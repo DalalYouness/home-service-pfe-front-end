@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "./components/NavBar";
 import Hero from "./components/Hero";
+import Footer from "./components/Footer";
 
 export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
@@ -12,6 +13,7 @@ export default function App() {
       <main>
         <Hero />
       </main>
+      <Footer />
     </div>
   );
 }
