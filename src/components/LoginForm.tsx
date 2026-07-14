@@ -6,9 +6,14 @@ import { authService } from "../services/auth.service";
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess: (message: string, fullname: string) => void;
 }
 
-export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export default function AuthModal({
+  isOpen,
+  onClose,
+  onLoginSuccess,
+}: AuthModalProps) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -63,16 +68,21 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       localStorage.setItem("user", JSON.stringify(userData));
 
       // 3. Si la promesse est résolue (Fulfilled/Success), on peut traiter le token et fermer le modal
-      console.log(responseData.message);
-      console.log("bonjour " + userData.fullname);
+      console.log(responseData);
+
+      onLoginSuccess(
+        responseData.message || "Connexion réussie.",
+        userData.fullname,
+      );
 
       // Fermeture du modal via le callback parent
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       // 4. Si la promesse échoue (Rejected), on extrait le message d'erreur de la réponse Axios
       console.error("Erreur d'authentification :", error);
       const backendMessage =
-        error.response?.data?.message || "Email ou mot de passe incorrect";
+        error.response?.data?.message ||
+        "Une erreur inattendue est survenue. Veuillez réessayer.";
       setErrorMsg(backendMessage);
     } finally {
       // 5. Dans tous les cas (Succès ou Échec), le traitement est terminé : on arrête le chargement

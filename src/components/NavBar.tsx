@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
-import AuthModal from "./AuthModal";
+import AuthModal from "./LoginForm";
+import LoginSuccessToast from "./LoginSuccessToast";
 
-interface NavbarProps {
-  onLoginClick: () => void;
-}
-
-export default function Navbar({ onLoginClick: NavbarProps }) {
+export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthOpen] = useState(false);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successData, setSuccessData] = useState({ message: "", fullname: "" });
+
+  const handleLoginSuccess = (message: string, fullname: string) => {
+    setSuccessData({ message, fullname });
+    setShowSuccess(true);
+  };
 
   return (
     <>
@@ -44,7 +49,7 @@ export default function Navbar({ onLoginClick: NavbarProps }) {
           {/* CTA — single Connexion button (Desktop) */}
           <div className="hidden md:flex">
             <button
-              onClick={() => setIsAuthModalOpen(true)} // 3. كـايـرد الـ State تـسـاوي true باش يـتـفـتـح
+              onClick={() => setIsAuthOpen(true)}
               className="text-sm font-semibold text-white bg-forest-800 hover:bg-forest-900 transition-all duration-200 active:scale-[0.97] px-6 py-2.5 rounded-full shadow-sm"
             >
               Connexion
@@ -88,7 +93,7 @@ export default function Navbar({ onLoginClick: NavbarProps }) {
             <button
               onClick={() => {
                 setMenuOpen(false);
-                setIsAuthModalOpen(true); // 4. كـايـفـتـح الـ Modal حـتّـى مـن الـ تـيـلـفـون
+                setIsAuthOpen(true);
               }}
               className="text-sm font-semibold text-white bg-forest-800 px-5 py-2.5 rounded-full w-full mt-1"
             >
@@ -99,8 +104,16 @@ export default function Navbar({ onLoginClick: NavbarProps }) {
       </nav>
       <AuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => setIsAuthOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
       />
+      {showSuccess && (
+        <LoginSuccessToast
+          message={successData.message}
+          fullname={successData.fullname}
+          onDurationEnd={() => setShowSuccess(false)}
+        />
+      )}
     </>
   );
 }

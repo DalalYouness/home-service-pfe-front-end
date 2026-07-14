@@ -4,7 +4,7 @@ import { CheckCircle, PartyPopper } from "lucide-react";
 interface LoginSuccessToastProps {
   message: string;
   fullname: string;
-  onDurationEnd: () => void; // باش نسدوه أوتوماتيكياً مور 4 ثواني مثلاً
+  onDurationEnd: () => void;
 }
 
 export default function LoginSuccessToast({
@@ -15,7 +15,7 @@ export default function LoginSuccessToast({
   useEffect(() => {
     const timer = setTimeout(() => {
       onDurationEnd();
-    }, 4000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [onDurationEnd]);
