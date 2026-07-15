@@ -229,7 +229,7 @@ export default function RegisterForm() {
     <div
       className="min-h-screen w-full flex items-center justify-center p-4 md:p-8 bg-cover bg-center relative"
       style={{
-        backgroundImage: `url('https://images.pexels.com/photos/4505171/pexels-photo-4505171.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80')`,
+        backgroundImage: `url('')`,
       }}
     >
       <div className="w-full max-w-2xl bg-white backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-2xl border border-white/20 my-8">
