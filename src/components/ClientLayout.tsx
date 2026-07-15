@@ -13,7 +13,7 @@ export const ClientLayout: React.FC = () => {
       <ClientNavbar user={mockUser} />
       <div className="flex flex-1">
         <ClientSidebar />
-        <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
           <Outlet />
         </main>
       </div>

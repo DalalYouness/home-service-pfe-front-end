@@ -19,7 +19,7 @@ export const ClientSidebar: React.FC = () => {
   return (
     <>
       {/* ========================================================
-          1️⃣ DESKTOP SIDEBAR (كتظهر غير فـ الـ Desktop: md:flex)
+          1️⃣ DESKTOP SIDEBAR
          ======================================================== */}
       <aside className="w-64 bg-white border-r border-gray-100 h-[calc(100vh-64px)] sticky top-16 left-0 p-4 hidden md:flex flex-col justify-between shrink-0">
         <div className="flex flex-col gap-1.5">
@@ -45,8 +45,7 @@ export const ClientSidebar: React.FC = () => {
       </aside>
 
       {/* ========================================================
-          2️⃣ MOBILE BOTTOM NAVIGATION (كتظهر غير فـ التلفون: md:hidden)
-          درنا ليها fixed لتحت كاع و z-50 باش تبقى ديما فوق الـ content
+          2 - MOBILE BOTTOM NAVIGATION
          ======================================================== */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 flex justify-around items-center z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] h-16">
         {menuItems.map((item, index) => (
