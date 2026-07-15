@@ -46,7 +46,7 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
             Confirmer la déconnexion
           </h3>
           <p className="text-sm text-gray-500 mt-2">
-            Êtes-vous sûr de vouloir vous déconnecter de votre espace client ?
+            Êtes-vous sûr de vouloir vous déconnecter?
           </p>
         </div>
 
