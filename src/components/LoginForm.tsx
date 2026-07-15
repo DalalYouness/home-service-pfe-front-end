@@ -2,18 +2,19 @@ import { useState } from "react";
 import { X, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 // Importation du service d'authentification pour collaborer avec lui
 import { authService } from "../services/auth.service";
+import { Link } from "react-router-dom";
 
-interface AuthModalProps {
+interface LoginFormProps {
   isOpen: boolean;
   onClose: () => void;
   onLoginSuccess: (message: string, fullname: string) => void;
 }
 
-export default function AuthModal({
+export default function LoginForm({
   isOpen,
   onClose,
   onLoginSuccess,
-}: AuthModalProps) {
+}: LoginFormProps) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -257,12 +258,12 @@ export default function AuthModal({
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Pas encore de compte ?{" "}
-            <a
-              href="#register"
+            <Link
+              to={"/register"}
               className="font-bold text-forest-700 hover:text-forest-900 hover:underline transition-colors"
             >
               Créer un compte
-            </a>
+            </Link>
           </p>
         </div>
       </div>

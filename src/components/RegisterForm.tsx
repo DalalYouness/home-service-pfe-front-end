@@ -3,9 +3,11 @@ import type {
   RegisterRequestDto,
   RegisterRequestErrors,
 } from "../types/register";
+import { authService } from "../services/auth.service";
+import { AlertCircle } from "lucide-react";
 
 export default function RegisterForm() {
-  // 1. الـ State ديال الـ Form Data
+  // 1.form state
   const [formData, setformData] = useState<RegisterRequestDto>({
     firstName: "",
     lastName: "",
@@ -19,10 +21,16 @@ export default function RegisterForm() {
     address: "",
   });
 
-  // 2. الـ State ديال كود الأخطاء (كيبدأ خاوي {})
+  // 2.errors state
   const [errorMsgs, seterrorMsgs] = useState<RegisterRequestErrors>({});
 
-  // الـ Change Handler للأجهزة والـ Inputs
+  // loading state
+  const [isLoading, setisLoading] = useState(false);
+
+  // gloabl message
+  const [globalErrorMsg, setGlobalErrorMsg] = useState("");
+
+  // formchange handler
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -32,7 +40,12 @@ export default function RegisterForm() {
       [name]: value,
     });
 
-    // UX ميزه إضافية: ملي يبدأ الـ user يصحح الغلط، نحيدو ليه اللون الأحمر فالبلاصة
+    // --- Better User Experience (UX) ---
+    // Hide the red borders around the fields dynamically when the user starts typing/correcting their input.
+
+    // We use "Bracket Notation" (errorMsgs[name]) instead of "Dot Notation" because 'name' is a dynamic variable.
+    // 'name as keyof RegisterRequestDto' is a Type Assertion. It tells the TypeScript compiler that the dynamic 'name'
+    // string is guaranteed to be one of the keys of our DTO, preventing TS compile-time errors.
     if (errorMsgs[name as keyof RegisterRequestDto]) {
       seterrorMsgs({
         ...errorMsgs,
@@ -41,7 +54,6 @@ export default function RegisterForm() {
     }
   };
 
-  // 3. الـ Validation Function مبنية على الـ Java DTO 100%
   const validateForm = (): boolean => {
     const errors: RegisterRequestErrors = {};
 
@@ -72,7 +84,7 @@ export default function RegisterForm() {
       errors.email = "L'email ne doit pas dépasser 50 caractères";
     }
 
-    // --- Password (طابقنا الـ Pattern ديال الـ Backend) ---
+    // --- Password
     const passwordRegex =
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,30}$/;
     if (!formData.password) {
@@ -82,7 +94,7 @@ export default function RegisterForm() {
         "Le mot de passe doit contenir entre 8 et 30 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial";
     }
 
-    // --- PhoneNumber (الـ Regex المغربي) ---
+    // --- PhoneNumber ---
     const phoneRegex = /^(\+212|0)([5-7])\d{8}$/;
     if (!formData.phoneNumber.trim()) {
       errors.phoneNumber = "Le numéro de téléphone est obligatoire";
@@ -129,19 +141,53 @@ export default function RegisterForm() {
     }
 
     seterrorMsgs(errors);
-    // إيلا كانت الـ keys length === 0 يعني خاوي وما كاين حتى غلط
+    // si l'objects errors contient zero field c'est a dire zero erreur
     return Object.keys(errors).length === 0;
   };
 
-  // 4. الـ Submit Handler
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // 👈 حيدنا الـ Default reload
-
+  // 4.s
+  //validate form return boolean for that purpose to do some debugging in the console
+  // if i want to remove it it's not a problem but i will let it to say the logs in the console
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const isValid = validateForm();
 
     if (isValid) {
       console.log("Data correcte! Prêt à envoyer au backend: ", formData);
-      // هنا غادي نعيطو للـ API Service ونصيفطو الـ formData ديالنا ناضي
+      setisLoading(true);
+      try {
+        const response = await authService.register(formData);
+        // for just log the result to see it
+        console.log(response);
+
+        // add the token inside localstorage with user details
+        const userDetails = {
+          email: response.email,
+          roles: response.roles,
+          fullname: response.fullName,
+        };
+        localStorage.setItem("token", response.token);
+        const userStringDetails = JSON.stringify(userDetails);
+        localStorage.setItem("user", userStringDetails);
+        setGlobalErrorMsg("");
+      } catch (error: any) {
+        let backendMessage = "";
+        if (error.response?.status === 409) {
+          backendMessage = error.response.data.message;
+          seterrorMsgs({
+            ...errorMsgs,
+            email: backendMessage,
+          });
+          setGlobalErrorMsg("");
+        } else {
+          backendMessage = "Une erreur est survenue. Veuillez réessuyer.";
+          setGlobalErrorMsg(backendMessage);
+          seterrorMsgs({});
+        }
+      } finally {
+        // pour l'instant
+        setisLoading(false);
+      }
     } else {
       console.log("Le formulaire contient des erreurs.");
     }
@@ -163,8 +209,14 @@ export default function RegisterForm() {
             Rejoignez dalyou et profitez de nos services à domicile
           </p>
         </div>
+        {globalErrorMsg && (
+          <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800 animate-fadeIn">
+            {/* Icône d'alerte rouge importée de lucide-react */}
+            <AlertCircle size={20} className="shrink-0 text-red-600" />
+            <span className="text-sm font-medium">{globalErrorMsg}</span>
+          </div>
+        )}
 
-        {/* ربطنا الـ Submit بالـ Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1. Prénom (firstName) */}
@@ -178,14 +230,13 @@ export default function RegisterForm() {
                 value={formData.firstName}
                 placeholder="Ex: Youness"
                 onChange={handleFormChange}
-                // الـ شرط د البوردر الأحمر:
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.firstName
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-200 focus:border-forest-800"
                 }`}
               />
-              {/* إيلا كاين الغلط كنبينوه هنا بالـ أحمر */}
+
               {errorMsgs.firstName && (
                 <span className="text-xs text-red-500 font-medium mt-1.5 block">
                   {errorMsgs.firstName}
@@ -414,9 +465,10 @@ export default function RegisterForm() {
           {/*submit button*/}
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full py-3.5 bg-forest-800 hover:bg-forest-900 text-white font-semibold rounded-2xl shadow-md transition-all duration-200 active:scale-[0.98] mt-4 text-sm"
           >
-            S'inscrire
+            {isLoading ? <span>Inscription en cours...</span> : "S'inscrire"}
           </button>
         </form>
       </div>

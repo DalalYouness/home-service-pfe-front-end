@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
-import AuthModal from "./LoginForm";
+import LoginForm from "./LoginForm";
 import LoginSuccessToast from "./LoginSuccessToast";
 
 export default function Navbar() {
@@ -102,7 +102,7 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      <AuthModal
+      <LoginForm
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthOpen(false)}
         onLoginSuccess={handleLoginSuccess}
