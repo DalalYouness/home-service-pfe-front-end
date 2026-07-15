@@ -28,7 +28,7 @@ export default function LoginSuccessToast({
       <div className="flex-1">
         <h4 className="font-sans font-bold text-emerald-950 flex items-center gap-1.5 text-base">
           Bienvenue, {fullname} !{" "}
-          <PartyPopper size={18} className="text-emerald-600" />
+          {/* <PartyPopper size={18} className="text-emerald-600" /> */}
         </h4>
         <p className="text-sm text-emerald-800 font-medium mt-0.5">{message}</p>
       </div>
