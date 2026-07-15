@@ -5,6 +5,7 @@ import type {
 } from "../types/register";
 import { authService } from "../services/auth.service";
 import { AlertCircle } from "lucide-react";
+import { City, Country } from "country-state-city";
 
 export default function RegisterForm() {
   // 1.form state
@@ -30,16 +31,46 @@ export default function RegisterForm() {
   // gloabl message
   const [globalErrorMsg, setGlobalErrorMsg] = useState("");
 
+  // cities state
+  const [cities, setcities] = useState<any[]>([]);
+
+  // get all countries
+  const countries = Country.getAllCountries();
+
   // formchange handler
   const handleFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setformData({
-      ...formData,
-      [name]: value,
-    });
 
+    if (name == "country") {
+      if (value) {
+        const countryCities = City.getCitiesOfCountry(value);
+        setcities(countryCities);
+        const selectedCountryObj = Country.getCountryByCode(value);
+        const countryFullName = selectedCountryObj
+          ? selectedCountryObj.name
+          : "";
+        setformData({
+          ...formData,
+          [name]: countryFullName,
+          city: "",
+        });
+        console.log(countryFullName);
+      } else {
+        setcities([]);
+        setformData({
+          ...formData,
+          country: "",
+          city: "",
+        });
+      }
+    } else {
+      setformData({
+        ...formData,
+        [name]: value,
+      });
+    }
     // --- Better User Experience (UX) ---
     // Hide the red borders around the fields dynamically when the user starts typing/correcting their input.
 
@@ -50,6 +81,7 @@ export default function RegisterForm() {
       seterrorMsgs({
         ...errorMsgs,
         [name]: undefined,
+        ...(name === "country" ? { city: undefined } : {}),
       });
     }
   };
@@ -200,7 +232,7 @@ export default function RegisterForm() {
         backgroundImage: `url('https://images.pexels.com/photos/4505171/pexels-photo-4505171.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80')`,
       }}
     >
-      <div className="w-full max-w-2xl bg-white/95 backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-2xl border border-white/20 my-8">
+      <div className="w-full max-w-2xl bg-white backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-2xl border border-white/20 my-8">
         <div className="flex flex-col items-center mb-8">
           <h2 className="text-2xl font-bold text-forest-950 mt-4">
             Créer votre compte
@@ -253,7 +285,7 @@ export default function RegisterForm() {
                 type="text"
                 name="lastName"
                 value={formData.lastName}
-                placeholder="Ex: El"
+                placeholder="Ex: Dalal"
                 onChange={handleFormChange}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.lastName
@@ -394,18 +426,26 @@ export default function RegisterForm() {
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
                 Pays
               </label>
-              <input
-                type="text"
+              <select
                 name="country"
-                value={formData.country}
-                placeholder="Ex: Maroc"
+                value={
+                  countries.find((c) => c.name === formData.country)?.isoCode ||
+                  ""
+                }
                 onChange={handleFormChange}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.country
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-200 focus:border-forest-800"
                 }`}
-              />
+              >
+                <option value="">Sélectionnez un pays</option>
+                {countries.map((country) => (
+                  <option key={country.isoCode} value={country.isoCode}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
               {errorMsgs.country && (
                 <span className="text-xs text-red-500 font-medium mt-1.5 block">
                   {errorMsgs.country}
@@ -418,18 +458,29 @@ export default function RegisterForm() {
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
                 Ville
               </label>
-              <input
-                type="text"
+              <select
                 name="city"
                 value={formData.city}
-                placeholder="Ex: Casablanca"
                 onChange={handleFormChange}
+                disabled={cities.length === 0}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.city
-                    ? "border-red-500 focus:border-red-500 bg-red-50/10"
+                    ? "border-red-500 focus-within:border-red-500 bg-red-50/10"
                     : "border-gray-200 focus:border-forest-800"
                 }`}
-              />
+              >
+                <option value="">
+                  {formData.country
+                    ? "Sélectionnez une ville"
+                    : "Sélectionnez d'abord un pays"}
+                </option>
+                {cities.map((city, index) => (
+                  <option key={city.name + "-" + index} value={city.name}>
+                    {" "}
+                    {city.name}
+                  </option>
+                ))}
+              </select>
               {errorMsgs.city && (
                 <span className="text-xs text-red-500 font-medium mt-1.5 block">
                   {errorMsgs.city}
@@ -446,7 +497,7 @@ export default function RegisterForm() {
                 type="text"
                 name="address"
                 value={formData.address}
-                placeholder="Ex: 123 Rue de la Liberté, Maarif"
+                placeholder="Ex: lot ouroud sidi maarouf"
                 onChange={handleFormChange}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.address
