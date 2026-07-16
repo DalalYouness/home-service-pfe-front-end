@@ -108,7 +108,7 @@ export default function LoginForm({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-card p-8 border border-cream-200">
-        {/* زر الإغلاق */}
+        {/*clode button*/}
         <button
           onClick={handleClose}
           className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:bg-cream-50 hover:text-gray-600 transition-colors"

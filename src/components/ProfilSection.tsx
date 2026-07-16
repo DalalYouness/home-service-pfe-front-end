@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { User, CheckCircle2 } from "lucide-react";
 
 export const ProfilSection: React.FC = () => {
-  const [email, setEmail] = useState("Youness");
+  const [email, setEmail] = useState("");
   const [isSavingName, setIsSavingName] = useState(false);
   const [nameSuccess, setNameSuccess] = useState(false);
 

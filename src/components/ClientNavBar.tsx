@@ -15,9 +15,6 @@ export const ClientNavbar: React.FC<ClientNavbarProps> = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  /**
-   * 🎯 الـ State المسؤول على واش السيرش مفتوح كامل فـ التلفون أولا لا
-   */
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   const handleLogoutConfirm = () => {

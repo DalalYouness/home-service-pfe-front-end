@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { CheckCircle, PartyPopper } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 interface LoginSuccessToastProps {
   message: string;
