@@ -1,26 +1,43 @@
 import React, { useState } from "react";
 import { User, CheckCircle2 } from "lucide-react";
+import type { ChangeEmailRequestDto } from "../types/changeEmail";
 
 export const ProfilSection: React.FC = () => {
-  // 1. Data states (matches the ChangeEmailRequestDto structure)
-  const [newEmail, setNewEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
+  // 2. Single object state initialized with the DTO contract
+  const [formData, setFormData] = useState<ChangeEmailRequestDto>({
+    newEmail: "",
+    currentPassword: "",
+  });
 
-  // 2. UI/UX states for loading and user feedback
+  // 3. UI/UX states
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // 3. Mock submit handler to simulate API behavior
+  // 4. Generic change handler for all form fields
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // 5. Mock submit handler
   const handleUpdateEmail = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     setSuccess(false);
 
-    // Simulate backend response delay
+    // Simulate backend response
     setTimeout(() => {
       setIsSaving(false);
       setSuccess(true);
-      setCurrentPassword(""); // Clear password field after success for security
+
+      // Clear only the password field after success, keeping the new email
+      setFormData((prev) => ({
+        ...prev,
+        currentPassword: "",
+      }));
     }, 1200);
   };
 
@@ -50,11 +67,13 @@ export const ProfilSection: React.FC = () => {
             </label>
             <input
               type="email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
+              name="newEmail" // Must match the DTO field name exactly
+              value={formData.newEmail}
+              onChange={handleChange}
               placeholder="votre.email@exemple.com"
               className="w-full px-4 py-3 bg-cream-50/50 border border-cream-200 rounded-xl focus:bg-white focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700 text-sm transition-all text-forest-900"
               required
+              maxLength={50}
             />
           </div>
 
@@ -65,8 +84,9 @@ export const ProfilSection: React.FC = () => {
             </label>
             <input
               type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
+              name="currentPassword" // Must match the DTO field name exactly
+              value={formData.currentPassword}
+              onChange={handleChange}
               placeholder="Saisissez votre mot de passe pour confirmer"
               className="w-full px-4 py-3 bg-cream-50/50 border border-cream-200 rounded-xl focus:bg-white focus:outline-none focus:border-forest-700 focus:ring-1 focus:ring-forest-700 text-sm transition-all text-forest-900"
               required
