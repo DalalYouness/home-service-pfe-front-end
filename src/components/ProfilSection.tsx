@@ -1,44 +1,73 @@
 import React, { useState } from "react";
-import { User, CheckCircle2 } from "lucide-react";
-import type { ChangeEmailRequestDto } from "../types/changeEmail";
+import { User, CheckCircle2, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type {
+  ChangeEmailErrors,
+  ChangeEmailRequestDto,
+} from "../types/changeEmail";
+import type { AuthResponseDto } from "../types/auth";
+import { profileService } from "../services/profile.service";
 
 export const ProfilSection: React.FC = () => {
-  // 2. Single object state initialized with the DTO contract
+  const navigate = useNavigate(); //  Initialize navigate
+
   const [formData, setFormData] = useState<ChangeEmailRequestDto>({
     newEmail: "",
     currentPassword: "",
   });
 
-  // 3. UI/UX states
   const [isSaving, setIsSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [successMsg, setsuccessMsg] = useState("");
+  const [errors, setErrors] = useState<ChangeEmailErrors>({});
 
-  // 4. Generic change handler for all form fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 5. Mock submit handler
-  const handleUpdateEmail = (e: React.FormEvent) => {
+  const handleUpdateEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setSuccess(false);
+    setsuccessMsg("");
+    setErrors({});
 
-    // Simulate backend response
-    setTimeout(() => {
+    try {
+      const response: AuthResponseDto =
+        await profileService.changeEmail(formData);
+
+      localStorage.setItem("token", response.token);
+      const userDetails = {
+        email: response.email,
+        roles: response.roles,
+        fullName: response.fullName,
+      };
+      localStorage.setItem("user", JSON.stringify(userDetails));
+
+      setsuccessMsg(response.message);
+      setFormData((prev) => ({ ...prev, currentPassword: "" }));
+    } catch (err: any) {
+      // 👈 3. Blast l'catch: check specialized for UserNotFoundException (404)
+      if (err.response && err.response.status === 404) {
+        const errorMsg =
+          err.response.data?.message || "Utilisateur non trouvé.";
+
+        // A. Clean up dead session from localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        // B. Set global error so the component knows what went wrong
+        setErrors({ global: errorMsg });
+
+        // C. Show alert then Redirect to Login page "/" with the state message
+        alert(`Session expirée: ${errorMsg}`); // A simple alert window to inform the user first
+        navigate("/", { replace: true });
+        return; // Stop execution
+      }
+
+      // TODO: We will handle other exceptions (InvalidPassword, EmailAlreadyExists) in the next steps!
+    } finally {
       setIsSaving(false);
-      setSuccess(true);
-
-      // Clear only the password field after success, keeping the new email
-      setFormData((prev) => ({
-        ...prev,
-        currentPassword: "",
-      }));
-    }, 1200);
+    }
   };
 
   return (
@@ -60,6 +89,14 @@ export const ProfilSection: React.FC = () => {
           onSubmit={handleUpdateEmail}
           className="space-y-4 w-full max-w-xl"
         >
+          {/* Global Error Alert */}
+          {errors.global && (
+            <div className="flex items-center gap-2 text-rose-600 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl text-xs">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errors.global}</span>
+            </div>
+          )}
+
           {/* New Email Input */}
           <div>
             <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-2">
@@ -67,7 +104,7 @@ export const ProfilSection: React.FC = () => {
             </label>
             <input
               type="email"
-              name="newEmail" // Must match the DTO field name exactly
+              name="newEmail"
               value={formData.newEmail}
               onChange={handleChange}
               placeholder="votre.email@exemple.com"
@@ -84,7 +121,7 @@ export const ProfilSection: React.FC = () => {
             </label>
             <input
               type="password"
-              name="currentPassword" // Must match the DTO field name exactly
+              name="currentPassword"
               value={formData.currentPassword}
               onChange={handleChange}
               placeholder="Saisissez votre mot de passe pour confirmer"
@@ -94,10 +131,10 @@ export const ProfilSection: React.FC = () => {
           </div>
 
           {/* Success Alert */}
-          {success && (
+          {successMsg && (
             <div className="flex items-center gap-2 text-forest-700 bg-forest-50/80 px-4 py-2.5 rounded-xl text-xs border border-forest-100">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span>Votre adresse email a été modifiée avec succès.</span>
+              <span>{successMsg}</span>
             </div>
           )}
 

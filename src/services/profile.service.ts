@@ -1,14 +1,21 @@
-import axios from "axios";
-import type {
-  ChangeEmailRequestDto,
-  ChangeEmailResponse,
-} from "../types/changeEmail";
+import type { ChangeEmailRequestDto } from "../types/changeEmail";
+import type { AuthResponseDto } from "../types/auth";
+import apiClient from "./api.client";
 
 export const profileService = {
   changeEmail: async (
     formData: ChangeEmailRequestDto,
-  ): Promise<ChangeEmailResponse> => {
-    const response = await axios.put("/api/v1/change-email", formData);
+  ): Promise<AuthResponseDto> => {
+    const token = localStorage.getItem("token");
+    const response = await apiClient.put(
+      "/api/v1/auth/change-email",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
     return response.data;
   },
 };
