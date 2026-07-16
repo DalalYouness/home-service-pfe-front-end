@@ -19,7 +19,7 @@ export const ClientSidebar: React.FC = () => {
   return (
     <>
       {/* ========================================================
-          1️⃣ DESKTOP SIDEBAR
+          1 - DESKTOP SIDEBAR
          ======================================================== */}
       <aside className="w-64 bg-white border-r border-gray-100 h-[calc(100vh-64px)] sticky top-16 left-0 p-4 hidden md:flex flex-col justify-between shrink-0">
         <div className="flex flex-col gap-1.5">
@@ -58,7 +58,6 @@ export const ClientSidebar: React.FC = () => {
               }`
             }
           >
-            {/* الأيقونة كتكبر شوية فـ التلفون باش تجيها ساهلة فـ الكليك */}
             <div className="p-1">{item.icon}</div>
             <span className="text-[10px] tracking-tight">{item.name}</span>
           </NavLink>

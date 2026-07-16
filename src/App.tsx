@@ -1,17 +1,13 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import RegisterForm from "./components/RegisterForm";
-import { ClientLayout } from "./components/ClientLayout"; // استيراد الـ Layout الأب
+import { ClientLayout } from "./components/ClientLayout";
+import { MonCompte } from "./components/MonCompte";
 
-// غادي تصاوب هاد الـ Components خاويين دابا غير باش تيستي بيهم
+// for test
 const ClientDashboard = () => (
   <div className="text-xl font-bold text-emerald-950">
     Tableau de bord (Dashboard)
-  </div>
-);
-const MonCompte = () => (
-  <div className="text-xl font-bold text-emerald-950">
-    Mon Compte (Modifier profil, password...)
   </div>
 );
 
