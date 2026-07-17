@@ -12,11 +12,13 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    // config.headers c'est just comme un garantie que le headers n'est pas undefined
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
+  // c'est rare mais c'est just pour garantire si c'est vraiment  une erreur au moments de l'interception de requtte on le cache
   (error) => {
     return Promise.reject(error);
   },
@@ -42,6 +44,10 @@ apiClient.interceptors.response.use(
         window.location.href = "/403";
         break;
 
+      // si le code status rah 500 , hna drna check wach l methode hiya l get ila kant hiya l get f request
+      // f machi mochkil anaho nredirigew mobachara l chi page katgolih rah kayn error intern
+      // walakin la kant post / put / delete rah logiquement makhasch luser nkharoj man lpage khas ntal3o lih ghir
+      // chi modal
       case 500:
         if (error.config.method === "get") {
           window.location.href = "/500";
@@ -53,6 +59,9 @@ apiClient.interceptors.response.use(
       default:
         break;
     }
+    // rah darouri l composant khas darouri nraj3o lih bali rah fachlat l3amaliya fl 7alat dyal redirect
+    // composant maghaykon endo maydir biha walakin f 7ala dyal la kana ghadi ntal3o ghir chi modal sghir ola chi haja
+    // had l error ghaynf3 bzf l composant bach ybdl state dyalo mataln yhbas spinner ola chi haja haka
     return Promise.reject(error);
   },
 );

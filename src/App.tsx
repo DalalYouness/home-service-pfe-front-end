@@ -3,6 +3,7 @@ import LandingPage from "./components/LandingPage";
 import RegisterForm from "./components/RegisterForm";
 import { ClientLayout } from "./components/ClientLayout";
 import { MonCompte } from "./components/MonCompte";
+import ForbiddenPage from "./errors/ForbiddenPage";
 
 // for test
 const ClientDashboard = () => (
@@ -19,6 +20,8 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterForm />} />
 
+        {/* erros pages */}
+        <Route path="/403" element={<ForbiddenPage />} />
         {/* 2 - client private routes*/}
         <Route path="/client" element={<ClientLayout />}>
           {/* /client/dashboard */}
