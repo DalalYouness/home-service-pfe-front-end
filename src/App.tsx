@@ -4,6 +4,7 @@ import RegisterForm from "./components/RegisterForm";
 import { ClientLayout } from "./components/ClientLayout";
 import { MonCompte } from "./components/MonCompte";
 import ForbiddenPage from "./errors/ForbiddenPage";
+import NotFoundPage from "./errors/NotFoundPage";
 
 // for test
 const ClientDashboard = () => (
@@ -19,9 +20,9 @@ export default function App() {
         {/*  1 - public routes open to all visitors */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterForm />} />
-
         {/* erros pages */}
         <Route path="/403" element={<ForbiddenPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
         {/* 2 - client private routes*/}
         <Route path="/client" element={<ClientLayout />}>
           {/* /client/dashboard */}

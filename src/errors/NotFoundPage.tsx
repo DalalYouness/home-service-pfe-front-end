@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import forbiddenImg from "../assets/forbiddenImg.svg";
+import notFoundImg from "../assets/notFoundImg.svg";
 
-const ForbiddenPage: React.FC = () => {
+const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
@@ -10,21 +10,22 @@ const ForbiddenPage: React.FC = () => {
       <div className="max-w-xl w-full text-center space-y-8">
         <div className="flex justify-center">
           <img
-            src={forbiddenImg}
-            alt="Access Denied Security Restriction"
+            src={notFoundImg}
+            alt="Page Not Found Error 404"
             className="w-full max-w-[360px] h-auto object-contain animate-fade-in"
           />
         </div>
 
         <div className="space-y-3">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1B3B2B]">
-            Cette page est restreinte
+            Cette page n'existe pas
           </h1>
           <p className="text-sm md:text-base text-[#4A5D4E] max-w-sm mx-auto leading-relaxed">
-            Votre profil ne possède pas les autorisations ou les rôles
-            nécessaires pour accéder à cette zone sécurisée.
+            Le lien que vous avez suivi est peut-être rompu ou la page a été
+            supprimée. Vérifiez l'URL ou revenez à l'accueil.
           </p>
         </div>
+
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 pt-2">
           <button
             onClick={() => navigate(-1)}
@@ -45,4 +46,4 @@ const ForbiddenPage: React.FC = () => {
   );
 };
 
-export default ForbiddenPage;
+export default NotFoundPage;
