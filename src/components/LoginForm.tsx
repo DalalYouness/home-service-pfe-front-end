@@ -141,7 +141,7 @@ export default function LoginForm({
         <form onSubmit={handleSubmit} className="space-y-5">
           {/*email field*/}
           <div>
-            <label className="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
               Adresse Email
             </label>
             <div className="relative">
@@ -170,7 +170,7 @@ export default function LoginForm({
 
           {/*pwd field*/}
           <div>
-            <label className="block text-xs font-bold text-forest-900 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
               Mot de passe
             </label>
             <div className="relative">

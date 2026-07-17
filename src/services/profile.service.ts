@@ -18,4 +18,13 @@ export const profileService = {
     );
     return response.data;
   },
+  deleteAccount: async () => {
+    const token = localStorage.getItem("token");
+    const response = await apiClient.delete("/api/v1/auth/delete-account", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  },
 };

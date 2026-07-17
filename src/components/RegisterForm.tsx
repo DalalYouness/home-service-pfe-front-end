@@ -253,7 +253,7 @@ export default function RegisterForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1. Prénom (firstName) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700  tracking-wider mb-2">
                 Prénom
               </label>
               <input
@@ -278,7 +278,7 @@ export default function RegisterForm() {
 
             {/* 2. Nom (lastName) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Nom
               </label>
               <input
@@ -302,7 +302,7 @@ export default function RegisterForm() {
 
             {/* 3. Email */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Adresse Email
               </label>
               <input
@@ -326,7 +326,7 @@ export default function RegisterForm() {
 
             {/* 4. Téléphone (phoneNumber) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Téléphone
               </label>
               <input
@@ -350,7 +350,7 @@ export default function RegisterForm() {
 
             {/* 5. Mot de passe (password) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Mot de passe
               </label>
               <input
@@ -374,7 +374,7 @@ export default function RegisterForm() {
 
             {/* 6. Date de naissance (birthDate) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Date de naissance
               </label>
               <input
@@ -397,7 +397,7 @@ export default function RegisterForm() {
 
             {/* 7. Genre (gender) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Genre
               </label>
               <select
@@ -423,7 +423,7 @@ export default function RegisterForm() {
 
             {/* 8. Pays (country) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Pays
               </label>
               <select
@@ -455,7 +455,7 @@ export default function RegisterForm() {
 
             {/* 9. Ville (city) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Ville
               </label>
               <select
@@ -490,7 +490,7 @@ export default function RegisterForm() {
 
             {/* 10. Adresse */}
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Adresse
               </label>
               <input
