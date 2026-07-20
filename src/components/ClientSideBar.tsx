@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { User, LayoutDashboard } from "lucide-react";
+import { User, LayoutDashboard, Settings } from "lucide-react";
 
 export const ClientSidebar: React.FC = () => {
   const menuItems = [
@@ -10,9 +10,14 @@ export const ClientSidebar: React.FC = () => {
       icon: <LayoutDashboard className="w-5 h-5" />,
     },
     {
-      name: "Mon Compte",
-      path: "/client/compte",
+      name: "Profil",
+      path: "/client/profil",
       icon: <User className="w-5 h-5" />,
+    },
+    {
+      name: "Paramètres du compte",
+      path: "/client/account-setting",
+      icon: <Settings className="w-5 h-5" />,
     },
   ];
 

@@ -31,7 +31,7 @@ export default function App() {
           <Route path="dashboard" element={<ClientDashboard />} />
 
           {/* /client/compte */}
-          <Route path="compte" element={<MonCompte />} />
+          <Route path="account-setting" element={<MonCompte />} />
 
           {/* important thing when user go directly to /client i have to redirect him to /client/dashboard*/}
           <Route index element={<Navigate to="dashboard" replace />} />
