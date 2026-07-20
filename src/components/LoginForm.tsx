@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 // Importation du service d'authentification pour collaborer avec lui
 import { authService } from "../services/auth.service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   isOpen: boolean;
@@ -25,6 +25,7 @@ export default function LoginForm({
    * Permet d'afficher un indicateur visuel (loading) à l'utilisateur.
    */
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   /*
    * État pour mémoriser le message d'erreur si la promesse est rejetée (Rejected).
@@ -79,14 +80,23 @@ export default function LoginForm({
       // Fermeture du modal via le callback parent
       onClose();
     } catch (error) {
-      // 4. Si la promesse échoue (Rejected), on extrait le message d'erreur de la réponse Axios
+      // Log the authentication failure
       console.error("Erreur d'authentification :", error);
-      const backendMessage =
-        error.response?.data?.message ||
-        "Une erreur inattendue est survenue. Veuillez réessayer.";
-      setErrorMsg(backendMessage);
+
+      // 1. Safe navigation using error?.response?.status
+      if (error?.response?.status === 401) {
+        const backendMessage =
+          error.response?.data?.message || "Email ou mot de passe incorrect.";
+        setErrorMsg(backendMessage);
+        return;
+      }
+
+      // 2. If response is undefined (Server Down), this runs safely without crashing
+      setErrorMsg(
+        "Le serveur est inaccessible. Veuillez vérifier votre connexion ou réessayer plus tard.",
+      );
     } finally {
-      // 5. Dans tous les cas (Succès ou Échec), le traitement est terminé : on arrête le chargement
+      // 3. Stop the loading spinner
       setIsLoading(false);
     }
   };

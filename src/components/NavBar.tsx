@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 👈 1. Import useNavigate
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
 import LoginForm from "./LoginForm";
 import LoginSuccessToast from "./LoginSuccessToast";
 
 export default function Navbar() {
+  const navigate = useNavigate(); // 👈 2. Instancier useNavigate
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthOpen] = useState(false);
 
@@ -14,6 +17,11 @@ export default function Navbar() {
   const handleLoginSuccess = (message: string, fullname: string) => {
     setSuccessData({ message, fullname });
     setShowSuccess(true);
+  };
+
+  const handleToastEnd = () => {
+    setShowSuccess(false);
+    navigate("/client/dashboard");
   };
 
   return (
@@ -102,16 +110,19 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+
       <LoginForm
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
+
+      {/* 👈 4. ربط handleToastEnd مع onDurationEnd */}
       {showSuccess && (
         <LoginSuccessToast
           message={successData.message}
           fullname={successData.fullname}
-          onDurationEnd={() => setShowSuccess(false)}
+          onDurationEnd={handleToastEnd}
         />
       )}
     </>

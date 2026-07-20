@@ -6,6 +6,7 @@ import type {
 import { authService } from "../services/auth.service";
 import { AlertCircle } from "lucide-react";
 import { City, Country } from "country-state-city";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
   // 1.form state
@@ -36,6 +37,8 @@ export default function RegisterForm() {
 
   // get all countries
   const countries = Country.getAllCountries();
+
+  const navigate = useNavigate();
 
   // formchange handler
   const handleFormChange = (
@@ -202,6 +205,7 @@ export default function RegisterForm() {
         const userStringDetails = JSON.stringify(userDetails);
         localStorage.setItem("user", userStringDetails);
         setGlobalErrorMsg("");
+        navigate("/client/dashboard");
       } catch (error: any) {
         let backendMessage = "";
         if (error.response?.status === 409) {

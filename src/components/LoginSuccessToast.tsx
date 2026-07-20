@@ -15,7 +15,7 @@ export default function LoginSuccessToast({
   useEffect(() => {
     const timer = setTimeout(() => {
       onDurationEnd();
-    }, 5000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [onDurationEnd]);

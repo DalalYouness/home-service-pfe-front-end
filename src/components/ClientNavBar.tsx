@@ -6,7 +6,7 @@ import { LogoutModal } from "./LogoutModal";
 interface ClientNavbarProps {
   user: {
     name: string;
-    avatarUrl?: string;
+    description: string;
   };
 }
 

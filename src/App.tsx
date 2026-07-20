@@ -5,6 +5,7 @@ import { ClientLayout } from "./components/ClientLayout";
 import { MonCompte } from "./components/MonCompte";
 import ForbiddenPage from "./errors/ForbiddenPage";
 import NotFoundPage from "./errors/NotFoundPage";
+import ServerErrorPage from "./errors/ServerErrorPage";
 
 // for test
 const ClientDashboard = () => (
@@ -23,6 +24,7 @@ export default function App() {
         {/* erros pages */}
         <Route path="/403" element={<ForbiddenPage />} />
         <Route path="/404" element={<NotFoundPage />} />
+        <Route path="/500" element={<ServerErrorPage />} />
         {/* 2 - client private routes*/}
         <Route path="/client" element={<ClientLayout />}>
           {/* /client/dashboard */}
@@ -34,6 +36,8 @@ export default function App() {
           {/* important thing when user go directly to /client i have to redirect him to /client/dashboard*/}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
+        {/* ay path mamsaybinoch o ktabto ilo7ni l 404 */}
+        <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

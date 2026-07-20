@@ -11,29 +11,40 @@ export const SuppressionSection: React.FC = () => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showNotFoundModal, setshowNotFoundModal] = useState(false);
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const handleSessionCleanup = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setshowNotFoundModal(false);
   };
+
   const handleDeleteAccount = async () => {
+    setIsDeleting(true); // 1. Déclencher le spinner immédiatement au clic
+    setGlobalError(null); // Réinitialiser les anciennes erreurs
+
     try {
       await profileService.deleteAccount();
-      setIsDeleting(true);
+
+      // 2. En cas de succès, attendre 1.5s pour laisser l'animation du spinner puis rediriger
       const callBackFunction = () => {
         localStorage.clear();
         navigate("/");
       };
       setTimeout(callBackFunction, 1500);
-      // we khow as well that the error object get fill when the server respond with failed status code
-      // but sometimes it mights to have a problem at the network level (no connexion) or server down
-      // for that raison we have to check if the response is undefined or not
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
+    } catch (err: any) {
+      setIsDeleting(false); // 3. Arrêter le spinner en cas d'erreur
+
+      // 4. Gestion sécurisée du Token Expiré (401)
+      if (err?.response?.status === 401) {
         setshowNotFoundModal(true);
         return;
       }
+
+      // 5. Gestion des erreurs de réseau ou serveur en panne
+      setGlobalError(
+        "Impossible de contacter le serveur. Veuillez vérifier votre connexion ou réessayer.",
+      );
     }
   };
 
@@ -43,6 +54,7 @@ export const SuppressionSection: React.FC = () => {
         isOpen={showNotFoundModal}
         onClose={handleSessionCleanup}
       />
+
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="p-6 md:p-8 flex items-center justify-between cursor-pointer select-none hover:bg-amber-50/10 active:bg-amber-50/20 transition-all duration-200"
@@ -62,6 +74,7 @@ export const SuppressionSection: React.FC = () => {
           }`}
         />
       </div>
+
       <div
         className={`transition-all duration-500 ease-in-out overflow-hidden ${
           isOpen
@@ -71,13 +84,21 @@ export const SuppressionSection: React.FC = () => {
       >
         <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="text-xs text-amber-600/80 leading-relaxed pr-4 hidden md:block">
-            Cette opération est irréversible. Une fois validée, toutes vos
+            Cette operation est irréversible. Une fois validée, toutes vos
             informations personnelles et historiques seront définitivement
-            effacés de nos bases de données.
+            effacées de nos bases de données.
           </div>
 
           <div className="md:col-span-2">
             <div className="w-full max-w-xl space-y-4">
+              {/* Alerte d'erreur globale (Réseau ou Serveur Down) */}
+              {globalError && (
+                <div className="flex items-center gap-2 text-rose-600 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl text-xs animate-in fade-in duration-200">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>{globalError}</span>
+                </div>
+              )}
+
               <p className="text-xs text-forest-700/75 leading-relaxed">
                 Cette action supprimera définitivement toutes vos données de nos
                 serveurs. Vous ne pourrez plus récupérer vos informations.
