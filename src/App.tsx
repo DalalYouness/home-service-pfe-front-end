@@ -6,6 +6,7 @@ import { MonCompte } from "./components/MonCompte";
 import ForbiddenPage from "./errors/ForbiddenPage";
 import NotFoundPage from "./errors/NotFoundPage";
 import ServerErrorPage from "./errors/ServerErrorPage";
+import Profil from "./components/Profil";
 
 // for test
 const ClientDashboard = () => (
@@ -33,6 +34,8 @@ export default function App() {
           {/* /client/compte */}
           <Route path="account-setting" element={<MonCompte />} />
 
+          {/* profile component */}
+          <Route path="myprofil" element={<Profil />} />
           {/* important thing when user go directly to /client i have to redirect him to /client/dashboard*/}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>

@@ -11,7 +11,7 @@ export const ClientSidebar: React.FC = () => {
     },
     {
       name: "Profil",
-      path: "/client/profil",
+      path: "/client/myprofil",
       icon: <User className="w-5 h-5" />,
     },
     {

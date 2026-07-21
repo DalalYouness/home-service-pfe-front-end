@@ -1,288 +1,249 @@
-import React, { useEffect, useState } from "react";
 import {
   User,
   Phone,
   MapPin,
   Globe,
-  Plus,
   Camera,
-  Sparkles,
+  Pencil,
+  Mail,
+  FileText,
 } from "lucide-react";
-
-interface UserProfileFormData {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  photo: string;
-  address: string;
-  city: string;
-  country: string;
-  bio: string;
-  interventionArea: string;
-}
+import { useProfil } from "../hooks/useProfil";
 
 export default function Profil() {
-  const [userRole, setUserRole] = useState<string>("CLIENT");
-  const [formData, setFormData] = useState<UserProfileFormData>({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    photo: "",
-    address: "",
-    city: "",
-    country: "",
-    bio: "",
-    interventionArea: "",
-  });
-
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        const role =
-          parsedUser.roles?.[0]?.roleName || parsedUser.role || "CLIENT";
-        setUserRole(role.toUpperCase());
-
-        setFormData((prev) => ({
-          ...prev,
-          firstName: parsedUser.firstName || "",
-          lastName: parsedUser.lastName || "",
-          phoneNumber: parsedUser.phoneNumber || "",
-          photo: parsedUser.photo || "",
-          address: parsedUser.address || "",
-          city: parsedUser.city || "",
-          country: parsedUser.country || "Maroc",
-          bio: parsedUser.bio || "",
-          interventionArea: parsedUser.interventionArea || "",
-        }));
-
-        if (parsedUser.photo) {
-          setPhotoPreview(parsedUser.photo);
-        }
-      } catch (error) {
-        console.error("Error reading user data from localStorage", error);
-      }
-    }
-  }, []);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPhotoPreview(imageUrl);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Data to send (UserProfileResponseDto style):", formData);
-  };
+  const { isEditing, handleEdit, role, errors } = useProfil();
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-cream-200 shadow-sm max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Photo Upload Header Zone */}
-        <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-cream-100">
-          <div className="relative group">
-            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-forest-50 border-2 border-forest-200 flex items-center justify-center overflow-hidden shadow-inner">
-              {photoPreview ? (
-                <img
-                  src={photoPreview}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User size={48} className="text-forest-400" />
-              )}
+    <div className="w-full bg-white rounded-3xl overflow-hidden border border-[#e8dfc8] shadow-sm">
+      {/* Header Banner & Avatar */}
+      <div className="relative bg-gradient-to-b from-forest-900 to-forest-700 h-32 w-full flex justify-center">
+        <div className="absolute -bottom-14 flex flex-col items-center">
+          <div className="relative">
+            <div className="w-28 h-28 rounded-full bg-[#faf8f3] border-4 border-white flex items-center justify-center overflow-hidden shadow-md">
+              <span className="font-bold text-3xl text-forest-900">y</span>
             </div>
 
-            <label
-              htmlFor="photo-upload"
-              className="absolute bottom-1 right-1 bg-forest-800 text-white p-2.5 rounded-full shadow-md hover:bg-forest-900 active:scale-95 transition-all cursor-pointer flex items-center justify-center border-2 border-white"
+            <button
+              type="button"
+              className="absolute bottom-0 right-0 bg-forest-900 hover:bg-forest-800 text-white p-2 rounded-full border-2 border-white cursor-pointer shadow-sm"
             >
-              <Plus size={18} strokeWidth={3} />
-              <input
-                type="file"
-                id="photo-upload"
-                accept="image/*"
-                className="hidden"
-                onChange={handlePhotoChange}
-              />
-            </label>
-          </div>
-
-          <div className="text-center sm:text-left space-y-1">
-            <h3 className="font-sans font-bold text-xl text-forest-950">
-              Photo de profil
-            </h3>
-            <p className="text-sm text-gray-500 max-w-xs">
-              Ajoutez une photo claire pour renforcer la confiance avec la
-              communauté Yaqin.
-            </p>
+              <Camera size={16} />
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Form Inputs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Profile Header Title */}
+      <div className="pt-16 pb-6 text-center px-4 border-b border-[#f2ece1]">
+        <p className="text-xs text-gray-400 mb-2">
+          Cliquez sur l'appareil photo pour ajouter
+        </p>
+        <h2 className="text-2xl font-bold text-forest-950 tracking-tight">
+          younessdalal
+        </h2>
+        <p className="text-sm text-gray-500 flex items-center justify-center gap-1.5 mt-1">
+          <Mail size={14} className="text-gray-400" />
+          younessdalal@gmail.com
+        </p>
+      </div>
+
+      {/* Main Content */}
+      <div className="p-6 md:p-8 space-y-8">
+        {/* Section Title & Action */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-bold text-forest-950">
+            Informations personnelles
+          </h3>
+
+          <button
+            onClick={handleEdit}
+            type="button"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#f5f0e5] hover:bg-[#ebe3d3] text-forest-900 font-medium text-sm rounded-xl transition-all cursor-pointer"
+          >
+            <Pencil size={15} />
+            {isEditing ? "Annuler" : "Modifier"}
+          </button>
+        </div>
+
+        {/* Info Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Prénom */}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Prénom
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              placeholder="Votre prénom"
-              className="w-full px-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
-            />
+          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+              <User size={18} />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="firstName"
+                className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+              >
+                Prénom
+              </label>
+              <input
+                id="firstName"
+                type="text"
+                defaultValue="younessdalal"
+                disabled={!isEditing}
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+              />
+            </div>
           </div>
 
           {/* Nom */}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Nom
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              placeholder="Votre nom"
-              className="w-full px-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
-            />
+          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+              <User size={18} />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="lastName"
+                className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+              >
+                Nom
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                defaultValue="—"
+                disabled={!isEditing}
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+              />
+            </div>
           </div>
 
           {/* Téléphone */}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Numéro de téléphone
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <Phone size={18} />
-              </span>
+          <div className="md:col-span-2 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+              <Phone size={18} />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="phone"
+                className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+              >
+                Téléphone
+              </label>
               <input
+                id="phone"
                 type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                placeholder="06 00 00 00 00"
-                className="w-full pl-11 pr-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
+                defaultValue="0612345678"
+                disabled={!isEditing}
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
               />
             </div>
           </div>
 
           {/* Adresse */}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Adresse
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <MapPin size={18} />
-              </span>
+          <div className="md:col-span-2 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+              <MapPin size={18} />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="address"
+                className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+              >
+                Adresse
+              </label>
               <input
+                id="address"
                 type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Ex: N° 12, Quartier Riad"
-                className="w-full pl-11 pr-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
+                defaultValue="12 Rue Mohammed V, Quartier Gueliz"
+                disabled={!isEditing}
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
               />
             </div>
           </div>
 
           {/* Ville */}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Ville
-            </label>
-            <input
-              type="text"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              placeholder="Ex: Casablanca"
-              className="w-full px-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
-            />
-          </div>
-
-          {/* Pays */}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Pays
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <Globe size={18} />
-              </span>
+          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+              <MapPin size={18} />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="city"
+                className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+              >
+                Ville
+              </label>
               <input
+                id="city"
                 type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                placeholder="Maroc"
-                className="w-full pl-11 pr-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
+                defaultValue="Casablanca"
+                disabled={!isEditing}
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
               />
             </div>
           </div>
+          {/* Zone d'intervention */}
 
-          {/* Field Dynamique: Zone d'intervention (Exclusivement pour PRESTATAIRE) */}
-          {userRole === "PRESTATAIRE" && (
-            <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2 flex items-center gap-1.5">
-                <Sparkles size={16} className="text-amber-600" />
-                Zone d'intervention
-              </label>
-              <input
-                type="text"
-                name="interventionArea"
-                value={formData.interventionArea}
-                onChange={handleChange}
-                placeholder="Ex: Maarif, Anfa, Gauthier, Ain Diab..."
-                className="w-full px-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all"
-              />
+          {role === "ROLE_PRESTATAIRE" && (
+            <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+                <MapPin size={18} />
+              </div>
+              <div className="w-full">
+                <label
+                  htmlFor="intervention-area"
+                  className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+                >
+                  Zone d'intervention
+                </label>
+                <input
+                  id="intervention-area"
+                  type="text"
+                  defaultValue="Mohammedia"
+                  disabled={!isEditing}
+                  className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                />
+              </div>
             </div>
           )}
 
-          {/* Bio */}
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Bio / Présentation
-            </label>
-            <textarea
-              name="bio"
-              rows={3}
-              value={formData.bio}
-              onChange={handleChange}
-              placeholder="Décrivez-vous en quelques lignes..."
-              className="w-full px-4 py-3 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl text-base text-gray-800 focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600 transition-all resize-none"
-            />
+          {/* Pays */}
+          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
+              <Globe size={18} />
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="country"
+                className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
+              >
+                Pays
+              </label>
+              <input
+                id="country"
+                type="text"
+                defaultValue="Maroc"
+                disabled={!isEditing}
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end pt-4 border-t border-cream-100">
-          <button
-            type="submit"
-            className="px-8 py-3.5 bg-forest-900 hover:bg-forest-800 text-white font-semibold rounded-2xl shadow-sm active:scale-95 transition-all"
-          >
-            Enregistrer les modifications
-          </button>
+        {/* Bio Section */}
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
+            <FileText size={16} className="text-forest-900" />
+            <label htmlFor="bio" className="cursor-pointer">
+              Bio
+            </label>
+          </div>
+
+          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-4">
+            <textarea
+              id="bio"
+              rows={3}
+              disabled={!isEditing}
+              defaultValue="Client dalyoo depuis 2024 — à la recherche de prestataires de confiance pour mes tâches quotidiennes."
+              className="w-full text-sm text-gray-700 leading-relaxed bg-transparent outline-none resize-none"
+            />
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
