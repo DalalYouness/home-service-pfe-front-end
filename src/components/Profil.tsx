@@ -12,7 +12,15 @@ import {
 import { useProfil } from "../hooks/useProfil";
 
 export default function Profil() {
-  const { isEditing, handleEdit, handleSubmit, role, errors } = useProfil();
+  const {
+    isEditing,
+    handleEdit,
+    role,
+    errors,
+    formData,
+    handleChange,
+    handleSubmit,
+  } = useProfil();
 
   return (
     <div className="w-full bg-white rounded-3xl overflow-hidden border border-[#e8dfc8] shadow-sm">
@@ -21,7 +29,11 @@ export default function Profil() {
         <div className="absolute -bottom-14 flex flex-col items-center">
           <div className="relative">
             <div className="w-28 h-28 rounded-full bg-[#faf8f3] border-4 border-white flex items-center justify-center overflow-hidden shadow-md">
-              <span className="font-bold text-3xl text-forest-900">y</span>
+              <span className="font-bold text-3xl text-forest-900">
+                {formData.firstName
+                  ? formData.firstName.charAt(0).toLowerCase()
+                  : "y"}
+              </span>
             </div>
 
             <button
@@ -40,11 +52,11 @@ export default function Profil() {
           Cliquez sur l'appareil photo pour ajouter
         </p>
         <h2 className="text-2xl font-bold text-forest-950 tracking-tight">
-          younessdalal
+          {formData.firstName || "---"}
         </h2>
         <p className="text-sm text-gray-500 flex items-center justify-center gap-1.5 mt-1">
           <Mail size={14} className="text-gray-400" />
-          younessdalal@gmail.com
+          {formData.email || "---"}
         </p>
       </div>
 
@@ -65,6 +77,7 @@ export default function Profil() {
             {isEditing ? "Annuler" : "Modifier"}
           </button>
         </div>
+
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Prénom */}
@@ -82,6 +95,8 @@ export default function Profil() {
               <input
                 id="firstName"
                 type="text"
+                value={formData.firstName || ""}
+                onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
@@ -103,6 +118,8 @@ export default function Profil() {
               <input
                 id="lastName"
                 type="text"
+                value={formData.lastName || ""}
+                onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
@@ -116,14 +133,16 @@ export default function Profil() {
             </div>
             <div className="w-full">
               <label
-                htmlFor="phone"
+                htmlFor="phoneNumber"
                 className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
               >
                 Téléphone
               </label>
               <input
-                id="phone"
+                id="phoneNumber"
                 type="tel"
+                value={formData.phoneNumber || ""}
+                onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
@@ -145,6 +164,9 @@ export default function Profil() {
               <input
                 id="address"
                 type="text"
+                value={formData.address || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
@@ -165,6 +187,8 @@ export default function Profil() {
               <input
                 id="city"
                 type="text"
+                value={formData.city || ""}
+                onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
@@ -179,14 +203,16 @@ export default function Profil() {
               </div>
               <div className="w-full">
                 <label
-                  htmlFor="intervention-area"
+                  htmlFor="interventionArea"
                   className="block text-[10px] font-bold tracking-wider text-gray-400 uppercase cursor-pointer"
                 >
                   Zone d'intervention
                 </label>
                 <input
-                  id="intervention-area"
+                  id="interventionArea"
                   type="text"
+                  value={formData.interventionArea || ""}
+                  onChange={handleChange}
                   disabled={!isEditing}
                   className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
                 />
@@ -209,12 +235,15 @@ export default function Profil() {
               <input
                 id="country"
                 type="text"
+                value={formData.country || ""}
+                onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
         </div>
+
         {/* Bio Section */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
@@ -228,12 +257,15 @@ export default function Profil() {
             <textarea
               id="bio"
               rows={3}
+              value={formData.bio || ""}
+              onChange={handleChange}
               disabled={!isEditing}
               className="w-full text-sm text-gray-700 leading-relaxed bg-transparent outline-none resize-none disabled:opacity-75"
             />
           </div>
         </div>
-        {/* Submit Button (Affiché uniquement si isEditing est vrai) */}
+
+        {/* Submit Button */}
         {isEditing && (
           <div className="flex justify-end pt-4 border-t border-[#f2ece1]">
             <button

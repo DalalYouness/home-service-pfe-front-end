@@ -40,47 +40,74 @@ export const useProfil = () => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    // l'utilisation de l'id aussi dayza parce que bach nwarak ela label ndkhol l field o sf madam
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+
     if (errors[id]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
-        delete newErrors[id];
+        delete newErrors[id as keyof ProfileErrors];
         return newErrors;
       });
     }
   };
+
   const validateForm = (): boolean => {
     const newErrors: ProfileErrors = {};
 
-    if (!formData.firstName.trim()) {
+    // 1. Valid firstName
+    const fn = (formData.firstName || "").trim();
+    if (!fn) {
       newErrors.firstName = "Le prénom est obligatoire";
+    } else if (fn.length < 2 || fn.length > 30) {
+      newErrors.firstName = "Le prénom doit contenir entre 2 et 30 caractères";
     }
 
-    if (!formData.lastName.trim() || formData.lastName === "—") {
+    // 2. Valid lastName
+    const ln = (formData.lastName || "").trim();
+    if (!ln) {
       newErrors.lastName = "Le nom est obligatoire";
+    } else if (ln.length < 2 || ln.length > 30) {
+      newErrors.lastName = "Le nom doit contenir entre 2 et 30 caractères";
     }
 
-    const phoneRegex = /^(?:0|\+212)[5-7]\d{8}$/;
-    if (!formData.phoneNumber.trim()) {
+    // 3. Valid Phone Number
+    const phone = (formData.phoneNumber || "").trim();
+    const regexPhone = /^(\+212|0)([5-7])\d{8}$/;
+    if (!phone) {
       newErrors.phoneNumber = "Le numéro de téléphone est obligatoire";
-    } else if (!phoneRegex.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Format de téléphone invalide (ex: 0612345678)";
+    } else if (!regexPhone.test(phone)) {
+      newErrors.phoneNumber =
+        "Le numéro de téléphone n'est pas valide (Format marocain attendu)";
     }
 
-    if (!formData.address.trim()) {
+    // 4. Valid Address
+    const addr = (formData.address || "").trim();
+    if (!addr) {
       newErrors.address = "L'adresse est obligatoire";
+    } else if (addr.length < 5 || addr.length > 150) {
+      newErrors.address = "L'adresse doit contenir entre 5 et 150 caractères";
     }
 
-    if (!formData.city.trim()) {
+    // 5. Valid Country
+    const country = (formData.country || "").trim();
+    if (!country) {
+      newErrors.country = "Le pays est obligatoire";
+    } else if (country.length < 2 || country.length > 50) {
+      newErrors.country = "Le pays doit contenir entre 2 et 50 caractères";
+    }
+
+    // 6. Valid City
+    const city = (formData.city || "").trim();
+    if (!city) {
       newErrors.city = "La ville est obligatoire";
-    }
-
-    if (role === "ROLE_PRESTATAIRE" && !formData.interventionArea?.trim()) {
-      newErrors.interventionArea = "La zone d'intervention est obligatoire";
+    } else if (city.length < 2 || city.length > 50) {
+      newErrors.city = "La ville doit contenir entre 2 et 50 caractères";
     }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = (e: FormEvent) => {
