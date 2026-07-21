@@ -33,7 +33,7 @@ export const ClientLayout: React.FC = () => {
       });
     } catch (error) {
       console.error("Error parsing user from localStorage", error);
-      navigate("/login");
+      navigate("/");
     }
   }, [navigate]);
 

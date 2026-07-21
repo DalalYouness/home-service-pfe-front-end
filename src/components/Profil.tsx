@@ -7,11 +7,12 @@ import {
   Pencil,
   Mail,
   FileText,
+  CheckCircle2,
 } from "lucide-react";
 import { useProfil } from "../hooks/useProfil";
 
 export default function Profil() {
-  const { isEditing, handleEdit, role, errors } = useProfil();
+  const { isEditing, handleEdit, handleSubmit, role, errors } = useProfil();
 
   return (
     <div className="w-full bg-white rounded-3xl overflow-hidden border border-[#e8dfc8] shadow-sm">
@@ -48,7 +49,7 @@ export default function Profil() {
       </div>
 
       {/* Main Content */}
-      <div className="p-6 md:p-8 space-y-8">
+      <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
         {/* Section Title & Action */}
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold text-forest-950">
@@ -64,7 +65,6 @@ export default function Profil() {
             {isEditing ? "Annuler" : "Modifier"}
           </button>
         </div>
-
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Prénom */}
@@ -82,9 +82,8 @@ export default function Profil() {
               <input
                 id="firstName"
                 type="text"
-                defaultValue="younessdalal"
                 disabled={!isEditing}
-                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
@@ -104,9 +103,8 @@ export default function Profil() {
               <input
                 id="lastName"
                 type="text"
-                defaultValue="—"
                 disabled={!isEditing}
-                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
@@ -126,9 +124,8 @@ export default function Profil() {
               <input
                 id="phone"
                 type="tel"
-                defaultValue="0612345678"
                 disabled={!isEditing}
-                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
@@ -148,9 +145,7 @@ export default function Profil() {
               <input
                 id="address"
                 type="text"
-                defaultValue="12 Rue Mohammed V, Quartier Gueliz"
-                disabled={!isEditing}
-                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
@@ -170,14 +165,13 @@ export default function Profil() {
               <input
                 id="city"
                 type="text"
-                defaultValue="Casablanca"
                 disabled={!isEditing}
-                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
-          {/* Zone d'intervention */}
 
+          {/* Zone d'intervention */}
           {role === "ROLE_PRESTATAIRE" && (
             <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
@@ -193,9 +187,8 @@ export default function Profil() {
                 <input
                   id="intervention-area"
                   type="text"
-                  defaultValue="Mohammedia"
                   disabled={!isEditing}
-                  className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                  className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
                 />
               </div>
             </div>
@@ -216,14 +209,12 @@ export default function Profil() {
               <input
                 id="country"
                 type="text"
-                defaultValue="Maroc"
                 disabled={!isEditing}
-                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none"
+                className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
             </div>
           </div>
         </div>
-
         {/* Bio Section */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
@@ -238,12 +229,23 @@ export default function Profil() {
               id="bio"
               rows={3}
               disabled={!isEditing}
-              defaultValue="Client dalyoo depuis 2024 — à la recherche de prestataires de confiance pour mes tâches quotidiennes."
-              className="w-full text-sm text-gray-700 leading-relaxed bg-transparent outline-none resize-none"
+              className="w-full text-sm text-gray-700 leading-relaxed bg-transparent outline-none resize-none disabled:opacity-75"
             />
           </div>
         </div>
-      </div>
+        {/* Submit Button (Affiché uniquement si isEditing est vrai) */}
+        {isEditing && (
+          <div className="flex justify-end pt-4 border-t border-[#f2ece1]">
+            <button
+              type="submit"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-forest-900 hover:bg-forest-800 text-white font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-md hover:shadow-lg"
+            >
+              <CheckCircle2 size={16} className="sm:w-[18px] sm:h-[18px]" />
+              Enregistrer les modifications
+            </button>
+          </div>
+        )}
+      </form>
     </div>
   );
 }
