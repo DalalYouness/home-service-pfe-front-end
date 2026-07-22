@@ -10,6 +10,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useProfil } from "../hooks/useProfil";
+import ProfilSkeleton from "./ProfilSkeleton";
 
 export default function Profil() {
   const {
@@ -20,8 +21,15 @@ export default function Profil() {
     formData,
     handleChange,
     handleSubmit,
+    isLoading,
   } = useProfil();
 
+  // ==================== SKELETON RENDER ====================
+  if (isLoading && !isEditing) {
+    return <ProfilSkeleton role={role} />;
+  }
+
+  // ==================== MAIN RENDER ====================
   return (
     <div className="w-full bg-white rounded-3xl overflow-hidden border border-[#e8dfc8] shadow-sm">
       {/* Header Banner & Avatar */}
@@ -29,13 +37,10 @@ export default function Profil() {
         <div className="absolute -bottom-14 flex flex-col items-center">
           <div className="relative">
             <div className="w-28 h-28 rounded-full bg-[#faf8f3] border-4 border-white flex items-center justify-center overflow-hidden shadow-md">
-              <span className="font-bold text-3xl text-forest-900">
-                {formData.firstName
-                  ? formData.firstName.charAt(0).toLowerCase()
-                  : "y"}
+              <span className="font-bold text-3xl text-forest-900 uppercase">
+                {formData.firstName ? formData.firstName.charAt(0) : "?"}
               </span>
             </div>
-
             <button
               type="button"
               className="absolute bottom-0 right-0 bg-forest-900 hover:bg-forest-800 text-white p-2 rounded-full border-2 border-white cursor-pointer shadow-sm"
@@ -52,17 +57,19 @@ export default function Profil() {
           Cliquez sur l'appareil photo pour ajouter
         </p>
         <h2 className="text-2xl font-bold text-forest-950 tracking-tight">
-          {formData.firstName || "---"}
+          {formData.firstName || formData.lastName
+            ? `${formData.firstName || ""} ${formData.lastName || ""}`.trim()
+            : "---"}
         </h2>
         <p className="text-sm text-gray-500 flex items-center justify-center gap-1.5 mt-1">
           <Mail size={14} className="text-gray-400" />
-          {formData.email || "---"}
+          {/* {userEmail || "---"} */}
         </p>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content Form */}
       <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
-        {/* Section Title & Action */}
+        {/* Section Title & Action Button */}
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold text-forest-950">
             Informations personnelles
@@ -80,8 +87,14 @@ export default function Profil() {
 
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Prénom */}
-          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+          {/* ==================== 1. PRÉNOM INPUT ==================== */}
+          <div
+            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              errors.firstName
+                ? "border-red-500 bg-red-50/20"
+                : "border-[#e8dfc8]"
+            }`}
+          >
             <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
               <User size={18} />
             </div>
@@ -100,11 +113,22 @@ export default function Profil() {
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
+              {errors.firstName && (
+                <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                  {errors.firstName}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Nom */}
-          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+          {/* ==================== 2. NOM INPUT ==================== */}
+          <div
+            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              errors.lastName
+                ? "border-red-500 bg-red-50/20"
+                : "border-[#e8dfc8]"
+            }`}
+          >
             <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
               <User size={18} />
             </div>
@@ -123,11 +147,22 @@ export default function Profil() {
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
+              {errors.lastName && (
+                <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                  {errors.lastName}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Téléphone */}
-          <div className="md:col-span-2 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+          {/* ==================== 3. TÉLÉPHONE INPUT ==================== */}
+          <div
+            className={`md:col-span-2 bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              errors.phoneNumber
+                ? "border-red-500 bg-red-50/20"
+                : "border-[#e8dfc8]"
+            }`}
+          >
             <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
               <Phone size={18} />
             </div>
@@ -146,11 +181,22 @@ export default function Profil() {
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
+              {errors.phoneNumber && (
+                <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                  {errors.phoneNumber}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Adresse */}
-          <div className="md:col-span-2 bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+          {/* ==================== 4. ADRESSE INPUT ==================== */}
+          <div
+            className={`md:col-span-2 bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              errors.address
+                ? "border-red-500 bg-red-50/20"
+                : "border-[#e8dfc8]"
+            }`}
+          >
             <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
               <MapPin size={18} />
             </div>
@@ -169,11 +215,20 @@ export default function Profil() {
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
+              {errors.address && (
+                <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                  {errors.address}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Ville */}
-          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+          {/* ==================== 5. VILLE INPUT ==================== */}
+          <div
+            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              errors.city ? "border-red-500 bg-red-50/20" : "border-[#e8dfc8]"
+            }`}
+          >
             <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
               <MapPin size={18} />
             </div>
@@ -192,12 +247,23 @@ export default function Profil() {
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
+              {errors.city && (
+                <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                  {errors.city}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Zone d'intervention */}
+          {/* ==================== 6. ZONE D'INTERVENTION INPUT (PRESTATAIRE ONLY) ==================== */}
           {role === "ROLE_PRESTATAIRE" && (
-            <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+            <div
+              className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+                errors.interventionArea
+                  ? "border-red-500 bg-red-50/20"
+                  : "border-[#e8dfc8]"
+              }`}
+            >
               <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
                 <MapPin size={18} />
               </div>
@@ -216,12 +282,23 @@ export default function Profil() {
                   disabled={!isEditing}
                   className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
                 />
+                {errors.interventionArea && (
+                  <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                    {errors.interventionArea}
+                  </span>
+                )}
               </div>
             </div>
           )}
 
-          {/* Pays */}
-          <div className="bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl p-3.5 flex items-center gap-3">
+          {/* ==================== 7. PAYS INPUT ==================== */}
+          <div
+            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              errors.country
+                ? "border-red-500 bg-red-50/20"
+                : "border-[#e8dfc8]"
+            }`}
+          >
             <div className="w-10 h-10 rounded-xl bg-[#d8e5db] text-forest-900 flex items-center justify-center flex-shrink-0">
               <Globe size={18} />
             </div>
@@ -240,11 +317,16 @@ export default function Profil() {
                 disabled={!isEditing}
                 className="w-full text-sm font-bold text-gray-800 bg-transparent outline-none disabled:opacity-75"
               />
+              {errors.country && (
+                <span className="text-[11px] text-red-500 font-medium mt-1 block">
+                  {errors.country}
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Bio Section */}
+        {/* ==================== 8. BIO TEXTAREA ==================== */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
             <FileText size={16} className="text-forest-900" />
@@ -265,15 +347,18 @@ export default function Profil() {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* ==================== SUBMIT BUTTON ==================== */}
         {isEditing && (
           <div className="flex justify-end pt-4 border-t border-[#f2ece1]">
             <button
               type="submit"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-forest-900 hover:bg-forest-800 text-white font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-md hover:shadow-lg"
+              disabled={isLoading}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-forest-900 hover:bg-forest-800 text-white font-medium text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-md hover:shadow-lg disabled:opacity-50"
             >
               <CheckCircle2 size={16} className="sm:w-[18px] sm:h-[18px]" />
-              Enregistrer les modifications
+              {isLoading
+                ? "Enregistrement..."
+                : "Enregistrer les modifications"}
             </button>
           </div>
         )}

@@ -3,6 +3,7 @@ import {
   type UserProfilResponseDTO,
   type ProfileErrors,
 } from "../types/UserProfilResponseDTO";
+import { profileService } from "../services/profile.service";
 export const useProfil = () => {
   //done
   const [isEditing, setIsEditing] = useState(false);
@@ -10,10 +11,13 @@ export const useProfil = () => {
   const [role, setRole] = useState("");
   const [errors, setErrors] = useState<ProfileErrors>({});
 
+  //component loading
+  const [isLoading, setisLoading] = useState(false);
+
   const [formData, setFormData] = useState<UserProfilResponseDTO>({
+    //id: wakha blama nkatbo ghadi yji man lbackend ghan7atoh tilqa2iyan hna
     firstName: "",
     lastName: "",
-    email: "",
     phoneNumber: "",
     photo: "",
     address: "",
@@ -25,6 +29,7 @@ export const useProfil = () => {
 
   //done
   useEffect(() => {
+    // 1. Extraire le rôle du localStorage
     const user = localStorage.getItem("user");
     if (user) {
       try {
@@ -35,6 +40,18 @@ export const useProfil = () => {
         console.error("Failed to parse user from localStorage", e);
       }
     }
+    const fetchProfil = async () => {
+      try {
+        setisLoading(true);
+        const profileData = await profileService.getProfil();
+        setFormData(profileData);
+      } catch (e) {
+        console.log("Error fetching profile", e);
+      } finally {
+        setisLoading(false);
+      }
+    };
+    fetchProfil();
   }, []);
 
   const handleChange = (
@@ -53,6 +70,7 @@ export const useProfil = () => {
     }
   };
 
+  //done
   const validateForm = (): boolean => {
     const newErrors: ProfileErrors = {};
 
@@ -110,6 +128,7 @@ export const useProfil = () => {
 
     return Object.keys(newErrors).length === 0;
   };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
@@ -117,7 +136,7 @@ export const useProfil = () => {
 
     if (isValid) {
       console.log("Données valides, prêt pour l'API call:", formData);
-      // هنا غانديرو مستقبلاً الـ API Call لـ Backend
+
       setIsEditing(false);
     } else {
       console.log("Validation échouée", errors);
@@ -139,5 +158,6 @@ export const useProfil = () => {
     formData,
     handleChange,
     handleSubmit,
+    isLoading,
   };
 };

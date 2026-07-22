@@ -25,7 +25,7 @@ export const ClientLayout: React.FC = () => {
 
     try {
       const parsedUser = JSON.parse(storedUser);
-      const rawRole = parsedUser.roles?.[0]?.roleName || "client";
+      const rawRole = parsedUser.roles?.[0]?.roleName;
 
       setUser({
         name: parsedUser.fullname || "Utilisateur",

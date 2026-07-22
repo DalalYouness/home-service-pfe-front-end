@@ -1,30 +1,28 @@
 import type { ChangeEmailRequestDto } from "../types/changeEmail";
 import type { AuthResponseDto } from "../types/auth";
 import apiClient from "./api.client";
+import type { UserProfilResponseDTO } from "../types/UserProfilResponseDTO";
 
+// j'injecte pas le token dans le service parce l'intercepteur du request d'axios fait ca
 export const profileService = {
+  getProfil: async (): Promise<UserProfilResponseDTO> => {
+    const response = await apiClient.get("/api/v1/auth/profile");
+    return response.data;
+  },
+  // 2. Change Email
   changeEmail: async (
     formData: ChangeEmailRequestDto,
   ): Promise<AuthResponseDto> => {
-    const token = localStorage.getItem("token");
-    const response = await apiClient.put(
+    const response = await apiClient.put<AuthResponseDto>(
       "/api/v1/auth/change-email",
       formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
     );
     return response.data;
   },
-  deleteAccount: async () => {
-    const token = localStorage.getItem("token");
-    const response = await apiClient.delete("/api/v1/auth/delete-account", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+
+  // 3. Delete Account
+  deleteAccount: async (): Promise<void> => {
+    const response = await apiClient.delete("/api/v1/auth/delete-account");
     return response.data;
   },
 };
