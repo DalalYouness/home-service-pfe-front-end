@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ClientNavbar } from "./ClientNavBar";
 import { ClientSidebar } from "./ClientSideBar";
+import { SessionExpiredModal } from "./SessionExpiredModal";
 
 interface UserStateData {
   name: string;
@@ -15,9 +16,21 @@ export const ClientLayout: React.FC = () => {
     description: "",
   });
 
+  const [isSessionExpired, setisSessionExipred] = useState(false);
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setisSessionExipred(true);
+    };
+    const cleanUpListner = () => {
+      window.removeEventListener("session-expired", handleSessionExpired);
+    };
+    window.addEventListener("session-expired", handleSessionExpired);
+    return cleanUpListner;
+  }, []);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-
     if (!storedUser) {
       navigate("/");
       return;
@@ -46,6 +59,10 @@ export const ClientLayout: React.FC = () => {
           <Outlet />
         </main>
       </div>
+      <SessionExpiredModal
+        isOpen={isSessionExpired}
+        onClose={() => setisSessionExipred(false)}
+      />
     </div>
   );
 };

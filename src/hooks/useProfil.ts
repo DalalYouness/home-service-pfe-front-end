@@ -14,6 +14,9 @@ export const useProfil = () => {
   //component loading
   const [isLoading, setisLoading] = useState(false);
 
+  // email
+  const [email, setemail] = useState("");
+
   const [formData, setFormData] = useState<UserProfilResponseDTO>({
     //id: wakha blama nkatbo ghadi yji man lbackend ghan7atoh tilqa2iyan hna
     firstName: "",
@@ -35,7 +38,9 @@ export const useProfil = () => {
       try {
         const parsedUser = JSON.parse(user);
         const roleName = parsedUser?.roles?.[0]?.roleName || "";
+        const email = parsedUser?.email || "";
         setRole(roleName);
+        setemail(email);
       } catch (e) {
         console.error("Failed to parse user from localStorage", e);
       }
@@ -159,5 +164,6 @@ export const useProfil = () => {
     handleChange,
     handleSubmit,
     isLoading,
+    email,
   };
 };

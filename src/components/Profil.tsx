@@ -22,6 +22,7 @@ export default function Profil() {
     handleChange,
     handleSubmit,
     isLoading,
+    email,
   } = useProfil();
 
   // ==================== SKELETON RENDER ====================
@@ -33,7 +34,7 @@ export default function Profil() {
   return (
     <div className="w-full bg-white rounded-3xl overflow-hidden border border-[#e8dfc8] shadow-sm">
       {/* Header Banner & Avatar */}
-      <div className="relative bg-gradient-to-b from-forest-900 to-forest-700 h-32 w-full flex justify-center">
+      <div className="relative bg-gradient-to-b from-forest-800 to-forest-700 h-32 w-full flex justify-center">
         <div className="absolute -bottom-14 flex flex-col items-center">
           <div className="relative">
             <div className="w-28 h-28 rounded-full bg-[#faf8f3] border-4 border-white flex items-center justify-center overflow-hidden shadow-md">
@@ -63,7 +64,7 @@ export default function Profil() {
         </h2>
         <p className="text-sm text-gray-500 flex items-center justify-center gap-1.5 mt-1">
           <Mail size={14} className="text-gray-400" />
-          {/* {userEmail || "---"} */}
+          {email}
         </p>
       </div>
 
@@ -89,7 +90,7 @@ export default function Profil() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* ==================== 1. PRÉNOM INPUT ==================== */}
           <div
-            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+            className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.firstName
                 ? "border-red-500 bg-red-50/20"
                 : "border-[#e8dfc8]"
@@ -123,7 +124,7 @@ export default function Profil() {
 
           {/* ==================== 2. NOM INPUT ==================== */}
           <div
-            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+            className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.lastName
                 ? "border-red-500 bg-red-50/20"
                 : "border-[#e8dfc8]"
@@ -157,7 +158,7 @@ export default function Profil() {
 
           {/* ==================== 3. TÉLÉPHONE INPUT ==================== */}
           <div
-            className={`md:col-span-2 bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+            className={`md:col-span-2 bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.phoneNumber
                 ? "border-red-500 bg-red-50/20"
                 : "border-[#e8dfc8]"
@@ -191,7 +192,7 @@ export default function Profil() {
 
           {/* ==================== 4. ADRESSE INPUT ==================== */}
           <div
-            className={`md:col-span-2 bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+            className={`md:col-span-2 bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.address
                 ? "border-red-500 bg-red-50/20"
                 : "border-[#e8dfc8]"
@@ -225,7 +226,7 @@ export default function Profil() {
 
           {/* ==================== 5. VILLE INPUT ==================== */}
           <div
-            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+            className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.city ? "border-red-500 bg-red-50/20" : "border-[#e8dfc8]"
             }`}
           >
@@ -258,7 +259,7 @@ export default function Profil() {
           {/* ==================== 6. ZONE D'INTERVENTION INPUT (PRESTATAIRE ONLY) ==================== */}
           {role === "ROLE_PRESTATAIRE" && (
             <div
-              className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+              className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
                 errors.interventionArea
                   ? "border-red-500 bg-red-50/20"
                   : "border-[#e8dfc8]"
@@ -293,7 +294,7 @@ export default function Profil() {
 
           {/* ==================== 7. PAYS INPUT ==================== */}
           <div
-            className={`bg-[#faf8f3] border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
+            className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.country
                 ? "border-red-500 bg-red-50/20"
                 : "border-[#e8dfc8]"

@@ -39,6 +39,7 @@ apiClient.interceptors.response.use(
 
         //  CRITICAL CHANGE: We no longer clear localStorage or redirect here!
         // We let the Promise.reject(error) propagate to the components so they can open the SessionExpiredModal.
+        window.dispatchEvent(new Event("session-expired"));
         break;
 
       case 500:

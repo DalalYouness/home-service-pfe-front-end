@@ -38,7 +38,7 @@ const NotFoundPage: React.FC = () => {
             onClick={() => navigate("/")}
             className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-[#FDFBF7] bg-[#1B3B2B] hover:bg-[#153022] rounded-full shadow-sm transition-all duration-200"
           >
-            Aller au tableau de bord
+            Aller à la page d'accueil
           </button>
         </div>
       </div>

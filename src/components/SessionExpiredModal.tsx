@@ -15,24 +15,18 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
 
   useEffect(() => {
     if (!isOpen) return;
-
-    // Reset countdown to 10 every time the modal opens
     setCountdown(10);
-
-    // 2. Interval updates the UI smoothly every second (1000ms)
     const interval = setInterval(() => {
       setCountdown((prev) => (prev > 1 ? prev - 1 : 1));
     }, 1000);
 
-    // 3. Timeout triggers the redirect exactly after 10 seconds (10000ms)
     const timer = setTimeout(() => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       onClose(); // Close modal setup
-      window.location.href = "/"; // Direct redirect to landing
-    }, 10000); // 10 seconds synchronized with state
+      window.location.href = "/";
+    }, 10000);
 
-    // Cleanup triggers if component unmounts to prevent memory leaks
     return () => {
       clearInterval(interval);
       clearTimeout(timer);

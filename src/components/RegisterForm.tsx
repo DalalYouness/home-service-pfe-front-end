@@ -233,10 +233,10 @@ export default function RegisterForm() {
     <div
       className="min-h-screen w-full flex items-center justify-center p-4 md:p-8 bg-cover bg-center relative"
       style={{
-        backgroundImage: `url('')`,
+        backgroundImage: `url('https://rapid-plomberie.com/wp-content/uploads/2025/11/Peindre-un-mur-comme-un-pro-astuces-et-materiel-necessaire.jpg')`,
       }}
     >
-      <div className="w-full max-w-2xl bg-white backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-2xl border border-white/20 my-8">
+      <div className="w-full max-w-2xl bg-white p-6 md:p-10 rounded-3xl  my-8">
         <div className="flex flex-col items-center mb-8">
           <h2 className="text-2xl font-bold text-forest-950 mt-4">
             Créer votre compte
@@ -266,10 +266,10 @@ export default function RegisterForm() {
                 value={formData.firstName}
                 placeholder="Ex: Youness"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.firstName
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
 
@@ -291,10 +291,10 @@ export default function RegisterForm() {
                 value={formData.lastName}
                 placeholder="Ex: Dalal"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.lastName
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
               {errorMsgs.lastName && (
@@ -315,10 +315,10 @@ export default function RegisterForm() {
                 value={formData.email}
                 placeholder="youness@example.com"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.email
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
               {errorMsgs.email && (
@@ -339,10 +339,10 @@ export default function RegisterForm() {
                 value={formData.phoneNumber}
                 placeholder="Ex: 0612345678"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.phoneNumber
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
               {errorMsgs.phoneNumber && (
@@ -363,10 +363,10 @@ export default function RegisterForm() {
                 value={formData.password}
                 placeholder="••••••••"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.password
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
               {errorMsgs.password && (
@@ -386,10 +386,10 @@ export default function RegisterForm() {
                 name="birthDate"
                 value={formData.birthDate}
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.birthDate
                     ? "border-red-500 focus:border-red-500"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
               {errorMsgs.birthDate && (
@@ -408,10 +408,10 @@ export default function RegisterForm() {
                 name="gender"
                 value={formData.gender}
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm appearance-none transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm appearance-none transition-all ${
                   errorMsgs.gender
                     ? "border-red-500 focus:border-red-500"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               >
                 <option value="">Sélectionner</option>
@@ -437,10 +437,10 @@ export default function RegisterForm() {
                   ""
                 }
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.country
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               >
                 <option value="">Sélectionnez un pays</option>
@@ -467,10 +467,10 @@ export default function RegisterForm() {
                 value={formData.city}
                 onChange={handleFormChange}
                 disabled={cities.length === 0}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.city
                     ? "border-red-500 focus-within:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               >
                 <option value="">
@@ -503,10 +503,10 @@ export default function RegisterForm() {
                 value={formData.address}
                 placeholder="Ex: lot ouroud sidi maarouf"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.address
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
-                    : "border-gray-200 focus:border-forest-800"
+                    : "border-gray-400 focus:border-forest-500"
                 }`}
               />
               {errorMsgs.address && (
