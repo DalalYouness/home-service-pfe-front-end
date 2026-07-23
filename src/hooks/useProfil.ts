@@ -154,6 +154,12 @@ export const useProfil = () => {
         };
         const response = await profileService.updateProfil(updatePayload);
         setIsEditing(false);
+        // hahowa lcode li ghanzid
+        const storedUser = localStorage.getItem("user");
+        const user = JSON.parse(storedUser);
+        user.fullname = response.firstName + " " + response.lastName;
+        localStorage.setItem("user", user);
+        // ghanbdlo l fullname f localstorage bach ytbdl f navbar
         setFormData(response);
       } catch (e) {
         console.error("Error updating profile", e);
