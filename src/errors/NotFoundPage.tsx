@@ -27,12 +27,12 @@ const NotFoundPage: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 pt-2">
-          <button
+          {/* <button
             onClick={() => navigate(-1)}
             className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-[#1B3B2B] bg-transparent hover:bg-[#F4F0E6] border border-[#1B3B2B] border-opacity-30 rounded-full transition-all duration-200"
           >
             Retourner en arrière
-          </button>
+          </button> */}
 
           <button
             onClick={() => navigate("/")}

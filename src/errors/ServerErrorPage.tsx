@@ -7,7 +7,7 @@ const ServerErrorPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleRetry = () => {
-    window.location.reload();
+    navigate(-1); // pour a chaque essaye le user va etre redirect vers la page precedente jusqu'a que le back end yt7al fih le probleme
   };
 
   return (
@@ -21,7 +21,7 @@ const ServerErrorPage: React.FC = () => {
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1B3B2B]">
             Erreur interne du serveur
           </h1>
@@ -40,7 +40,7 @@ const ServerErrorPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/", { replace: true })}
             className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-[#FDFBF7] bg-[#1B3B2B] hover:bg-[#153022] rounded-full shadow-sm transition-all duration-200"
           >
             Aller au tableau de bord

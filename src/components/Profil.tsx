@@ -38,16 +38,31 @@ export default function Profil() {
         <div className="absolute -bottom-14 flex flex-col items-center">
           <div className="relative">
             <div className="w-28 h-28 rounded-full bg-[#faf8f3] border-4 border-white flex items-center justify-center overflow-hidden shadow-md">
-              <span className="font-bold text-3xl text-forest-900 uppercase">
-                {formData.firstName ? formData.firstName.charAt(0) : "?"}
-              </span>
+              {formData.photo ? (
+                <img
+                  src={formData.photo}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="font-bold text-3xl text-forest-900 uppercase">
+                  {formData.firstName ? formData.firstName.charAt(0) : "?"}
+                </span>
+              )}
             </div>
-            <button
-              type="button"
-              className="absolute bottom-0 right-0 bg-forest-900 hover:bg-forest-800 text-white p-2 rounded-full border-2 border-white cursor-pointer shadow-sm"
+            <input
+              type="file"
+              id="profilePhotoInput"
+              accept="image/*"
+              // onChange={handlePhotoChange} // apres je vais generer ca
+              className="hidden"
+            />
+            <label
+              htmlFor="profilePhotoInput"
+              className="absolute bottom-0 right-0 bg-forest-900 hover:bg-forest-800 text-white p-2 rounded-full border-2 border-white cursor-pointer shadow-sm transition-transform active:scale-95 flex items-center justify-center"
             >
               <Camera size={16} />
-            </button>
+            </label>
           </div>
         </div>
       </div>

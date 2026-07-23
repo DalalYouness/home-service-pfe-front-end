@@ -4,7 +4,6 @@ import type {
   RegisterRequestErrors,
 } from "../types/register";
 import { authService } from "../services/auth.service";
-import { AlertCircle } from "lucide-react";
 import { City, Country } from "country-state-city";
 import { useNavigate } from "react-router-dom";
 
@@ -28,9 +27,6 @@ export default function RegisterForm() {
 
   // loading state
   const [isLoading, setisLoading] = useState(false);
-
-  // gloabl message
-  const [globalErrorMsg, setGlobalErrorMsg] = useState("");
 
   // cities state
   const [cities, setcities] = useState<any[]>([]);
@@ -142,9 +138,8 @@ export default function RegisterForm() {
     if (!formData.birthDate) {
       errors.birthDate = "La date de naissance est obligatoire";
     } else {
-      const selectedDate = new Date(formData.birthDate);
-      const today = new Date();
-      if (selectedDate >= today) {
+      const todayStr = new Date().toISOString().split("T")[0];
+      if (formData.birthDate >= todayStr) {
         errors.birthDate = "La date de naissance doit être dans le passé";
       }
     }
@@ -204,28 +199,29 @@ export default function RegisterForm() {
         localStorage.setItem("token", response.token);
         const userStringDetails = JSON.stringify(userDetails);
         localStorage.setItem("user", userStringDetails);
-        setGlobalErrorMsg("");
         navigate("/client/dashboard");
       } catch (error: any) {
-        let backendMessage = "";
+        // 1. Handling Email/Conflict Errors (409)
         if (error.response?.status === 409) {
-          backendMessage = error.response.data.message;
-          seterrorMsgs({
-            ...errorMsgs,
+          const backendMessage =
+            error.response.data?.message || "Cet email est déjà utilisé.";
+          seterrorMsgs((prev) => ({
+            ...prev,
             email: backendMessage,
-          });
-          setGlobalErrorMsg("");
-        } else {
-          backendMessage = "Une erreur est survenue. Veuillez réessuyer.";
-          setGlobalErrorMsg(backendMessage);
-          seterrorMsgs({});
+          }));
+          return;
         }
+
+        // rah nqdr nkhali hadi onqdr ndir bohadha blama nvalider l form fl front mais man l2ahsan tkon hta lvalidation coté front hit server yqdr yt3atal
+        // 2. Handling Form Validation Errors (400) from Backend
+        // if (error.response?.status === 400 && error.response.data?.errors) {
+        //   // errors coming from backend
+        //   seterrorMsgs(error.response.data.errors);
+        //   return;
+        // }
       } finally {
-        // pour l'instant
         setisLoading(false);
       }
-    } else {
-      console.log("Le formulaire contient des erreurs.");
     }
   };
 
@@ -245,13 +241,6 @@ export default function RegisterForm() {
             Rejoignez dalyou et profitez de nos services à domicile
           </p>
         </div>
-        {globalErrorMsg && (
-          <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800 animate-fadeIn">
-            {/* Icône d'alerte rouge importée de lucide-react */}
-            <AlertCircle size={20} className="shrink-0 text-red-600" />
-            <span className="text-sm font-medium">{globalErrorMsg}</span>
-          </div>
-        )}
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

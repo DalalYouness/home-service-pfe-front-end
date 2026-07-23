@@ -7,6 +7,7 @@ import ForbiddenPage from "./errors/ForbiddenPage";
 import NotFoundPage from "./errors/NotFoundPage";
 import ServerErrorPage from "./errors/ServerErrorPage";
 import Profil from "./components/Profil";
+import { Toaster } from "sonner";
 
 // for test
 const ClientDashboard = () => (
@@ -18,6 +19,22 @@ const ClientDashboard = () => (
 export default function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          className: "border-2 font-sans rounded-2xl shadow-lg",
+          style: {
+            fontSize: "14px",
+          },
+          classNames: {
+            error: "bg-red-50 text-red-900 border-red-200",
+            success: "bg-emerald-50 text-emerald-900 border-emerald-200",
+            warning: "bg-amber-50 text-amber-900 border-amber-200",
+            info: "bg-blue-50 text-blue-900 border-blue-200",
+            description: "text-gray-500 text-xs",
+          },
+        }}
+      />
       <Routes>
         {/*  1 - public routes open to all visitors */}
         <Route path="/" element={<LandingPage />} />

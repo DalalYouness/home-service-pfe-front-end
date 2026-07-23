@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface SessionExpiredModalProps {
   isOpen: boolean;
@@ -10,28 +11,33 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  // 1. Start the countdown state at 10 seconds
-  const [countdown, setCountdown] = useState(10);
+  const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(7);
 
   useEffect(() => {
     if (!isOpen) return;
-    setCountdown(10);
+
+    setCountdown(7);
+
     const interval = setInterval(() => {
       setCountdown((prev) => (prev > 1 ? prev - 1 : 1));
     }, 1000);
 
     const timer = setTimeout(() => {
+      // Clean LocalStorage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      onClose(); // Close modal setup
-      window.location.href = "/";
-    }, 10000);
+
+      onClose();
+
+      navigate("/", { replace: true });
+    }, 7000);
 
     return () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, navigate]);
 
   if (!isOpen) return null;
 
@@ -49,8 +55,6 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
             redirigé vers l'accueil automatiquement.
           </p>
         </div>
-
-        {/* Visual Countdown Badge */}
         <div className="inline-flex items-center justify-center px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-600">
           Redirection dans {countdown}s...
         </div>

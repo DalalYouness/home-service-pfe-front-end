@@ -11,7 +11,6 @@ export const SuppressionSection: React.FC = () => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showNotFoundModal, setshowNotFoundModal] = useState(false);
-  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const handleSessionCleanup = () => {
     localStorage.removeItem("token");
@@ -21,7 +20,6 @@ export const SuppressionSection: React.FC = () => {
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true); // 1. Déclencher le spinner immédiatement au clic
-    setGlobalError(null); // Réinitialiser les anciennes erreurs
 
     try {
       await profileService.deleteAccount();
@@ -40,11 +38,6 @@ export const SuppressionSection: React.FC = () => {
         setshowNotFoundModal(true);
         return;
       }
-
-      // 5. Gestion des erreurs de réseau ou serveur en panne
-      setGlobalError(
-        "Impossible de contacter le serveur. Veuillez vérifier votre connexion ou réessayer.",
-      );
     }
   };
 
@@ -91,14 +84,6 @@ export const SuppressionSection: React.FC = () => {
 
           <div className="md:col-span-2">
             <div className="w-full max-w-xl space-y-4">
-              {/* Alerte d'erreur globale (Réseau ou Serveur Down) */}
-              {globalError && (
-                <div className="flex items-center gap-2 text-rose-600 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl text-xs animate-in fade-in duration-200">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{globalError}</span>
-                </div>
-              )}
-
               <p className="text-xs text-forest-700/75 leading-relaxed">
                 Cette action supprimera définitivement toutes vos données de nos
                 serveurs. Vous ne pourrez plus récupérer vos informations.

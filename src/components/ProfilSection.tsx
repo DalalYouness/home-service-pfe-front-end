@@ -90,9 +90,10 @@ export const ProfilSection: React.FC = () => {
         return;
       }
 
-      setErrors({
-        global: "Une erreur inattendue est survenue. Veuillez réessayer.",
-      });
+      // i replace it with the toast window error
+      // setErrors({
+      //   global: "Une erreur inattendue est survenue. Veuillez réessayer.",
+      // });
     } finally {
       setIsSaving(false);
     }

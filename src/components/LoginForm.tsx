@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 // Importation du service d'authentification pour collaborer avec lui
 import { authService } from "../services/auth.service";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface LoginFormProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export default function LoginForm({
    * Permet d'afficher un indicateur visuel (loading) à l'utilisateur.
    */
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   /*
    * État pour mémoriser le message d'erreur si la promesse est rejetée (Rejected).
@@ -90,11 +90,6 @@ export default function LoginForm({
         setErrorMsg(backendMessage);
         return;
       }
-
-      // 2. If response is undefined (Server Down), this runs safely without crashing
-      setErrorMsg(
-        "Le serveur est inaccessible. Veuillez vérifier votre connexion ou réessayer plus tard.",
-      );
     } finally {
       // 3. Stop the loading spinner
       setIsLoading(false);

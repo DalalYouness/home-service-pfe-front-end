@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const API_BASE_URL = "http://localhost:8081";
 
@@ -49,6 +50,9 @@ apiClient.interceptors.response.use(
       case 404:
         window.location.href = "/404";
         break;
+    }
+    if (!error.response) {
+      toast.error("Une erreur est survenue. Veuillez réessayer plus tard");
     }
 
     // Always reject the promise so components can catch the error and stop spinners/update state safely
