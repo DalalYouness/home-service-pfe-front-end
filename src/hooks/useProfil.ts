@@ -4,6 +4,7 @@ import {
   type ProfileErrors,
 } from "../types/UserProfilResponseDTO";
 import { profileService } from "../services/profile.service";
+import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
 export const useProfil = () => {
   //done
   const [isEditing, setIsEditing] = useState(false);
@@ -134,17 +135,31 @@ export const useProfil = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const isValid = validateForm();
-
     if (isValid) {
-      console.log("Données valides, prêt pour l'API call:", formData);
-
-      setIsEditing(false);
-    } else {
-      console.log("Validation échouée", errors);
+      try {
+        setisLoading(true);
+        const updatePayload: UpdateProfileRequestDto = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phoneNumber: formData.phoneNumber,
+          address: formData.address,
+          city: formData.city,
+          country: formData.country,
+          bio: formData.bio,
+          interventionArea: formData.interventionArea,
+        };
+        const response = await profileService.updateProfil(updatePayload);
+        setIsEditing(false);
+        setFormData(response);
+      } catch (e) {
+        console.error("Error updating profile", e);
+      } finally {
+        setisLoading(false);
+      }
     }
   };
 
