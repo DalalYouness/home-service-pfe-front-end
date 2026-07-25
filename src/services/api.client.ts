@@ -1,8 +1,12 @@
 import axios from "axios";
 import { toast } from "sonner";
+import { AppEvent } from "../events/appEvents";
 
-const API_BASE_URL = "http://localhost:8081";
+// Retrieve the base URL from environment variables, defaulting to local setup
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8081";
 
+// Create a centralized Axios instance for all application HTTP requests
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -10,52 +14,63 @@ const apiClient = axios.create({
   },
 });
 
+// Request Interceptor: Attach JWT Bearer Token to outgoing requests if available
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    // Guarantee that headers object exists before setting Authorization
-    if (token && config.headers) {
+
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
+// Response Interceptor: Centralized Event-Driven Error Handling
 apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    const isLoginEndPoint = originalRequest.url?.includes("/api/v1/auth/login");
+    const isLoginEndPoint =
+      originalRequest?.url?.includes("/api/v1/auth/login");
 
+    // Handle complete network failures or offline server state
+    if (!error.response) {
+      toast.error(
+        "Une erreur réseau est survenue. Veuillez vérifier votre connexion.",
+      );
+      return Promise.reject(error);
+    }
+
+    // Dispatch global application events based on HTTP response status codes.
+    // Listeners in the global layout/router will catch these events for SPA navigation.
     switch (status) {
       case 401:
-        // If it's the login endpoint, just break and let the component handle wrong credentials
-        if (isLoginEndPoint) break;
+        // Ignore 401 errors on the login endpoint to allow the login form to show invalid credentials
+        if (!isLoginEndPoint) {
+          window.dispatchEvent(new Event(AppEvent.SESSION_EXPIRED));
+        }
+        break;
 
-        //  CRITICAL CHANGE: We no longer clear localStorage or redirect here!
-        // We let the Promise.reject(error) propagate to the components so they can open the SessionExpiredModal.
-        window.dispatchEvent(new Event("session-expired"));
+      case 404:
+        // Dispatch event when a requested resource is missing on the server
+        window.dispatchEvent(new Event(AppEvent.RESOURCE_NOT_FOUND));
         break;
 
       case 500:
-        // Global redirect for internal server errors
-        window.location.href = "/500";
+        // Dispatch event for unhandled internal server exceptions
+        window.dispatchEvent(new Event(AppEvent.INTERNAL_SERVER_ERROR));
         break;
-      case 404:
-        window.location.href = "/404";
+
+      // Ignore all other HTTP status codes and let the calling code handle them if needed.
+      default:
         break;
-    }
-    if (!error.response) {
-      toast.error("Une erreur est survenue. Veuillez réessayer plus tard");
     }
 
-    // Always reject the promise so components can catch the error and stop spinners/update state safely
+    // Always reject the promise so calling components can clear loading states or catch local errors
     return Promise.reject(error);
   },
 );

@@ -17,6 +17,8 @@ interface AuthContextType {
   logout: () => void;
 }
 
+// Creates the global Authentication Context contract.
+// Initialized with 'undefined' until populated by AuthProvider.
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
