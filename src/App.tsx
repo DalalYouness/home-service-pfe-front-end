@@ -8,6 +8,7 @@ import NotFoundPage from "./errors/NotFoundPage";
 import ServerErrorPage from "./errors/ServerErrorPage";
 import Profil from "./components/Profil";
 import { Toaster } from "sonner";
+import GlobalErrorHandler from "./components/GlobalErrorHandler";
 
 // for test
 const ClientDashboard = () => (
@@ -19,6 +20,7 @@ const ClientDashboard = () => (
 export default function App() {
   return (
     <BrowserRouter>
+      <GlobalErrorHandler />
       <Toaster
         position="top-right"
         toastOptions={{

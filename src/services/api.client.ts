@@ -1,3 +1,5 @@
+// Application Setup - Step 1: Configure the centralized HTTP client
+
 import axios from "axios";
 import { toast } from "sonner";
 import { AppEvent } from "../events/appEvents";
