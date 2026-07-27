@@ -5,11 +5,6 @@ import serverErrorImg from "../assets/serverErrorImg.svg";
 
 const ServerErrorPage: React.FC = () => {
   const navigate = useNavigate();
-
-  const handleRetry = () => {
-    navigate(-1); // pour a chaque essaye le user va etre redirect vers la page precedente jusqu'a que le back end yt7al fih le probleme
-  };
-
   return (
     <section className="min-h-screen bg-[#FDFBF7] text-[#1B3B2B] flex items-center justify-center px-6 py-12 font-sans">
       <div className="max-w-xl w-full text-center space-y-8">
@@ -33,14 +28,8 @@ const ServerErrorPage: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 pt-2">
           <button
-            onClick={handleRetry}
-            className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-[#1B3B2B] bg-[#F4F0E6] hover:bg-[#E6DCD0] rounded-full transition-all duration-200"
-          >
-            Réessayer l'opération
-          </button>
-
-          <button
-            onClick={() => navigate("/", { replace: true })}
+            // navigate(getDashboardRoute(user.role), { replace: true }); nqdr nst3ml hadi ela hsab ila kant kol role endo dashboard mokhtalifa
+            onClick={() => navigate("/dashboard", { replace: true })}
             className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-[#FDFBF7] bg-[#1B3B2B] hover:bg-[#153022] rounded-full shadow-sm transition-all duration-200"
           >
             Aller au tableau de bord

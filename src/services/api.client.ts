@@ -58,8 +58,8 @@ apiClient.interceptors.response.use(
         break;
 
       case 404:
-        // Dispatch event when a requested resource is missing on the server
-        window.dispatchEvent(new Event(AppEvent.RESOURCE_NOT_FOUND));
+        // no event because we will throw toast notification diretly
+        toast.error("La ressource demandée est introuvable.");
         break;
 
       case 500:

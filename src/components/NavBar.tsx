@@ -1,28 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 👈 1. Import useNavigate
 import { Menu, X } from "lucide-react";
+
 import Logo from "./Logo";
 import LoginForm from "./LoginForm";
-import LoginSuccessToast from "./LoginSuccessToast";
 
 export default function Navbar() {
-  const navigate = useNavigate(); // 👈 2. Instancier useNavigate
-
+  // Mobile menu state
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Login modal state
   const [isAuthModalOpen, setIsAuthOpen] = useState(false);
-
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [successData, setSuccessData] = useState({ message: "", fullname: "" });
-
-  const handleLoginSuccess = (message: string, fullname: string) => {
-    setSuccessData({ message, fullname });
-    setShowSuccess(true);
-  };
-
-  const handleToastEnd = () => {
-    setShowSuccess(false);
-    navigate("/client/dashboard");
-  };
 
   return (
     <>
@@ -40,12 +27,14 @@ export default function Navbar() {
             >
               Services
             </a>
+
             <a
               href="#how-it-works"
               className="text-sm font-medium text-gray-700 hover:text-forest-800 transition-colors"
             >
               Comment ça marche
             </a>
+
             <a
               href="#providers"
               className="text-sm font-medium text-gray-700 hover:text-forest-800 transition-colors"
@@ -54,7 +43,7 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* CTA — single Connexion button (Desktop) */}
+          {/* Desktop Login */}
           <div className="hidden md:flex">
             <button
               onClick={() => setIsAuthOpen(true)}
@@ -64,7 +53,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Mobile toggle */}
+          {/* Mobile Toggle */}
           <button
             className="md:hidden p-2 text-gray-700"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -84,6 +73,7 @@ export default function Navbar() {
             >
               Services
             </a>
+
             <a
               href="#how-it-works"
               className="text-sm font-medium text-gray-700"
@@ -91,6 +81,7 @@ export default function Navbar() {
             >
               Comment ça marche
             </a>
+
             <a
               href="#providers"
               className="text-sm font-medium text-gray-700"
@@ -98,6 +89,7 @@ export default function Navbar() {
             >
               Prestataires
             </a>
+
             <button
               onClick={() => {
                 setMenuOpen(false);
@@ -114,17 +106,7 @@ export default function Navbar() {
       <LoginForm
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
       />
-
-      {/* 👈 4. ربط handleToastEnd مع onDurationEnd */}
-      {showSuccess && (
-        <LoginSuccessToast
-          message={successData.message}
-          fullname={successData.fullname}
-          onDurationEnd={handleToastEnd}
-        />
-      )}
     </>
   );
 }
