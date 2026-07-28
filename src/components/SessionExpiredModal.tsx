@@ -24,10 +24,6 @@ export const SessionExpiredModal: React.FC<SessionExpiredModalProps> = ({
     }, 1000);
 
     const timer = setTimeout(() => {
-      // c'est pas la peine parce que le logout a fait le necessaire
-      // // Clean LocalStorage just user et token pour ne pas supprimer le tous
-      // localStorage.removeItem("token");
-      // localStorage.removeItem("user");
       onClose();
 
       navigate("/", { replace: true });

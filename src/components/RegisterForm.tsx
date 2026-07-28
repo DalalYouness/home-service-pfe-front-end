@@ -1,229 +1,16 @@
-import { useState } from "react";
-import type {
-  RegisterRequestDto,
-  RegisterRequestErrors,
-} from "../types/register";
-import { authService } from "../services/auth.service";
-import { City, Country } from "country-state-city";
-import { useNavigate } from "react-router-dom";
+import { useRegisterForm } from "../hooks/useRegisterForm";
 
 export default function RegisterForm() {
-  // 1.form state
-  const [formData, setformData] = useState<RegisterRequestDto>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    password: "",
-    birthDate: "",
-    gender: "",
-    country: "",
-    city: "",
-    address: "",
-  });
-
-  // 2.errors state
-  const [errorMsgs, seterrorMsgs] = useState<RegisterRequestErrors>({});
-
-  // loading state
-  const [isLoading, setisLoading] = useState(false);
-
-  // cities state
-  const [cities, setcities] = useState<any[]>([]);
-
-  // get all countries
-  const countries = Country.getAllCountries();
-
-  const navigate = useNavigate();
-
-  // formchange handler
-  const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-
-    if (name == "country") {
-      if (value) {
-        const countryCities = City.getCitiesOfCountry(value);
-        setcities(countryCities);
-        const selectedCountryObj = Country.getCountryByCode(value);
-        const countryFullName = selectedCountryObj
-          ? selectedCountryObj.name
-          : "";
-        setformData({
-          ...formData,
-          [name]: countryFullName,
-          city: "",
-        });
-        console.log(countryFullName);
-      } else {
-        setcities([]);
-        setformData({
-          ...formData,
-          country: "",
-          city: "",
-        });
-      }
-    } else {
-      setformData({
-        ...formData,
-        [name]: value,
-      });
-    }
-    // --- Better User Experience (UX) ---
-    // Hide the red borders around the fields dynamically when the user starts typing/correcting their input.
-
-    // We use "Bracket Notation" (errorMsgs[name]) instead of "Dot Notation" because 'name' is a dynamic variable.
-    // 'name as keyof RegisterRequestDto' is a Type Assertion. It tells the TypeScript compiler that the dynamic 'name'
-    // string is guaranteed to be one of the keys of our DTO, preventing TS compile-time errors.
-    if (errorMsgs[name as keyof RegisterRequestDto]) {
-      seterrorMsgs({
-        ...errorMsgs,
-        [name]: undefined,
-        ...(name === "country" ? { city: undefined } : {}),
-      });
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const errors: RegisterRequestErrors = {};
-
-    // --- FirstName ---
-    if (!formData.firstName.trim()) {
-      errors.firstName = "Le prénom est obligatoire";
-    } else if (
-      formData.firstName.length < 2 ||
-      formData.firstName.length > 30
-    ) {
-      errors.firstName = "Le prénom doit contenir entre 2 et 30 caractères";
-    }
-
-    // --- LastName ---
-    if (!formData.lastName.trim()) {
-      errors.lastName = "Le nom est obligatoire";
-    } else if (formData.lastName.length < 2 || formData.lastName.length > 30) {
-      errors.lastName = "Le nom doit contenir entre 2 et 30 caractères";
-    }
-
-    // --- Email ---
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      errors.email = "L'adresse email est obligatoire";
-    } else if (!emailRegex.test(formData.email)) {
-      errors.email = "L'adresse email n'est pas valide";
-    } else if (formData.email.length > 50) {
-      errors.email = "L'email ne doit pas dépasser 50 caractères";
-    }
-
-    // --- Password
-    const passwordRegex =
-      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,30}$/;
-    if (!formData.password) {
-      errors.password = "Le mot de passe ne doit pas être vide";
-    } else if (!passwordRegex.test(formData.password)) {
-      errors.password =
-        "Le mot de passe doit contenir entre 8 et 30 caractères, incluant une majuscule, une minuscule, un chiffre et un caractère spécial";
-    }
-
-    // --- PhoneNumber ---
-    const phoneRegex = /^(\+212|0)([5-7])\d{8}$/;
-    if (!formData.phoneNumber.trim()) {
-      errors.phoneNumber = "Le numéro de téléphone est obligatoire";
-    } else if (!phoneRegex.test(formData.phoneNumber)) {
-      errors.phoneNumber =
-        "Le numéro de téléphone n'est pas valide (Format marocain attendu)";
-    }
-
-    // --- BirthDate ---
-    if (!formData.birthDate) {
-      errors.birthDate = "La date de naissance est obligatoire";
-    } else {
-      const todayStr = new Date().toISOString().split("T")[0];
-      if (formData.birthDate >= todayStr) {
-        errors.birthDate = "La date de naissance doit être dans le passé";
-      }
-    }
-
-    // --- Gender ---
-    if (!formData.gender) {
-      errors.gender = "Le genre est obligatoire";
-    }
-
-    // --- Address ---
-    if (!formData.address.trim()) {
-      errors.address = "L'adresse est obligatoire";
-    } else if (formData.address.length < 5 || formData.address.length > 150) {
-      errors.address = "L'adresse doit contenir entre 5 et 150 caractères";
-    }
-
-    // --- Country ---
-    if (!formData.country.trim()) {
-      errors.country = "Le pays est obligatoire";
-    } else if (formData.country.length < 2 || formData.country.length > 50) {
-      errors.country = "Le pays doit contenir entre 2 et 50 caractères";
-    }
-
-    // --- City ---
-    if (!formData.city.trim()) {
-      errors.city = "La ville est obligatoire";
-    } else if (formData.city.length < 2 || formData.city.length > 50) {
-      errors.city = "La ville doit contenir entre 2 et 50 caractères";
-    }
-
-    seterrorMsgs(errors);
-    // si l'objects errors contient zero field c'est a dire zero erreur
-    return Object.keys(errors).length === 0;
-  };
-
-  // 4.s
-  //validate form return boolean for that purpose to do some debugging in the console
-  // if i want to remove it it's not a problem but i will let it to say the logs in the console
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const isValid = validateForm();
-
-    if (isValid) {
-      console.log("Data correcte! Prêt à envoyer au backend: ", formData);
-      setisLoading(true);
-      try {
-        const response = await authService.register(formData);
-        // for just log the result to see it
-        console.log(response);
-
-        // add the token inside localstorage with user details
-        const userDetails = {
-          email: response.email,
-          roles: response.roles,
-          fullname: response.fullName,
-        };
-        localStorage.setItem("token", response.token);
-        const userStringDetails = JSON.stringify(userDetails);
-        localStorage.setItem("user", userStringDetails);
-        navigate("/user/dashboard");
-      } catch (error: any) {
-        // 1. Handling Email/Conflict Errors (409)
-        if (error.response?.status === 409) {
-          const backendMessage =
-            error.response.data?.message || "Cet email est déjà utilisé.";
-          seterrorMsgs((prev) => ({
-            ...prev,
-            email: backendMessage,
-          }));
-          return;
-        }
-
-        // rah nqdr nkhali hadi onqdr ndir bohadha blama nvalider l form fl front mais man l2ahsan tkon hta lvalidation coté front hit server yqdr yt3atal
-        // 2. Handling Form Validation Errors (400) from Backend
-        // if (error.response?.status === 400 && error.response.data?.errors) {
-        //   // errors coming from backend
-        //   seterrorMsgs(error.response.data.errors);
-        //   return;
-        // }
-      } finally {
-        setisLoading(false);
-      }
-    }
-  };
+  const {
+    formData,
+    errorMsgs,
+    isLoading,
+    countries,
+    cities,
+    selectedCountryCode,
+    handleFormChange,
+    handleSubmit,
+  } = useRegisterForm();
 
   return (
     <div
@@ -232,7 +19,7 @@ export default function RegisterForm() {
         backgroundImage: `url('https://rapid-plomberie.com/wp-content/uploads/2025/11/Peindre-un-mur-comme-un-pro-astuces-et-materiel-necessaire.jpg')`,
       }}
     >
-      <div className="w-full max-w-2xl bg-white p-6 md:p-10 rounded-3xl  my-8">
+      <div className="w-full max-w-2xl bg-white p-6 md:p-10 rounded-3xl my-8">
         <div className="flex flex-col items-center mb-8">
           <h2 className="text-2xl font-bold text-forest-950 mt-4">
             Créer votre compte
@@ -244,9 +31,9 @@ export default function RegisterForm() {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* 1. Prénom (firstName) */}
+            {/* 1. Prénom */}
             <div>
-              <label className="block text-xs font-bold text-gray-700  tracking-wider mb-2">
+              <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Prénom
               </label>
               <input
@@ -255,13 +42,12 @@ export default function RegisterForm() {
                 value={formData.firstName}
                 placeholder="Ex: Youness"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.firstName
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
                 }`}
               />
-
               {errorMsgs.firstName && (
                 <span className="text-xs text-red-500 font-medium mt-1.5 block">
                   {errorMsgs.firstName}
@@ -269,7 +55,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 2. Nom (lastName) */}
+            {/* 2. Nom */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Nom
@@ -280,7 +66,7 @@ export default function RegisterForm() {
                 value={formData.lastName}
                 placeholder="Ex: Dalal"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.lastName
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
@@ -304,7 +90,7 @@ export default function RegisterForm() {
                 value={formData.email}
                 placeholder="youness@example.com"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.email
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
@@ -317,7 +103,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 4. Téléphone (phoneNumber) */}
+            {/* 4. Téléphone */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Téléphone
@@ -328,7 +114,7 @@ export default function RegisterForm() {
                 value={formData.phoneNumber}
                 placeholder="Ex: 0612345678"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.phoneNumber
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
@@ -341,7 +127,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 5. Mot de passe (password) */}
+            {/* 5. Mot de passe */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Mot de passe
@@ -352,7 +138,7 @@ export default function RegisterForm() {
                 value={formData.password}
                 placeholder="••••••••"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.password
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
@@ -365,7 +151,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 6. Date de naissance (birthDate) */}
+            {/* 6. Date de naissance */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Date de naissance
@@ -388,7 +174,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 7. Genre (gender) */}
+            {/* 7. Genre */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Genre
@@ -397,7 +183,7 @@ export default function RegisterForm() {
                 name="gender"
                 value={formData.gender}
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm appearance-none transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm appearance-none transition-all ${
                   errorMsgs.gender
                     ? "border-red-500 focus:border-red-500"
                     : "border-gray-400 focus:border-forest-500"
@@ -414,19 +200,16 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 8. Pays (country) */}
+            {/* 8. Pays */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Pays
               </label>
               <select
                 name="country"
-                value={
-                  countries.find((c) => c.name === formData.country)?.isoCode ||
-                  ""
-                }
+                value={selectedCountryCode}
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.country
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
@@ -446,7 +229,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* 9. Ville (city) */}
+            {/* 9. Ville */}
             <div>
               <label className="block text-xs font-bold text-gray-700 tracking-wider mb-2">
                 Ville
@@ -468,8 +251,7 @@ export default function RegisterForm() {
                     : "Sélectionnez d'abord un pays"}
                 </option>
                 {cities.map((city, index) => (
-                  <option key={city.name + "-" + index} value={city.name}>
-                    {" "}
+                  <option key={`${city.name}-${index}`} value={city.name}>
                     {city.name}
                   </option>
                 ))}
@@ -492,7 +274,7 @@ export default function RegisterForm() {
                 value={formData.address}
                 placeholder="Ex: lot ouroud sidi maarouf"
                 onChange={handleFormChange}
-                className={`w-full px-4 py-3  border rounded-2xl focus:outline-none text-sm transition-all ${
+                className={`w-full px-4 py-3 border rounded-2xl focus:outline-none text-sm transition-all ${
                   errorMsgs.address
                     ? "border-red-500 focus:border-red-500 bg-red-50/10"
                     : "border-gray-400 focus:border-forest-500"
@@ -506,7 +288,7 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          {/*submit button*/}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
