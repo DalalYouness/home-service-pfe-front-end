@@ -199,7 +199,7 @@ export default function RegisterForm() {
         localStorage.setItem("token", response.token);
         const userStringDetails = JSON.stringify(userDetails);
         localStorage.setItem("user", userStringDetails);
-        navigate("/client/dashboard");
+        navigate("/user/dashboard");
       } catch (error: any) {
         // 1. Handling Email/Conflict Errors (409)
         if (error.response?.status === 409) {

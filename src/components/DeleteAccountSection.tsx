@@ -1,53 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { UserX, AlertTriangle, Loader2, ChevronDown } from "lucide-react";
-import { profileService } from "../services/profile.service";
-import { SessionExpiredModal } from "./SessionExpiredModal";
+import { useDeleteAccount } from "../hooks/useDeleteAccount";
 
 export const DeleteAccountSection: React.FC = () => {
-  const navigate = useNavigate();
-
+  //  UI Presentational States
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [showNotFoundModal, setshowNotFoundModal] = useState(false);
 
-  const handleSessionCleanup = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setshowNotFoundModal(false);
-  };
-
-  const handleDeleteAccount = async () => {
-    setIsDeleting(true); // 1. Déclencher le spinner immédiatement au clic
-
-    try {
-      await profileService.deleteAccount();
-
-      // 2. En cas de succès, attendre 1.5s pour laisser l'animation du spinner puis rediriger
-      const callBackFunction = () => {
-        localStorage.clear();
-        navigate("/");
-      };
-      setTimeout(callBackFunction, 1500);
-    } catch (err: any) {
-      setIsDeleting(false); // 3. Arrêter le spinner en cas d'erreur
-
-      // 4. Gestion sécurisée du Token Expiré (401)
-      if (err?.response?.status === 401) {
-        setshowNotFoundModal(true);
-        return;
-      }
-    }
-  };
+  // Business Logic Hook
+  const { isDeleting, handleDeleteAccount } = useDeleteAccount();
 
   return (
     <div className="bg-white border rounded-2xl border-cream-200/60 shadow-sm transition-all duration-300 hover:shadow-md overflow-hidden">
-      <SessionExpiredModal
-        isOpen={showNotFoundModal}
-        onClose={handleSessionCleanup}
-      />
-
+      {/* Accordion Header */}
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="p-6 md:p-8 flex items-center justify-between cursor-pointer select-none hover:bg-amber-50/10 active:bg-amber-50/20 transition-all duration-200"
@@ -68,6 +33,7 @@ export const DeleteAccountSection: React.FC = () => {
         />
       </div>
 
+      {/* Accordion Content */}
       <div
         className={`transition-all duration-500 ease-in-out overflow-hidden ${
           isOpen
@@ -77,7 +43,7 @@ export const DeleteAccountSection: React.FC = () => {
       >
         <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="text-xs text-amber-600/80 leading-relaxed pr-4 hidden md:block">
-            Cette operation est irréversible. Une fois validée, toutes vos
+            Cette opération est irréversible. Une fois validée, toutes vos
             informations personnelles et historiques seront définitivement
             effacées de nos bases de données.
           </div>
