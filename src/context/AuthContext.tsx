@@ -1,10 +1,12 @@
+//refactoring done hmdulilah
+
 import React, { createContext, useContext, useMemo, useState } from "react";
 
 interface User {
   id?: number;
   email: string;
   fullname: string;
-  roles: Array<{ roleName: string }>;
+  roles;
 }
 
 interface AuthContextType {
@@ -15,6 +17,7 @@ interface AuthContextType {
   login: (user: User, token: string) => void;
   updateUser: (updatedFields: Partial<User>) => void;
   logout: () => void;
+  updateToken: (newToken: string) => void;
 }
 
 // Creates the global Authentication Context contract.
@@ -66,6 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("token");
   };
 
+  const updateToken = (newToken: string) => {
+    setToken(newToken);
+
+    localStorage.setItem("token", newToken);
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -75,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       login,
       updateUser,
       logout,
+      updateToken,
     }),
     [user, token],
   );

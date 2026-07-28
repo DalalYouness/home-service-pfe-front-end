@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Lock, CheckCircle2, ChevronDown, AlertCircle } from "lucide-react";
 
-export const SecuritySection: React.FC = () => {
+export const ChangePasswordSection: React.FC = () => {
   // 1. Independent State control for this Accordion
   const [isOpen, setIsOpen] = useState(false);
 

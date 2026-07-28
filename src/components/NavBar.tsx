@@ -1,3 +1,5 @@
+//refactoring done hmdulilah
+
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -10,6 +12,8 @@ export default function Navbar() {
 
   // Login modal state
   const [isAuthModalOpen, setIsAuthOpen] = useState(false);
+
+  // i keep the two states inside the component because no component will need them except that component for that reason i didn't create a custom hook
 
   return (
     <>

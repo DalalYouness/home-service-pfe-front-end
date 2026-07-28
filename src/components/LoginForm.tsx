@@ -1,31 +1,31 @@
+//refactoring done hmdulilah
 import { useState } from "react";
 import { X, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
-// Importation du service d'authentification pour collaborer avec lui
 import { authService } from "../services/auth.service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import type { LoginRequestDto } from "../types/auth";
 
 interface LoginFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess: (message: string, fullname: string) => void;
 }
 
-export default function LoginForm({
-  isOpen,
-  onClose,
-  onLoginSuccess,
-}: LoginFormProps) {
-  const [formData, setFormData] = useState({
+export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
+  const [formData, setFormData] = useState<LoginRequestDto>({
     email: "",
     password: "",
   });
 
+  const navigate = useNavigate();
+
+  const { login } = useAuth();
+  // hna fin wsalt
   /*
    * État pour suivre le processus asynchrone (Pending) de la requête Axios.
    * Permet d'afficher un indicateur visuel (loading) à l'utilisateur.
    */
   const [isLoading, setIsLoading] = useState(false);
-  // const navigate = useNavigate();
 
   /*
    * État pour mémoriser le message d'erreur si la promesse est rejetée (Rejected).
@@ -39,10 +39,15 @@ export default function LoginForm({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (errorMsg) {
+      setErrorMsg(null);
+    }
   };
 
   /*
@@ -60,29 +65,20 @@ export default function LoginForm({
       // 2. Appel asynchrone de l'API via notre service avec les données du formulaire (LoginRequestDto)
       const responseData = await authService.login(formData);
 
-      localStorage.setItem("token", responseData.token);
-
-      const userData = {
+      const user = {
         email: responseData.email,
-        roles: responseData.roles,
         fullname: responseData.fullName,
+        roles: responseData.roles,
       };
-      localStorage.setItem("user", JSON.stringify(userData));
 
-      // 3. Si la promesse est résolue (Fulfilled/Success), on peut traiter le token et fermer le modal
-      console.log(responseData);
-
-      onLoginSuccess(
-        responseData.message || "Connexion réussie.",
-        userData.fullname,
-      );
-
-      // Fermeture du modal via le callback parent
+      login(user, responseData.token);
+      resetForm();
       onClose();
-    } catch (error) {
-      // Log the authentication failure
-      console.error("Erreur d'authentification :", error);
 
+      navigate("/user/dashboard", {
+        replace: true,
+      });
+    } catch (error) {
       // 1. Safe navigation using error?.response?.status
       if (error?.response?.status === 401) {
         const backendMessage =
@@ -98,7 +94,6 @@ export default function LoginForm({
 
   const resetForm = () => {
     setFormData({
-      ...formData,
       email: "",
       password: "",
     });
@@ -211,12 +206,13 @@ export default function LoginForm({
 
           {/*forget password button*/}
           <div className="text-right">
-            <a
-              href="#forgot-password"
+            <Link
+              to="/forgot-password"
               className="text-sm font-medium text-forest-700 hover:text-forest-900 hover:underline transition-colors"
             >
+              {" "}
               Mot de passe oublié ?
-            </a>
+            </Link>
           </div>
 
           {/* submit button */}

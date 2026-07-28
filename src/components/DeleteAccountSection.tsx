@@ -4,7 +4,7 @@ import { UserX, AlertTriangle, Loader2, ChevronDown } from "lucide-react";
 import { profileService } from "../services/profile.service";
 import { SessionExpiredModal } from "./SessionExpiredModal";
 
-export const SuppressionSection: React.FC = () => {
+export const DeleteAccountSection: React.FC = () => {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);

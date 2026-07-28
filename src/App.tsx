@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import RegisterForm from "./components/RegisterForm";
-import { ClientLayout } from "./components/ClientLayout";
-import { MonCompte } from "./components/MonCompte";
+import { UserLayout } from "./components/UserLayout";
+import { AccountSetting } from "./components/AccountSetting";
 import ForbiddenPage from "./errors/ForbiddenPage";
 import NotFoundPage from "./errors/NotFoundPage";
 import ServerErrorPage from "./errors/ServerErrorPage";
@@ -48,12 +48,12 @@ export default function App() {
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="/500" element={<ServerErrorPage />} />
           {/* 2 - client private routes*/}
-          <Route path="/client" element={<ClientLayout />}>
+          <Route path="/user" element={<UserLayout />}>
             {/* /client/dashboard */}
             <Route path="dashboard" element={<ClientDashboard />} />
 
             {/* /client/compte */}
-            <Route path="account-setting" element={<MonCompte />} />
+            <Route path="account-setting" element={<AccountSetting />} />
 
             {/* profile component */}
             <Route path="myprofil" element={<Profil />} />

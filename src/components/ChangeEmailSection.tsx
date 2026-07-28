@@ -1,110 +1,15 @@
 import React, { useState } from "react";
 import { User, CheckCircle2, AlertCircle, ChevronDown } from "lucide-react";
-import type {
-  ChangeEmailErrors,
-  ChangeEmailRequestDto,
-} from "../types/changeEmail";
-import type { AuthResponseDto } from "../types/auth";
-import { profileService } from "../services/profile.service";
-import { SessionExpiredModal } from "./SessionExpiredModal";
+import { useChangeEmailForm } from "../hooks/useChangeEmailForm";
 
-export const ProfilSection: React.FC = () => {
+export const ChangeEmailSection: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showNotFoundModal, setShowNotFoundModal] = useState(false);
-
-  const [formData, setFormData] = useState<ChangeEmailRequestDto>({
-    newEmail: "",
-    currentPassword: "",
-  });
-
-  const [isSaving, setIsSaving] = useState(false);
-  const [successMsg, setsuccessMsg] = useState("");
-  const [errors, setErrors] = useState<ChangeEmailErrors>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (errors[name as keyof ChangeEmailErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  const handleSessionCleanup = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setShowNotFoundModal(false);
-  };
-
-  const handleUpdateEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setsuccessMsg("");
-    setErrors({});
-
-    try {
-      const response: AuthResponseDto =
-        await profileService.changeEmail(formData);
-
-      localStorage.setItem("token", response.token);
-      const userDetails = {
-        email: response.email,
-        roles: response.roles,
-        fullName: response.fullName,
-      };
-      localStorage.setItem("user", JSON.stringify(userDetails));
-
-      setsuccessMsg(response.message);
-      setFormData((prev) => ({ ...prev, currentPassword: "" }));
-    } catch (err: any) {
-      if (
-        err.response &&
-        (err.response.status === 404 || err.response.status === 401)
-      ) {
-        setShowNotFoundModal(true);
-        return;
-      }
-
-      if (err.response && err.response.status === 400) {
-        const errorMsg =
-          err.response.data?.message || "Mot de passe incorrect.";
-        setErrors({ currentPassword: errorMsg });
-        return;
-      }
-
-      if (err.response && err.response.status === 409) {
-        const storedUser = localStorage.getItem("user");
-        const currentEmail = storedUser ? JSON.parse(storedUser).email : null;
-        let errorMsg =
-          err.response.data?.message || "Cet adresse email est déjà utilisée.";
-
-        if (
-          currentEmail &&
-          formData.newEmail.trim().toLowerCase() ===
-            currentEmail.trim().toLowerCase()
-        ) {
-          errorMsg = "C'est déjà votre adresse email actuelle.";
-        }
-
-        setErrors({ newEmail: errorMsg });
-        return;
-      }
-
-      // i replace it with the toast window error
-      // setErrors({
-      //   global: "Une erreur inattendue est survenue. Veuillez réessayer.",
-      // });
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const { formData, isSaving, successMsg, errors, handleChange, handleSubmit } =
+    useChangeEmailForm();
 
   return (
     <div className="bg-white border rounded-2xl border-cream-200/60 shadow-sm transition-all duration-300 hover:shadow-md overflow-hidden">
-      <SessionExpiredModal
-        isOpen={showNotFoundModal}
-        onClose={handleSessionCleanup}
-      />
+      {/* Accordion Header */}
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="p-6 md:p-8 flex items-center justify-between cursor-pointer select-none hover:bg-cream-50/30 active:bg-cream-50/60 transition-all duration-200"
@@ -124,6 +29,8 @@ export const ProfilSection: React.FC = () => {
           }`}
         />
       </div>
+
+      {/* Form Content */}
       <div
         className={`transition-all duration-500 ease-in-out overflow-hidden ${
           isOpen
@@ -132,18 +39,10 @@ export const ProfilSection: React.FC = () => {
         }`}
       >
         <div className="p-6 md:p-8">
-          <form onSubmit={handleUpdateEmail} className="space-y-4 w-full">
-            {/* Global Error Alert */}
-            {errors.global && (
-              <div className="flex items-center gap-2 text-rose-600 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl text-xs">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{errors.global}</span>
-              </div>
-            )}
-
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
             {/* New Email Input */}
             <div>
-              <label className="block text-xs font-semibold text-forest-700  tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-forest-700 tracking-wider mb-2">
                 Nouvelle adresse email
               </label>
               <input
@@ -171,7 +70,7 @@ export const ProfilSection: React.FC = () => {
 
             {/* Current Password Input */}
             <div>
-              <label className="block text-xs font-semibold text-forest-700  tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-forest-700 tracking-wider mb-2">
                 Mot de passe actuel
               </label>
               <input

@@ -1,5 +1,5 @@
 // Application Setup - Step 1: Configure the centralized HTTP client
-
+// done hmudlilah
 import axios from "axios";
 import { toast } from "sonner";
 import { AppEvent } from "../events/appEvents";
@@ -42,7 +42,7 @@ apiClient.interceptors.response.use(
     // Handle complete network failures or offline server state
     if (!error.response) {
       toast.error(
-        "Une erreur réseau est survenue. Veuillez vérifier votre connexion.",
+        "Une erreur est survenue. Veuillez réessayer dans quelques instants.",
       );
       return Promise.reject(error);
     }

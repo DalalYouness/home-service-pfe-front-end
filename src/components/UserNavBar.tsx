@@ -1,27 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, Home, X } from "lucide-react"; // زدنا X باش نسدو السيرش فـ التلفون
+import { Search, Bell, LogOut, Home, X } from "lucide-react";
 import { LogoutModal } from "./LogoutModal";
+import { useAuth } from "../context/AuthContext";
 
-interface ClientNavbarProps {
-  user: {
-    name: string;
-    description: string;
-  };
-}
-
-export const ClientNavbar: React.FC<ClientNavbarProps> = ({ user }) => {
+export const UserNavbar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-
+  const { user, logout } = useAuth();
   const handleLogoutConfirm = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    logout();
     setIsLogoutModalOpen(false);
-    navigate("/");
   };
 
   return (
@@ -61,7 +52,7 @@ export const ClientNavbar: React.FC<ClientNavbarProps> = ({ user }) => {
             {/* LOGO */}
             <div
               className="flex items-center gap-2 md:gap-3 cursor-pointer shrink-0"
-              onClick={() => navigate("/client/dashboard")}
+              onClick={() => navigate("/user/dashboard")}
             >
               <div className="w-9 h-9 md:w-10 md:h-10 bg-emerald-800 rounded-xl flex items-center justify-center text-white shadow-md transition-all">
                 <Home className="w-5 h-5 md:w-5.5 md:h-5.5" />
@@ -109,15 +100,15 @@ export const ClientNavbar: React.FC<ClientNavbarProps> = ({ user }) => {
               {/* Profile User Info */}
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="w-9 h-9 md:w-10 md:h-10 bg-emerald-950 rounded-full flex items-center justify-center text-white font-bold shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
+                  {user?.fullname.charAt(0).toUpperCase()}
                 </div>
 
                 <div className="hidden sm:flex flex-col">
                   <span className="text-sm font-semibold text-emerald-950 leading-tight">
-                    {user.name}
+                    {user?.fullname}
                   </span>
                   <span className="text-xs text-gray-500 font-medium">
-                    Espace client
+                    Espace {user?.roles[0].roleName.substring(5).toLowerCase()}
                   </span>
                 </div>
               </div>

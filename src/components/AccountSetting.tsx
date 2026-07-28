@@ -1,9 +1,9 @@
 import React from "react";
-import { ProfilSection } from "./ProfilSection";
-import { SecuritySection } from "./SecuritySection";
-import { SuppressionSection } from "./SuppressionSection";
+import { ChangeEmailSection } from "./ChangeEmailSection";
+import { ChangePasswordSection } from "./ChangePasswordSection";
+import { DeleteAccountSection } from "./DeleteAccountSection";
 
-export const MonCompte: React.FC = () => {
+export const AccountSetting: React.FC = () => {
   return (
     <div className="w-full space-y-4 py-6 px-4 md:px-8 pb-16 font-sans">
       <div className="space-y-1">
@@ -17,13 +17,13 @@ export const MonCompte: React.FC = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-start w-full">
         <div className="bg-white rounded-2xl border border-cream-200/50 shadow-[0_2px_12px_rgba(140,130,122,0.05)] hover:shadow-[0_4px_20px_rgba(140,130,122,0.08)] transition-all duration-300">
-          <ProfilSection />
+          <ChangeEmailSection />
         </div>
         <div className="bg-white rounded-2xl border border-cream-200/50 shadow-[0_2px_12px_rgba(140,130,122,0.05)] hover:shadow-[0_4px_20px_rgba(140,130,122,0.08)] transition-all duration-300">
-          <SecuritySection />
+          <ChangePasswordSection />
         </div>
         <div className="bg-white rounded-2xl border border-cream-200/50 shadow-[0_2px_12px_rgba(140,130,122,0.05)] hover:shadow-[0_4px_20px_rgba(140,130,122,0.08)] transition-all duration-300 md:col-span-2">
-          <SuppressionSection />
+          <DeleteAccountSection />
         </div>
       </div>
     </div>
