@@ -1,4 +1,5 @@
 import { useRegisterForm } from "../hooks/useRegisterForm";
+import bgRegister from "../assets/register-background.png";
 
 export default function RegisterForm() {
   const {
@@ -14,22 +15,26 @@ export default function RegisterForm() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center p-4 md:p-8 bg-cover bg-center relative"
+      className="min-h-screen w-full bg-cover bg-left md:bg-center bg-no-repeat flex items-center justify-center lg:justify-end p-4 md:p-12 lg:pr-24"
       style={{
-        backgroundImage: `url('https://rapid-plomberie.com/wp-content/uploads/2025/11/Peindre-un-mur-comme-un-pro-astuces-et-materiel-necessaire.jpg')`,
+        backgroundImage: `url(${bgRegister})`,
       }}
     >
-      <div className="w-full max-w-2xl bg-white p-6 md:p-10 rounded-3xl my-8">
-        <div className="flex flex-col items-center mb-8">
-          <h2 className="text-2xl font-bold text-forest-950 mt-4">
+      {/*
+        - نقصنا الـ max-w لـ max-w-xl باش تاخد قياس متناسق.
+        - زدنا backdrop-blur خفيف مع bg-white/95 باش تبان المودرن UI layout.
+      */}
+      <div className="w-full max-w-xl bg-white/95 backdrop-blur-sm p-6 md:p-8 rounded-3xl my-8 shadow-2xl border border-white/20">
+        <div className="flex flex-col items-center mb-6">
+          <h2 className="text-2xl font-bold text-forest-950 mt-2">
             Créer votre compte
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1 text-center">
             Rejoignez dalyou et profitez de nos services à domicile
           </p>
         </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1. Prénom */}
             <div>

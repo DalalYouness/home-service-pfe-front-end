@@ -10,6 +10,7 @@ import Profil from "./components/Profil";
 import { Toaster } from "sonner";
 import GlobalErrorHandler from "./components/GlobalErrorHandler";
 import { AuthProvider } from "./context/AuthContext";
+import { BecomePrestatairePage } from "./components/BecomePrestatairePage";
 
 // for test
 const ClientDashboard = () => (
@@ -60,6 +61,7 @@ export default function App() {
             {/* important thing when user go directly to /client i have to redirect him to /client/dashboard*/}
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
+          <Route path="/become-provider" element={<BecomePrestatairePage />} />
           {/* ay path mamsaybinoch o ktabto ilo7ni l 404 */}
           <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>

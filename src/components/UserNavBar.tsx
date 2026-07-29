@@ -103,7 +103,7 @@ export const UserNavbar = () => {
                   if (isPrestataire) {
                     navigate("/prestataire/dashboard");
                   } else {
-                    navigate("/become-prestataire");
+                    navigate("/become-provider");
                   }
                 }}
                 className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 border border-emerald-200/60 rounded-xl font-medium text-xs md:text-sm transition-all shadow-xs active:scale-95"
