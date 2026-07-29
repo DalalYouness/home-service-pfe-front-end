@@ -1,29 +1,28 @@
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
-import {
-  type UserProfilResponseDTO,
-  type ProfileErrors,
-} from "../types/UserProfilResponseDTO";
+import { useAuth } from "../context/AuthContext"; // 👈 Context Integration
 import { profileService } from "../services/profile.service";
+import type {
+  UserProfilResponseDTO,
+  ProfileErrors,
+} from "../types/UserProfilResponseDTO";
 import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
+
 export const useProfil = () => {
-  //done
+  const { user, updateUser } = useAuth(); // 👈 Single Source of Truth for Auth State
+
   const [isEditing, setIsEditing] = useState(false);
-  //done
-  const [role, setRole] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ProfileErrors>({});
 
-  //component loading
-  const [isLoading, setisLoading] = useState(false);
-
-  // email
-  const [email, setemail] = useState("");
+  // Deriving role & email from AuthContext directly
+  const role = user?.roles?.[0]?.roleName || user?.roles?.[0] || "";
+  const email = user?.email || "";
 
   const [formData, setFormData] = useState<UserProfilResponseDTO>({
-    //id: wakha blama nkatbo ghadi yji man lbackend ghan7atoh tilqa2iyan hna
     firstName: "",
     lastName: "",
     phoneNumber: "",
-    photo: "",
+    photo: null,
     address: "",
     city: "",
     country: "",
@@ -31,43 +30,43 @@ export const useProfil = () => {
     interventionArea: "",
   });
 
-  //done
+  // 1. Fetch Profile Data on Mount
   useEffect(() => {
-    // 1. Extraire le rôle du localStorage
-    const user = localStorage.getItem("user");
-    if (user) {
-      try {
-        const parsedUser = JSON.parse(user);
-        const roleName = parsedUser?.roles?.[0]?.roleName || "";
-        const email = parsedUser?.email || "";
-        setRole(roleName);
-        setemail(email);
-      } catch (e) {
-        console.error("Failed to parse user from localStorage", e);
-      }
-    }
+    let isMounted = true;
+
     const fetchProfil = async () => {
       try {
-        setisLoading(true);
+        setIsLoading(true);
         const profileData = await profileService.getProfil();
-        setFormData(profileData);
+        if (isMounted) {
+          setFormData(profileData);
+        }
       } catch (e) {
-        console.log("Error fetching profile", e);
+        // Axios interceptors handle global errors (401, 500),
+        // local catch handles specific fallback if needed.
+        console.error("Error fetching profile", e);
       } finally {
-        setisLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
+
     fetchProfil();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+  // 2. Clear error on typing
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    // l'utilisation de l'id aussi dayza parce que bach nwarak ela label ndkhol l field o sf madam
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
 
-    if (errors[id]) {
+    if (errors[id as keyof ProfileErrors]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[id as keyof ProfileErrors];
@@ -76,96 +75,80 @@ export const useProfil = () => {
     }
   };
 
-  //done
+  // 3. Validation Logic
   const validateForm = (): boolean => {
     const newErrors: ProfileErrors = {};
 
-    // 1. Valid firstName
     const fn = (formData.firstName || "").trim();
-    if (!fn) {
-      newErrors.firstName = "Le prénom est obligatoire";
-    } else if (fn.length < 2 || fn.length > 30) {
+    if (!fn) newErrors.firstName = "Le prénom est obligatoire";
+    else if (fn.length < 2 || fn.length > 30)
       newErrors.firstName = "Le prénom doit contenir entre 2 et 30 caractères";
-    }
 
-    // 2. Valid lastName
     const ln = (formData.lastName || "").trim();
-    if (!ln) {
-      newErrors.lastName = "Le nom est obligatoire";
-    } else if (ln.length < 2 || ln.length > 30) {
+    if (!ln) newErrors.lastName = "Le nom est obligatoire";
+    else if (ln.length < 2 || ln.length > 30)
       newErrors.lastName = "Le nom doit contenir entre 2 et 30 caractères";
-    }
 
-    // 3. Valid Phone Number
     const phone = (formData.phoneNumber || "").trim();
     const regexPhone = /^(\+212|0)([5-7])\d{8}$/;
-    if (!phone) {
+    if (!phone)
       newErrors.phoneNumber = "Le numéro de téléphone est obligatoire";
-    } else if (!regexPhone.test(phone)) {
+    else if (!regexPhone.test(phone))
       newErrors.phoneNumber =
         "Le numéro de téléphone n'est pas valide (Format marocain attendu)";
-    }
 
-    // 4. Valid Address
     const addr = (formData.address || "").trim();
-    if (!addr) {
-      newErrors.address = "L'adresse est obligatoire";
-    } else if (addr.length < 5 || addr.length > 150) {
+    if (!addr) newErrors.address = "L'adresse est obligatoire";
+    else if (addr.length < 5 || addr.length > 150)
       newErrors.address = "L'adresse doit contenir entre 5 et 150 caractères";
-    }
 
-    // 5. Valid Country
     const country = (formData.country || "").trim();
-    if (!country) {
-      newErrors.country = "Le pays est obligatoire";
-    } else if (country.length < 2 || country.length > 50) {
+    if (!country) newErrors.country = "Le pays est obligatoire";
+    else if (country.length < 2 || country.length > 50)
       newErrors.country = "Le pays doit contenir entre 2 et 50 caractères";
-    }
 
-    // 6. Valid City
     const city = (formData.city || "").trim();
-    if (!city) {
-      newErrors.city = "La ville est obligatoire";
-    } else if (city.length < 2 || city.length > 50) {
+    if (!city) newErrors.city = "La ville est obligatoire";
+    else if (city.length < 2 || city.length > 50)
       newErrors.city = "La ville doit contenir entre 2 et 50 caractères";
-    }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
+  // 4. Submit Update
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const isValid = validateForm();
-    if (isValid) {
-      try {
-        setisLoading(true);
-        const updatePayload: UpdateProfileRequestDto = {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phoneNumber: formData.phoneNumber,
-          address: formData.address,
-          city: formData.city,
-          country: formData.country,
-          bio: formData.bio,
-          interventionArea: formData.interventionArea,
-        };
-        const response = await profileService.updateProfil(updatePayload);
-        setIsEditing(false);
-        // hahowa lcode li ghanzid
-        const storedUser = localStorage.getItem("user");
-        const user = JSON.parse(storedUser);
-        user.fullname = response.firstName + " " + response.lastName;
-        localStorage.setItem("user", user);
-        // ghanbdlo l fullname f localstorage bach ytbdl f navbar
-        setFormData(response);
-      } catch (e) {
-        console.error("Error updating profile", e);
-      } finally {
-        setisLoading(false);
-      }
+    if (!validateForm()) return;
+
+    try {
+      setIsLoading(true);
+      const updatePayload: UpdateProfileRequestDto = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
+        city: formData.city,
+        country: formData.country,
+        bio: formData.bio,
+        interventionArea: formData.interventionArea,
+      };
+
+      const response = await profileService.updateProfil(updatePayload);
+
+      // Update local state
+      setFormData(response);
+      setIsEditing(false);
+
+      // Sync updated name globally via AuthContext (Updates Navbar automatically)
+      updateUser({
+        fullname: `${response.firstName} ${response.lastName}`.trim(),
+      });
+    } catch (e) {
+      console.error("Error updating profile", e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -173,7 +156,7 @@ export const useProfil = () => {
     if (isEditing) {
       setErrors({});
     }
-    setIsEditing(!isEditing);
+    setIsEditing((prev) => !prev);
   };
 
   return {

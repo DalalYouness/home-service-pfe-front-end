@@ -51,8 +51,8 @@ export const DeleteAccountSection: React.FC = () => {
           <div className="md:col-span-2">
             <div className="w-full max-w-xl space-y-4">
               <p className="text-xs text-forest-700/75 leading-relaxed">
-                Cette action supprimera définitivement toutes vos données de nos
-                serveurs. Vous ne pourrez plus récupérer vos informations.
+                Cette action supprimera définitivement toutes vos données. Vous
+                ne pourrez plus récupérer vos informations.
               </p>
 
               {!isDeleteConfirmOpen ? (
