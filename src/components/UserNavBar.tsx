@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, Home, X } from "lucide-react";
+import { Search, Bell, LogOut, Home, X, Wrench } from "lucide-react"; // 👈 زدنا Briefcase هنا
 import { LogoutModal } from "./LogoutModal";
 import { useAuth } from "../context/AuthContext";
 
@@ -10,16 +10,19 @@ export const UserNavbar = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const { user, logout } = useAuth();
+
   const handleLogoutConfirm = () => {
     logout();
     setIsLogoutModalOpen(false);
   };
 
+  const isPrestataire = user?.roles?.some(
+    (role) => role.roleName === "ROLE_PRESTATAIRE",
+  );
+
   return (
     <>
       <nav className="w-full bg-white border-b border-gray-100 px-4 py-3 md:px-6 flex items-center justify-between shadow-sm sticky top-0 z-40 min-h-[64px]">
-        {/* j'ai utilisé deux conditions avec le ternary operator si isMobileSearchOpen j'affiches dans le nav la barre de recherche
-        si non j'affiche le navbar*/}
         {isMobileSearchOpen ? (
           <div className="w-full flex items-center gap-3 animate-in fade-in duration-150">
             <button
@@ -42,7 +45,7 @@ export const UserNavbar = () => {
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                autoFocus // le focus pousse le telephone d'afficher le clavier automatiquement
+                autoFocus
                 className="w-full pl-11 pr-4 py-2 bg-neutral-50 border border-amber-200/40 rounded-full focus:outline-none focus:border-amber-800/40 focus:bg-white text-sm transition-all"
               />
             </div>
@@ -62,7 +65,7 @@ export const UserNavbar = () => {
               </span>
             </div>
 
-            {/* DESKTOP SEARCH BAR  */}
+            {/* DESKTOP SEARCH BAR */}
             <div className="flex-1 max-w-xl mx-8 hidden md:block">
               <div className="relative w-full">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
@@ -79,7 +82,7 @@ export const UserNavbar = () => {
             </div>
 
             {/* ACTIONS & PROFILE */}
-            <div className="flex items-center gap-2 md:gap-6 shrink-0">
+            <div className="flex items-center gap-2 md:gap-4 shrink-0">
               <button
                 onClick={() => setIsMobileSearchOpen(true)}
                 className="md:hidden p-2 text-gray-500 hover:text-emerald-800 hover:bg-gray-50 rounded-full transition-all"
@@ -92,6 +95,24 @@ export const UserNavbar = () => {
               <button className="relative p-2 text-gray-500 hover:text-emerald-800 rounded-full transition-all">
                 <Bell className="w-5.5 h-5.5" />
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+              </button>
+
+              {/*Devenir / Espace Prestataire */}
+              <button
+                onClick={() => {
+                  if (isPrestataire) {
+                    navigate("/prestataire/dashboard");
+                  } else {
+                    navigate("/become-prestataire");
+                  }
+                }}
+                className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 border border-emerald-200/60 rounded-xl font-medium text-xs md:text-sm transition-all shadow-xs active:scale-95"
+              >
+                {/* <Wrench className="w-4 h-4 text-emerald-700" />{" "} */}
+
+                <span>
+                  {isPrestataire ? "Espace Prestataire" : "Devenir prestataire"}
+                </span>
               </button>
 
               {/* Divider */}

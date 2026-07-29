@@ -8,7 +8,7 @@ import type {
 import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
 
 export const useProfil = () => {
-  const { user, updateUser } = useAuth(); // 👈 Single Source of Truth for Auth State
+  const { user, updateUser } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ export const useProfil = () => {
     interventionArea: "",
   });
 
-  // 1. Fetch Profile Data on Mount
+  // 1. Fetch Profile Data on Mount mafhomma ✔
   useEffect(() => {
     let isMounted = true;
 
