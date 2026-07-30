@@ -10,7 +10,7 @@ import Profil from "./components/Profil";
 import { Toaster } from "sonner";
 import GlobalErrorHandler from "./components/GlobalErrorHandler";
 import { AuthProvider } from "./context/AuthContext";
-import { BecomePrestatairePage } from "./components/BecomePrestatairePage";
+import BecomePrestatairePage from "./components/BecomePrestatairePage";
 
 // for test
 const ClientDashboard = () => (
