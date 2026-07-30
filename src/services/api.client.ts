@@ -6,7 +6,7 @@ import { AppEvent } from "../events/appEvents";
 
 // Retrieve the base URL from environment variables, defaulting to local setup
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8081";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:9999";
 
 // Create a centralized Axios instance for all application HTTP requests
 const apiClient = axios.create({

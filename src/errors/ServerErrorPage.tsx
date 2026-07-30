@@ -29,10 +29,10 @@ const ServerErrorPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 pt-2">
           <button
             // navigate(getDashboardRoute(user.role), { replace: true }); nqdr nst3ml hadi ela hsab ila kant kol role endo dashboard mokhtalifa
-            onClick={() => navigate("/dashboard", { replace: true })}
+            onClick={() => navigate("/", { replace: true })}
             className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-[#FDFBF7] bg-[#1B3B2B] hover:bg-[#153022] rounded-full shadow-sm transition-all duration-200"
           >
-            Aller au tableau de bord
+            Aller à la page d'accueil
           </button>
         </div>
       </div>

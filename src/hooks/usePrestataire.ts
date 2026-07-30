@@ -8,7 +8,7 @@ export const usePrestataire = () => {
     interventionArea: "",
     service: "",
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<PrestataireErrors>({});
 
   const validateForm = () => {
@@ -18,7 +18,7 @@ export const usePrestataire = () => {
       newErrors.interventionArea = "La zone d'intervention est obligatoire";
     } else if (areaValue.length < 3 || areaValue.length > 30) {
       newErrors.interventionArea =
-        "La zone doit contenir entre 4 et 30 caractères";
+        "La zone doit contenir entre 3 et 30 caractères";
     }
 
     if (!prestataireInfo.service) {
@@ -33,7 +33,15 @@ export const usePrestataire = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log("Formulaire valide ! Données :", prestataireInfo);
+      setIsLoading(true);
+      setErrors(null);
+      try {
+        //our logique
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -59,5 +67,6 @@ export const usePrestataire = () => {
     handleChange,
     handleSubmit,
     errors,
+    isLoading,
   };
 };

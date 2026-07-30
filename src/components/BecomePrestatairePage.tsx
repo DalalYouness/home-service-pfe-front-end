@@ -7,7 +7,7 @@ import { useServices } from "../hooks/useServices";
 
 export default function BecomePrestatairePage() {
   const { isAuthenticated } = useAuth();
-  const { prestataireInfo, handleChange, handleSubmit, errors } =
+  const { prestataireInfo, handleChange, handleSubmit, errors, isLoading } =
     usePrestataire();
   const services = useServices();
   if (!isAuthenticated) {
@@ -105,7 +105,7 @@ export default function BecomePrestatairePage() {
                     </option>
                     {services.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.service_name}
+                        {s.name}
                       </option>
                     ))}
                   </select>
@@ -125,7 +125,7 @@ export default function BecomePrestatairePage() {
                 type="submit"
                 className="w-full py-4 bg-forest-900 hover:bg-forest-800 text-white font-semibold rounded-2xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base active:scale-[0.99] mt-2"
               >
-                <span>Devenir prestataire</span>
+                {isLoading ? "Enregistrement..." : "Devenir prestataire"}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>

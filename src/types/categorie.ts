@@ -1,6 +1,6 @@
 export interface ServiceResponseDto {
   id: number;
-  service_name: string;
+  name: string;
   description?: string;
 }
 export interface PageResponse<T> {

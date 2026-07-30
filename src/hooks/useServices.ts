@@ -5,7 +5,7 @@ import type { ServiceResponseDto } from "../types/categorie";
 export const useServices = () => {
   const [services, setservices] = useState<ServiceResponseDto[]>([]);
   useEffect(() => {
-    const isMounted = true;
+    let isMounted = true;
     const fetchServices = async () => {
       const servicesResponse = await categorieService.getAllServices();
       if (isMounted) {
@@ -14,6 +14,9 @@ export const useServices = () => {
     };
 
     fetchServices();
+    return () => {
+      isMounted = false;
+    };
   }, []);
   return services;
 };
