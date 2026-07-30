@@ -3,21 +3,13 @@ import { MapPin, Briefcase, ArrowRight } from "lucide-react";
 import heroProviderImg from "../assets/BecomePrestataireImage.png";
 import { usePrestataire } from "../hooks/usePrestataire";
 import { useAuth } from "../context/AuthContext";
-
-const STATIC_SERVICES = [
-  { id: "1", name: "Plomberie" },
-  { id: "2", name: "Électricité" },
-  { id: "3", name: "Peinture" },
-  { id: "4", name: "Jardinage" },
-  { id: "5", name: "Nettoyage à domicile" },
-  { id: "6", name: "Menuiserie" },
-];
+import { useServices } from "../hooks/useServices";
 
 export default function BecomePrestatairePage() {
   const { isAuthenticated } = useAuth();
   const { prestataireInfo, handleChange, handleSubmit, errors } =
     usePrestataire();
-
+  const services = useServices();
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
@@ -111,9 +103,9 @@ export default function BecomePrestatairePage() {
                     <option value="" disabled>
                       Sélectionner un service
                     </option>
-                    {STATIC_SERVICES.map((s) => (
+                    {services.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.name}
+                        {s.service_name}
                       </option>
                     ))}
                   </select>
