@@ -4,9 +4,10 @@ import apiClient from "./api.client";
 import type { UserProfilResponseDTO } from "../types/UserProfilResponseDTO";
 import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
 import type {
+  BecomePrestataireDto,
   BecomePrestataiteRespDto,
   PrestataireInfo,
-} from "../types/PrestataireInfo";
+} from "../types/prestataire";
 
 // j'injecte pas le token dans le service parce l'intercepteur du request d'axios fait ca
 export const profileService = {
@@ -42,9 +43,12 @@ export const profileService = {
   },
 
   becomeProvider: async (
-    interventionArea: PrestataireInfo,
+    interventionArea: BecomePrestataireDto,
   ): Promise<BecomePrestataiteRespDto> => {
-    const response = await apiClient.post("/api/v1/auth", interventionArea);
+    const response = await apiClient.post(
+      "/api/v1/auth/become-prestataire",
+      interventionArea,
+    );
     return response.data;
   },
 };

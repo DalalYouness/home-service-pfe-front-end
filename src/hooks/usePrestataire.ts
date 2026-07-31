@@ -1,5 +1,9 @@
 import { useState } from "react";
-import type { PrestataireInfo } from "../types/PrestataireInfo";
+import type {
+  BecomePrestataireDto,
+  PrestataireInfo,
+} from "../types/prestataire";
+import { profileService } from "../services/profile.service";
 
 type PrestataireErrors = Partial<Record<keyof PrestataireInfo, string>>;
 
@@ -29,7 +33,7 @@ export const usePrestataire = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
@@ -37,6 +41,12 @@ export const usePrestataire = () => {
       setErrors(null);
       try {
         //our logique
+        const prestataireReq: BecomePrestataireDto = {
+          interventionArea: prestataireInfo.interventionArea,
+        };
+        const becomePrestataireResponse =
+          await profileService.becomeProvider(prestataireReq);
+        console.log("response", becomePrestataireResponse);
       } catch (err) {
         console.log(err);
       } finally {
