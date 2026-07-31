@@ -43,11 +43,11 @@ export const profileService = {
   },
 
   becomeProvider: async (
-    interventionArea: BecomePrestataireDto,
+    dto: BecomePrestataireDto,
   ): Promise<BecomePrestataiteRespDto> => {
-    const response = await apiClient.post(
+    const response = await apiClient.post<BecomePrestataiteRespDto>(
       "/api/v1/auth/become-prestataire",
-      interventionArea,
+      dto,
     );
     return response.data;
   },
