@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { MapPin, Briefcase, ArrowRight } from "lucide-react";
+import { MapPin, Briefcase, ArrowRight, Loader2 } from "lucide-react";
 import heroProviderImg from "../assets/BecomePrestataireImage.png";
 import { usePrestataire } from "../hooks/usePrestataire";
 import { useAuth } from "../context/AuthContext";
@@ -9,10 +9,13 @@ export default function BecomePrestatairePage() {
   const { isAuthenticated } = useAuth();
   const { prestataireInfo, handleChange, handleSubmit, errors, isLoading } =
     usePrestataire();
-  const services = useServices();
+  const { services, isLoadingServices } = useServices();
+
+  // Guard Clause: Only authenticated clients can access this onboarding flow
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
+
   return (
     <div className="min-h-screen bg-cream-50 flex items-center justify-center p-4 md:p-8 lg:p-12 font-sans text-gray-800">
       <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -66,6 +69,7 @@ export default function BecomePrestatairePage() {
                   <input
                     type="text"
                     name="interventionArea"
+                    disabled={isLoading}
                     value={prestataireInfo.interventionArea}
                     onChange={handleChange}
                     placeholder="Casablanca, Sidi Maarouf"
@@ -92,6 +96,7 @@ export default function BecomePrestatairePage() {
                   <Briefcase className="absolute left-4 w-5 h-5 text-gray-400 pointer-events-none" />
                   <select
                     name="service"
+                    disabled={isLoading || isLoadingServices}
                     value={prestataireInfo.service}
                     onChange={handleChange}
                     className={`w-full pl-12 pr-10 py-3.5 bg-cream-50/50 border rounded-2xl text-sm appearance-none focus:outline-none transition-all duration-200 text-gray-700 ${
@@ -101,7 +106,9 @@ export default function BecomePrestatairePage() {
                     }`}
                   >
                     <option value="" disabled>
-                      Sélectionner un service
+                      {isLoadingServices
+                        ? "Chargement des services..."
+                        : "Sélectionner un service"}
                     </option>
                     {services.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -123,10 +130,20 @@ export default function BecomePrestatairePage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-4 bg-forest-900 hover:bg-forest-800 text-white font-semibold rounded-2xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base active:scale-[0.99] mt-2"
+                disabled={isLoading}
+                className="w-full py-4 bg-forest-900 hover:bg-forest-800 disabled:opacity-75 text-white font-semibold rounded-2xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base active:scale-[0.99] mt-2"
               >
-                {isLoading ? "Enregistrement..." : "Devenir prestataire"}
-                <ArrowRight className="w-4 h-4" />
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Enregistrement...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Devenir prestataire</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </form>
           </div>
