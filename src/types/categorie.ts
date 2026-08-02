@@ -13,3 +13,7 @@ export interface PageResponse<T> {
   first: boolean;
   empty: boolean;
 }
+
+export interface AddServiceReqProviderDTO {
+  serviceId: number;
+}

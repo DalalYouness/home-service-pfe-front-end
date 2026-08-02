@@ -9,7 +9,6 @@ export const useSwitchMode = () => {
   const { user, currentMode, switchMode } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  // التحقق واش المستخدم عندو Role Prestataire
   const hasPrestataireRole = user?.roles?.some((role: any) =>
     typeof role === "string"
       ? role === "ROLE_PRESTATAIRE"
@@ -17,7 +16,6 @@ export const useSwitchMode = () => {
   );
 
   const handleModeAction = async () => {
-    // 1. إلا ما عندوش الـ Role، يمشي لصفحة devenir-prestataire
     if (!hasPrestataireRole) {
       navigate("/become-provider");
       return;
@@ -27,17 +25,15 @@ export const useSwitchMode = () => {
 
     try {
       if (currentMode === "PRESTATAIRE") {
-        // 2. العياط للـ Backend للتحويل إلى CLIENT
         const res = await profileService.switchToClient();
         switchMode("CLIENT");
         toast.success(res.message || "Mode client activé");
         navigate("/user/dashboard");
       } else {
-        // 3. العياط للـ Backend للتحويل إلى PRESTATAIRE
         const res = await profileService.switchToProvider();
         switchMode("PRESTATAIRE");
         toast.success(res.message || "Mode prestataire activé");
-        navigate("/prestataire/dashboard");
+        navigate("/user/dashboard");
       }
     } catch (error: any) {
       console.error("Erreur switch mode:", error);

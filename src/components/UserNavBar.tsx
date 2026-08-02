@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, Home, X, Repeat } from "lucide-react";
+import { Search, Bell, LogOut, Home, X, Repeat, Loader2 } from "lucide-react";
 import { LogoutModal } from "./LogoutModal";
 import { useAuth } from "../context/AuthContext";
+import { useSwitchMode } from "../hooks/useSwitchMode";
 
 export const UserNavbar = () => {
   const navigate = useNavigate();
@@ -10,35 +11,15 @@ export const UserNavbar = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
-  // Extract authentication states and mode control
-  const { user, logout, currentMode, switchMode } = useAuth();
+  // Auth Context
+  const { user, logout, currentMode } = useAuth();
+
+  // Custom Hook Switch Mode
+  const { hasPrestataireRole, handleModeAction, isLoading } = useSwitchMode();
 
   const handleLogoutConfirm = () => {
     logout();
     setIsLogoutModalOpen(false);
-  };
-
-  // Safe check if user possesses the PRESTATAIRE role
-  const hasPrestataireRole = user?.roles?.some((role: any) =>
-    typeof role === "string"
-      ? role === "ROLE_PRESTATAIRE"
-      : role?.roleName === "ROLE_PRESTATAIRE",
-  );
-
-  // Simplified mode toggle logic
-  const handleModeAction = () => {
-    if (!hasPrestataireRole) {
-      navigate("/become-provider");
-      return;
-    }
-
-    if (currentMode === "PRESTATAIRE") {
-      switchMode("CLIENT");
-      navigate("/user/myprofil");
-    } else {
-      switchMode("PRESTATAIRE");
-      navigate("/user/myprofil");
-    }
   };
 
   return (
@@ -124,20 +105,27 @@ export const UserNavbar = () => {
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               </button>
 
-              {/* DYNAMIC MODE SWITCH BUTTON */}
+              {/* DYNAMIC MODE SWITCH BUTTON USING USE-SWITCH-MODE HOOK */}
               <button
                 onClick={handleModeAction}
-                className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 border border-emerald-200/60 rounded-xl font-medium text-xs md:text-sm transition-all shadow-xs active:scale-95"
+                disabled={isLoading}
+                className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 border border-emerald-200/60 rounded-xl font-medium text-xs md:text-sm transition-all shadow-xs active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {hasPrestataireRole && (
-                  <Repeat className="w-3.5 h-3.5 text-emerald-700" />
+                {isLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 text-emerald-700 animate-spin" />
+                ) : (
+                  hasPrestataireRole && (
+                    <Repeat className="w-3.5 h-3.5 text-emerald-700" />
+                  )
                 )}
                 <span>
-                  {!hasPrestataireRole
-                    ? "Devenir prestataire"
-                    : currentMode === "PRESTATAIRE"
-                      ? "Passer en mode Client"
-                      : "Passer en mode Prestataire"}
+                  {isLoading
+                    ? "Changement..."
+                    : !hasPrestataireRole
+                      ? "Devenir prestataire"
+                      : currentMode === "PRESTATAIRE"
+                        ? "Passer en mode Client"
+                        : "Passer en mode Prestataire"}
                 </span>
               </button>
 
