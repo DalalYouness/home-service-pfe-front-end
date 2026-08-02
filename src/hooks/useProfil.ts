@@ -14,8 +14,6 @@ export const useProfil = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ProfileErrors>({});
 
-  // Deriving role & email from AuthContext directly
-  const role = user?.roles?.[0]?.roleName || user?.roles?.[0] || "";
   const email = user?.email || "";
 
   const [formData, setFormData] = useState<UserProfilResponseDTO>({
@@ -162,7 +160,6 @@ export const useProfil = () => {
   return {
     isEditing,
     handleEdit,
-    role,
     errors,
     formData,
     handleChange,

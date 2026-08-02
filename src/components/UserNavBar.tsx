@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, Home, X } from "lucide-react";
+import { Search, Bell, LogOut, Home, X, Repeat } from "lucide-react";
 import { LogoutModal } from "./LogoutModal";
 import { useAuth } from "../context/AuthContext";
 
@@ -9,16 +9,37 @@ export const UserNavbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const { user, logout } = useAuth();
+
+  // Extracting currentMode & switchMode from AuthContext
+  const { user, logout, currentMode, switchMode } = useAuth();
 
   const handleLogoutConfirm = () => {
     logout();
     setIsLogoutModalOpen(false);
   };
 
-  const isPrestataire = user?.roles?.some(
-    (role) => role.roleName === "ROLE_PRESTATAIRE",
+  // Safe Role Check for PRESTATAIRE existence in user.roles
+  const hasPrestataireRole = user?.roles?.some((role: any) =>
+    typeof role === "string"
+      ? role === "ROLE_PRESTATAIRE"
+      : role?.roleName === "ROLE_PRESTATAIRE",
   );
+
+  // Handle switching modes or redirecting to become-provider
+  const handleModeAction = () => {
+    if (!hasPrestataireRole) {
+      navigate("/become-provider");
+      return;
+    }
+
+    if (currentMode === "PRESTATAIRE") {
+      switchMode("CLIENT");
+      navigate("/user/myprofil");
+    } else {
+      switchMode("PRESTATAIRE");
+      navigate("/user/myprofil");
+    }
+  };
 
   return (
     <>
@@ -55,7 +76,13 @@ export const UserNavbar = () => {
             {/* LOGO */}
             <div
               className="flex items-center gap-2 md:gap-3 cursor-pointer shrink-0"
-              onClick={() => navigate("/user/dashboard")}
+              onClick={() =>
+                navigate(
+                  currentMode === "PRESTATAIRE"
+                    ? "/prestataire/dashboard"
+                    : "/user/dashboard",
+                )
+              }
             >
               <div className="w-9 h-9 md:w-10 md:h-10 bg-emerald-800 rounded-xl flex items-center justify-center text-white shadow-md transition-all">
                 <Home className="w-5 h-5 md:w-5.5 md:h-5.5" />
@@ -97,21 +124,20 @@ export const UserNavbar = () => {
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               </button>
 
-              {/*Devenir / Espace Prestataire */}
+              {/* ✅ DYNAMIC MODE SWITCH BUTTON */}
               <button
-                onClick={() => {
-                  if (isPrestataire) {
-                    navigate("/prestataire/dashboard");
-                  } else {
-                    navigate("/become-provider");
-                  }
-                }}
+                onClick={handleModeAction}
                 className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 border border-emerald-200/60 rounded-xl font-medium text-xs md:text-sm transition-all shadow-xs active:scale-95"
               >
-                {/* <Wrench className="w-4 h-4 text-emerald-700" />{" "} */}
-
+                {hasPrestataireRole && (
+                  <Repeat className="w-3.5 h-3.5 text-emerald-700" />
+                )}
                 <span>
-                  {isPrestataire ? "Espace Prestataire" : "Devenir prestataire"}
+                  {!hasPrestataireRole
+                    ? "Devenir prestataire"
+                    : currentMode === "PRESTATAIRE"
+                      ? "Passer en mode Client"
+                      : "Passer en mode Prestataire"}
                 </span>
               </button>
 
@@ -121,15 +147,18 @@ export const UserNavbar = () => {
               {/* Profile User Info */}
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="w-9 h-9 md:w-10 md:h-10 bg-emerald-950 rounded-full flex items-center justify-center text-white font-bold shrink-0">
-                  {user?.fullname.charAt(0).toUpperCase()}
+                  {(user?.fullname || user?.email || "U")
+                    .charAt(0)
+                    .toUpperCase()}
                 </div>
 
                 <div className="hidden sm:flex flex-col">
                   <span className="text-sm font-semibold text-emerald-950 leading-tight">
-                    {user?.fullname}
+                    {user?.fullname || "Utilisateur"}
                   </span>
-                  <span className="text-xs text-gray-500 font-medium">
-                    Espace {user?.roles[0].roleName.substring(5).toLowerCase()}
+                  <span className="text-xs text-gray-500 font-medium capitalize">
+                    {/* ✅ Reflects the exact active viewing mode */}
+                    Espace {currentMode.toLowerCase()}
                   </span>
                 </div>
               </div>

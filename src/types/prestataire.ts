@@ -19,4 +19,5 @@ export interface BecomePrestataireDto {
 export interface BecomePrestataiteRespDto {
   message: string;
   token: string;
+  roles: string[];
 }

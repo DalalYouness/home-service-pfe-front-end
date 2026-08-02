@@ -59,10 +59,12 @@ export const usePrestataire = () => {
         updateToken(response.token);
       }
 
-      // 2. Synchronize local user role to PRESTATAIRE
-      updateUser({
-        roles: ["ROLE_PRESTATAIRE"],
-      });
+      // 2. add new roles to user context to reflect role change in UI
+      if (response.roles) {
+        updateUser({
+          roles: response.roles /*[ROLE_PRESTATAIRE, ROLE_CLIENT]*/,
+        });
+      }
     } catch (err) {
       // Global Interceptor handles 500/Network errors; local handling if needed
       console.error("Failed to convert user to prestataire:", err);

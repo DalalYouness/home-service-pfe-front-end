@@ -10,13 +10,14 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useProfil } from "../hooks/useProfil";
+import { useAuth } from "../context/AuthContext"; // ✅ 1. Import useAuth
 import ProfilSkeleton from "./ProfilSkeleton";
 
 export default function Profil() {
+  const { currentMode } = useAuth(); // ✅ 2. Get active viewing mode directly
   const {
     isEditing,
     handleEdit,
-    role,
     errors,
     formData,
     handleChange,
@@ -27,7 +28,7 @@ export default function Profil() {
 
   // ==================== SKELETON RENDER ====================
   if (isLoading && !isEditing) {
-    return <ProfilSkeleton role={role} />;
+    return <ProfilSkeleton currentMode={currentMode} />;
   }
 
   // ==================== MAIN RENDER ====================
@@ -54,7 +55,6 @@ export default function Profil() {
               type="file"
               id="profilePhotoInput"
               accept="image/*"
-              // onChange={handlePhotoChange} // apres je vais generer ca
               className="hidden"
             />
             <label
@@ -103,7 +103,7 @@ export default function Profil() {
 
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* ==================== 1. PRÉNOM INPUT ==================== */}
+          {/* 1. PRÉNOM INPUT */}
           <div
             className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.firstName
@@ -137,7 +137,7 @@ export default function Profil() {
             </div>
           </div>
 
-          {/* ==================== 2. NOM INPUT ==================== */}
+          {/* 2. NOM INPUT */}
           <div
             className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.lastName
@@ -171,7 +171,7 @@ export default function Profil() {
             </div>
           </div>
 
-          {/* ==================== 3. TÉLÉPHONE INPUT ==================== */}
+          {/* 3. TÉLÉPHONE INPUT */}
           <div
             className={`md:col-span-2 bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.phoneNumber
@@ -205,7 +205,7 @@ export default function Profil() {
             </div>
           </div>
 
-          {/* ==================== 4. ADRESSE INPUT ==================== */}
+          {/* 4. ADRESSE INPUT */}
           <div
             className={`md:col-span-2 bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.address
@@ -239,7 +239,7 @@ export default function Profil() {
             </div>
           </div>
 
-          {/* ==================== 5. VILLE INPUT ==================== */}
+          {/* 5. VILLE INPUT */}
           <div
             className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.city ? "border-red-500 bg-red-50/20" : "border-[#e8dfc8]"
@@ -271,8 +271,8 @@ export default function Profil() {
             </div>
           </div>
 
-          {/* ==================== 6. ZONE D'INTERVENTION INPUT (PRESTATAIRE ONLY) ==================== */}
-          {role === "ROLE_PRESTATAIRE" && (
+          {/* ✅ 6. ZONE D'INTERVENTION INPUT (PRESTATAIRE MODE ONLY) */}
+          {currentMode === "PRESTATAIRE" && (
             <div
               className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
                 errors.interventionArea
@@ -307,7 +307,7 @@ export default function Profil() {
             </div>
           )}
 
-          {/* ==================== 7. PAYS INPUT ==================== */}
+          {/* 7. PAYS INPUT */}
           <div
             className={`bg-white border rounded-2xl p-3.5 flex items-center gap-3 transition-colors ${
               errors.country
@@ -342,7 +342,7 @@ export default function Profil() {
           </div>
         </div>
 
-        {/* ==================== 8. BIO TEXTAREA ==================== */}
+        {/* 8. BIO TEXTAREA */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
             <FileText size={16} className="text-forest-900" />
@@ -363,7 +363,7 @@ export default function Profil() {
           </div>
         </div>
 
-        {/* ==================== SUBMIT BUTTON ==================== */}
+        {/* SUBMIT BUTTON */}
         {isEditing && (
           <div className="flex justify-end pt-4 border-t border-[#f2ece1]">
             <button
