@@ -21,3 +21,7 @@ export interface BecomePrestataiteRespDto {
   token: string;
   roles: string[];
 }
+
+export interface SwitchModeResponse {
+  message: string;
+}

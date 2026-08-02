@@ -10,7 +10,7 @@ export const UserNavbar = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
-  // Extracting currentMode & switchMode from AuthContext
+  // Extract authentication states and mode control
   const { user, logout, currentMode, switchMode } = useAuth();
 
   const handleLogoutConfirm = () => {
@@ -18,14 +18,14 @@ export const UserNavbar = () => {
     setIsLogoutModalOpen(false);
   };
 
-  // Safe Role Check for PRESTATAIRE existence in user.roles
+  // Safe check if user possesses the PRESTATAIRE role
   const hasPrestataireRole = user?.roles?.some((role: any) =>
     typeof role === "string"
       ? role === "ROLE_PRESTATAIRE"
       : role?.roleName === "ROLE_PRESTATAIRE",
   );
 
-  // Handle switching modes or redirecting to become-provider
+  // Simplified mode toggle logic
   const handleModeAction = () => {
     if (!hasPrestataireRole) {
       navigate("/become-provider");
@@ -124,7 +124,7 @@ export const UserNavbar = () => {
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
               </button>
 
-              {/* ✅ DYNAMIC MODE SWITCH BUTTON */}
+              {/* DYNAMIC MODE SWITCH BUTTON */}
               <button
                 onClick={handleModeAction}
                 className="hidden sm:flex items-center gap-2 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 border border-emerald-200/60 rounded-xl font-medium text-xs md:text-sm transition-all shadow-xs active:scale-95"
@@ -157,7 +157,6 @@ export const UserNavbar = () => {
                     {user?.fullname || "Utilisateur"}
                   </span>
                   <span className="text-xs text-gray-500 font-medium capitalize">
-                    {/* ✅ Reflects the exact active viewing mode */}
                     Espace {currentMode.toLowerCase()}
                   </span>
                 </div>

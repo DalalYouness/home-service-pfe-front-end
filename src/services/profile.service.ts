@@ -6,7 +6,7 @@ import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
 import type {
   BecomePrestataireDto,
   BecomePrestataiteRespDto,
-  PrestataireInfo,
+  SwitchModeResponse,
 } from "../types/prestataire";
 
 // j'injecte pas le token dans le service parce l'intercepteur du request d'axios fait ca
@@ -49,6 +49,16 @@ export const profileService = {
       "/api/v1/auth/become-prestataire",
       dto,
     );
+    return response.data;
+  },
+
+  switchToClient: async (): Promise<SwitchModeResponse> => {
+    const response = await apiClient.post("/api/v1/auth/switch-to-client");
+    return response.data;
+  },
+
+  switchToProvider: async (): Promise<SwitchModeResponse> => {
+    const response = await apiClient.post("/api/v1/auth/switch-to-provider");
     return response.data;
   },
 };
