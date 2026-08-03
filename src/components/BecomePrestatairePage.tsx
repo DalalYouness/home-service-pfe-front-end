@@ -95,12 +95,12 @@ export default function BecomePrestatairePage() {
                 <div className="relative flex items-center">
                   <Briefcase className="absolute left-4 w-5 h-5 text-gray-400 pointer-events-none" />
                   <select
-                    name="service"
+                    name="serviceId"
                     disabled={isLoading || isLoadingServices}
-                    value={prestataireInfo.service}
+                    value={prestataireInfo.serviceId ?? ""}
                     onChange={handleChange}
                     className={`w-full pl-12 pr-10 py-3.5 bg-cream-50/50 border rounded-2xl text-sm appearance-none focus:outline-none transition-all duration-200 text-gray-700 ${
-                      errors.service
+                      errors.serviceId
                         ? "border-red-500 focus:border-red-500 bg-red-50/20"
                         : "border-gray-200 focus:border-forest-500 focus:bg-white"
                     }`}
@@ -120,9 +120,9 @@ export default function BecomePrestatairePage() {
                     ▼
                   </div>
                 </div>
-                {errors.service && (
+                {errors.serviceId && (
                   <p className="text-xs text-red-500 font-medium mt-1">
-                    {errors.service}
+                    {errors.serviceId}
                   </p>
                 )}
               </div>

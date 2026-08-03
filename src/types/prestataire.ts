@@ -3,7 +3,7 @@
  */
 export interface PrestataireInfo {
   interventionArea: string;
-  service: string;
+  serviceId: number | null;
 }
 
 /**

@@ -1,19 +1,19 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
-// NEW: Define all supported application modes across the UI context
 export type AppMode = "CLIENT" | "PRESTATAIRE" | "ADMIN";
 
-interface User {
+export interface User {
   id?: number;
   email: string;
   fullname: string;
   roles: string[];
+  // FIXED: Added activeMode from Backend to keep state in sync with DB Profile type
+  activeMode?: AppMode;
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  // NEW: State and handler exposed to control global dynamic layout viewing modes
   currentMode: AppMode;
   isAuthenticated: boolean;
 
@@ -21,65 +21,77 @@ interface AuthContextType {
   updateUser: (updatedFields: Partial<User>) => void;
   logout: () => void;
   updateToken: (newToken: string) => void;
-  // NEW: Action handler for explicitly toggling viewing modes (e.g. from UserNavBar)
   switchMode: (mode: AppMode) => void;
 }
 
 /**
- * NEW: Helper function to evaluate role hierarchy and derive initial active mode.
- * Rules: ADMIN -> PRESTATAIRE -> CLIENT (Fallback for unauthenticated or base users).
+ * FIXED: Synchronization Strategy
+ * 1. Honor explicit DB persisted activeMode sent from Backend User response first.
+ * 2. Fall back to role priority only if activeMode is undefined (e.g. initial login).
  */
 const deriveInitialMode = (user: User | null): AppMode => {
-  if (!user || !user.roles) return "CLIENT";
+  if (!user) return "CLIENT";
 
-  if (user.roles.includes("ROLE_ADMIN")) return "ADMIN";
-  if (user.roles.includes("ROLE_PRESTATAIRE")) return "PRESTATAIRE";
+  // Priority 1: Backend DB truth
+  if (user.activeMode) return user.activeMode;
+
+  // Priority 2: Role fallback logic
+  if (user.roles?.includes("ROLE_ADMIN")) return "ADMIN";
+  if (user.roles?.includes("ROLE_PRESTATAIRE")) return "PRESTATAIRE";
+
   return "CLIENT";
 };
 
-// Creates the global Authentication Context contract.
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // User
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // Token
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem("token");
   });
 
-  // NEW: Current viewing mode initialization with local persistence & role check fallback
+  // Synchronize state from persisted user or localStorage override
   const [currentMode, setCurrentMode] = useState<AppMode>(() => {
     const savedMode = localStorage.getItem("currentMode") as AppMode;
     if (savedMode) return savedMode;
 
     const initialUser = localStorage.getItem("user");
-    const parsedUser = initialUser ? JSON.parse(initialUser) : null;
+    const parsedUser: User | null = initialUser
+      ? JSON.parse(initialUser)
+      : null;
     return deriveInitialMode(parsedUser);
   });
 
-  //NEW: Updates mode state in memory and persists state across page reloads
   const switchMode = (mode: AppMode) => {
     setCurrentMode(mode);
     localStorage.setItem("currentMode", mode);
+
+    // FIXED: Also update activeMode inside the stored user object to avoid desync on reload
+    if (user) {
+      const updatedUser = { ...user, activeMode: mode };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
   };
 
-  const login = (user: User, token: string) => {
-    setUser(user);
-    setToken(token);
+  const login = (userData: User, tokenData: string) => {
+    setUser(userData);
+    setToken(tokenData);
 
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
-
-    // NEW: Automatically calculate and set the priority mode immediately upon authentication
-    const defaultMode = deriveInitialMode(user);
+    const defaultMode = deriveInitialMode(userData);
     setCurrentMode(defaultMode);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...userData, activeMode: defaultMode }),
+    );
+    localStorage.setItem("token", tokenData);
     localStorage.setItem("currentMode", defaultMode);
   };
 
@@ -92,14 +104,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         ...updatedFields,
       };
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      // FIXED: Dynamically derive mode if activeMode or roles were changed in update
+      const newMode =
+        updatedFields.activeMode ?? deriveInitialMode(updatedUser);
+      setCurrentMode(newMode);
 
-      // NEW: Recalculate and trigger mode update if roles were updated (e.g., Became Prestataire)
-      if (updatedFields.roles) {
-        const newMode = deriveInitialMode(updatedUser);
-        setCurrentMode(newMode);
-        localStorage.setItem("currentMode", newMode);
-      }
+      updatedUser.activeMode = newMode;
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem("currentMode", newMode);
 
       return updatedUser;
     });
@@ -108,8 +121,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     setUser(null);
     setToken(null);
-
-    // NEW: Reset viewing mode state back to default guest/client mode upon logout
     setCurrentMode("CLIENT");
 
     localStorage.removeItem("user");
@@ -126,14 +137,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     () => ({
       user,
       token,
-      currentMode, // NEW
+      currentMode,
       isAuthenticated: !!token,
-
       login,
       updateUser,
       logout,
       updateToken,
-      switchMode, // NEW
+      switchMode,
     }),
     [user, token, currentMode],
   );
@@ -143,10 +153,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth must be used inside AuthProvider");
   }
-
   return context;
 };

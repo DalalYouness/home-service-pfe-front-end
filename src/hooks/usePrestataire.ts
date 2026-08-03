@@ -3,23 +3,23 @@ import type {
   BecomePrestataireDto,
   PrestataireInfo,
 } from "../types/prestataire";
+import type { AddServiceReqProviderDTO } from "../types/categorie";
 import { profileService } from "../services/profile.service";
+import { categorieService } from "../services/categorie.service";
 import { useAuth } from "../context/AuthContext";
 
 type PrestataireErrors = Partial<Record<keyof PrestataireInfo, string>>;
 
 export const usePrestataire = () => {
-  // Extract context methods to handle local session role transition
   const { updateUser, updateToken } = useAuth();
 
   const [prestataireInfo, setPrestataireInfo] = useState<PrestataireInfo>({
     interventionArea: "",
-    service: "",
+    serviceId: null,
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<PrestataireErrors>({});
 
-  // Client-side input validation strategy
   const validateForm = (): boolean => {
     const newErrors: PrestataireErrors = {};
     const areaValue = prestataireInfo.interventionArea.trim();
@@ -31,15 +31,14 @@ export const usePrestataire = () => {
         "La zone doit contenir entre 3 et 30 caractères";
     }
 
-    if (!prestataireInfo.service) {
-      newErrors.service = "Veuillez sélectionner un service";
+    if (!prestataireInfo.serviceId) {
+      newErrors.serviceId = "Veuillez sélectionner un service";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Main submit handler responsible for role switching
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -51,33 +50,38 @@ export const usePrestataire = () => {
         interventionArea: prestataireInfo.interventionArea,
       };
 
-      // Call API to update status in Identity/Profile Service
+      // 1. Upgrade user role and fetch new JWT token
       const response = await profileService.becomeProvider(prestataireReq);
 
-      // 1. Update JWT Token in Context & LocalStorage with new claims
       if (response.token) {
         updateToken(response.token);
       }
 
-      // 2. add new roles to user context to reflect role change in UI
       if (response.roles) {
         updateUser({
-          roles: response.roles /*[ROLE_PRESTATAIRE, ROLE_CLIENT]*/,
+          roles: response.roles,
         });
       }
+
+      // FIXED: Used categorieService instead of providerService to perform the API request
+      if (prestataireInfo.serviceId) {
+        const addServiceDto: AddServiceReqProviderDTO = {
+          serviceId: prestataireInfo.serviceId,
+        };
+        await categorieService.addServiceToProvider(addServiceDto);
+      }
     } catch (err) {
-      // Global Interceptor handles 500/Network errors; local handling if needed
-      console.error("Failed to convert user to prestataire:", err);
+      console.error("Failed to convert user or add service:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Clear relevant error as the user types
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
+
     if (errors[name as keyof PrestataireInfo]) {
       setErrors((prev) => ({
         ...prev,
@@ -87,7 +91,7 @@ export const usePrestataire = () => {
 
     setPrestataireInfo((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "serviceId" ? (value ? Number(value) : null) : value,
     }));
   };
 
