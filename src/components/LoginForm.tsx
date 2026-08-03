@@ -69,6 +69,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
         email: responseData.email,
         fullname: responseData.fullName,
         roles: responseData.roles,
+        activeMode: responseData.activeMode,
       };
 
       login(user, responseData.token);

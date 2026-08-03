@@ -1,3 +1,5 @@
+import type { AppMode } from "../context/AuthContext";
+
 // equal to loginRequestDto in my backend
 export interface LoginRequestDto {
   email: string;
@@ -12,4 +14,5 @@ export interface AuthResponseDto {
   message: string;
   roles: string[];
   expiresIn: string;
+  activeMode: AppMode;
 }
