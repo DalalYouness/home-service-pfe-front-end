@@ -1,69 +1,143 @@
-import { Wrench, Flower2, Truck, Sparkles, Baby, PawPrint } from "lucide-react";
+// src/components/services/ServiceGrid.tsx
 import { ServiceCard } from "./ServiceCard";
+import { useServices } from "../hooks/useServices";
+import {
+  Wrench,
+  Zap,
+  Paintbrush,
+  Flower2,
+  Sparkles,
+  BookOpen,
+  Briefcase,
+  ChevronDown,
+  type LucideIcon,
+} from "lucide-react";
 
-const SERVICES_LIST = [
+// Dictionary كيربط السمية بـ الأيقونة والصورة ديال الخلفية
+const SERVICE_MEDIA_MAP: Record<string, { icon: LucideIcon; bgImage: string }> =
   {
-    id: 1,
-    title: "Bricolage",
-    description: "Montage, fixation, petits travaux",
-    icon: Wrench,
-  },
-  {
-    id: 2,
-    title: "Jardinage",
-    description: "Tonte, élagage, entretien extérieur",
-    icon: Flower2,
-  },
-  {
-    id: 3,
-    title: "Déménagement",
-    description: "Transport, emballage, chargement",
-    icon: Truck,
-  },
-  {
-    id: 4,
-    title: "Ménage",
-    description: "Nettoyage, repassage, vitres",
-    icon: Sparkles,
-  },
-  {
-    id: 5,
-    title: "Enfants",
-    description: "Garde, sorties d'école, aide",
-    icon: Baby,
-  },
-  {
-    id: 6,
-    title: "Animaux",
-    description: "Promenade, soins, pension",
-    icon: PawPrint,
-  },
-];
+    Plomberie: {
+      icon: Wrench,
+      bgImage:
+        "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=800&auto=format&fit=crop",
+    },
+    Électricité: {
+      icon: Zap,
+      bgImage:
+        "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
+    },
+    Peinture: {
+      icon: Paintbrush,
+      bgImage:
+        "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop",
+    },
+    Jardinage: {
+      icon: Flower2,
+      bgImage:
+        "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=800&auto=format&fit=crop",
+    },
+    "Nettoyage à domicile": {
+      icon: Sparkles,
+      bgImage:
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop",
+    },
+    "Cours à domicile": {
+      icon: BookOpen,
+      bgImage:
+        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop",
+    },
+  };
 
 export const ServiceGrid = () => {
+  const { services } = useServices();
+
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header Section */}
-      <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
-        <h2 className="font-serif font-bold text-2xl sm:text-3xl md:text-4xl text-forest-900 mb-3">
-          Nos Services à Domicile
-        </h2>
-        <p className="font-sans text-sm sm:text-base text-gray-600">
-          Trouvez le professionnel idéal pour tous vos besoins du quotidien.
-        </p>
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        {services.map((service) => {
+          const media = SERVICE_MEDIA_MAP[service.name];
+
+          return (
+            <ServiceCard
+              key={service.id}
+              title={service.name}
+              description={service.description}
+              icon={media?.icon || Briefcase}
+              bgImage={media?.bgImage}
+            />
+          );
+        })}
       </div>
 
-      {/* Grid Container (Mobile-First) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {SERVICES_LIST.map((service) => (
-          <ServiceCard
-            key={service.id}
-            title={service.title}
-            description={service.description}
-            icon={service.icon}
-          />
-        ))}
+      {/* Button Section */}
+      <div className="mt-10 md:mt-12 flex justify-center">
+        <button className="group relative inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full bg-white border border-cream-300 text-forest-900 font-sans font-semibold text-sm sm:text-base shadow-card hover:shadow-card-hover hover:border-forest-500 hover:text-forest-700 active:scale-95 transition-all duration-300 cursor-pointer">
+          <span>Voir tous les services</span>
+          <div className="p-1 rounded-full bg-forest-50 text-forest-700 group-hover:bg-forest-900 group-hover:text-white transition-colors duration-300">
+            <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1 group-hover:animate-bounce" />
+          </div>
+        </button>
       </div>
-    </section>
+    </div>
   );
 };
+
+// import {
+//   Wrench,
+//   Zap,
+//   Paintbrush,
+//   Flower2,
+//   Sparkles,
+//   BookOpen,
+//   Briefcase,
+//   ChevronDown,
+//   type LucideIcon, // 1. Import le type LucideIcon
+// } from "lucide-react";
+// import { ServiceCard } from "./ServiceCard";
+// import { useServices } from "../hooks/useServices";
+
+// // 2. Typing explicit avec LucideIcon
+// const SERVICE_ICONS_MAP: Record<string, LucideIcon> = {
+//   Plomberie: Wrench,
+//   Électricité: Zap,
+//   Peinture: Paintbrush,
+//   Jardinage: Flower2,
+//   "Nettoyage à domicile": Sparkles,
+//   "Cours à domicile": BookOpen,
+// };
+
+// export const ServiceGrid = () => {
+//   const { services } = useServices();
+
+//   return (
+//     <div className="w-full">
+//       {/* Grid Container */}
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+//         {services.map((service) => {
+//           // 3. Extraction sécurisée de l'icône
+//           const SelectedIcon: LucideIcon =
+//             SERVICE_ICONS_MAP[service.name] || Briefcase;
+
+//           return (
+//             <ServiceCard
+//               key={service.id}
+//               title={service.name}
+//               description={service.description}
+//               icon={SelectedIcon}
+//             />
+//           );
+//         })}
+//       </div>
+
+//       {/* Button Section */}
+//       <div className="mt-10 md:mt-12 flex justify-center">
+//         <button className="group relative inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full bg-white border border-cream-300 text-forest-900 font-sans font-semibold text-sm sm:text-base shadow-card hover:shadow-card-hover hover:border-forest-500 hover:text-forest-700 active:scale-95 transition-all duration-300 cursor-pointer">
+//           <span>Voir tous les services</span>
+//           <div className="p-1 rounded-full bg-forest-50 text-forest-700 group-hover:bg-forest-900 group-hover:text-white transition-colors duration-300">
+//             <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1 group-hover:animate-bounce" />
+//           </div>
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };

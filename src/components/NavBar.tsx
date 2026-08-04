@@ -1,7 +1,5 @@
-//refactoring done hmdulilah
-
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 
 import Logo from "./Logo";
 import LoginForm from "./LoginForm";
@@ -13,53 +11,60 @@ export default function Navbar() {
   // Login modal state
   const [isAuthModalOpen, setIsAuthOpen] = useState(false);
 
-  // i keep the two states inside the component because no component will need them except that component for that reason i didn't create a custom hook
-
   return (
     <>
-      <nav className="fixed top-0 right-0 left-0 z-50 bg-cream-100/95 backdrop-blur-sm border-b border-[#e8dfc8]">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-          <a href="#">
+      {/* Navbar background darkened to 90% for contrast comfort */}
+      <nav className="fixed top-0 right-0 left-0 z-50 bg-forest-950/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
+          {/* Logo */}
+          <a
+            href="#"
+            className="flex items-center gap-2 group transition-transform duration-300 hover:scale-105"
+          >
             <Logo size="sm" animate />
           </a>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-9">
             <a
               href="#services"
-              className="text-sm font-medium text-gray-700 hover:text-forest-800 transition-colors"
+              className="relative text-sm font-semibold text-gray-100 hover:text-cream-100 transition-colors py-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-cream-200 hover:after:w-full after:transition-all after:duration-300"
             >
               Services
             </a>
 
             <a
               href="#how-it-works"
-              className="text-sm font-medium text-gray-700 hover:text-forest-800 transition-colors"
+              className="relative text-sm font-semibold text-gray-100 hover:text-cream-100 transition-colors py-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-cream-200 hover:after:w-full after:transition-all after:duration-300"
             >
               Comment ça marche
             </a>
 
             <a
               href="#providers"
-              className="text-sm font-medium text-gray-700 hover:text-forest-800 transition-colors"
+              className="relative text-sm font-semibold text-gray-100 hover:text-cream-100 transition-colors py-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-cream-200 hover:after:w-full after:transition-all after:duration-300"
             >
               Prestataires
             </a>
           </div>
 
-          {/* Desktop Login */}
-          <div className="hidden md:flex">
+          {/* Desktop Login Button */}
+          <div className="hidden md:flex items-center">
             <button
               onClick={() => setIsAuthOpen(true)}
-              className="text-sm font-semibold text-white bg-forest-800 hover:bg-forest-900 transition-all duration-200 active:scale-[0.97] px-6 py-2.5 rounded-full shadow-sm"
+              className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-cream-100 via-amber-100 to-cream-200 text-forest-950 font-bold text-sm shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_4px_25px_rgba(245,240,230,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer overflow-hidden border border-white/50"
             >
-              Connexion
+              <User
+                size={16}
+                className="text-forest-900 group-hover:rotate-12 transition-transform duration-300"
+              />
+              <span>Connexion</span>
             </button>
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile Toggle Button */}
           <button
-            className="md:hidden p-2 text-gray-700"
+            className="md:hidden p-2.5 rounded-xl bg-white/10 border border-white/10 text-white hover:bg-white/20 transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Menu"
           >
@@ -67,12 +72,12 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Dropdown Menu */}
         {menuOpen && (
-          <div className="md:hidden bg-[#f5f0e6] border-t border-[#e8dfc8] px-6 py-4 flex flex-col gap-4">
+          <div className="md:hidden bg-forest-950/98 backdrop-blur-xl border-b border-white/10 px-6 py-6 flex flex-col gap-5 shadow-2xl">
             <a
               href="#services"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-semibold text-gray-100 hover:text-cream-100 transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               Services
@@ -80,7 +85,7 @@ export default function Navbar() {
 
             <a
               href="#how-it-works"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-semibold text-gray-100 hover:text-cream-100 transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               Comment ça marche
@@ -88,7 +93,7 @@ export default function Navbar() {
 
             <a
               href="#providers"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-semibold text-gray-100 hover:text-cream-100 transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               Prestataires
@@ -99,9 +104,10 @@ export default function Navbar() {
                 setMenuOpen(false);
                 setIsAuthOpen(true);
               }}
-              className="text-sm font-semibold text-white bg-forest-800 px-5 py-2.5 rounded-full w-full mt-1"
+              className="flex items-center justify-center gap-2 text-sm font-bold text-forest-950 bg-gradient-to-r from-cream-100 to-amber-100 px-5 py-3 rounded-full w-full mt-2 shadow-lg active:scale-95 transition-all"
             >
-              Connexion
+              <User size={18} />
+              <span>Connexion</span>
             </button>
           </div>
         )}
