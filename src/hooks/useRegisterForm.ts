@@ -183,6 +183,7 @@ export const useRegisterForm = () => {
           email: response.email,
           roles: response.roles,
           fullname: response.fullName,
+          activeMode: response.activeMode || "CLIENT",
         },
         response.token,
       );

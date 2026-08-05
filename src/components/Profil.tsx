@@ -10,11 +10,11 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useProfil } from "../hooks/useProfil";
-import { useAuth } from "../context/AuthContext"; // ✅ 1. Import useAuth
+import { useAuth } from "../context/AuthContext";
 import ProfilSkeleton from "./ProfilSkeleton";
 
 export default function Profil() {
-  const { currentMode } = useAuth(); // ✅ 2. Get active viewing mode directly
+  const { currentMode } = useAuth();
   const {
     isEditing,
     handleEdit,
@@ -28,7 +28,7 @@ export default function Profil() {
 
   // ==================== SKELETON RENDER ====================
   if (isLoading && !isEditing) {
-    return <ProfilSkeleton currentMode={currentMode} />;
+    return <ProfilSkeleton role={currentMode} />;
   }
 
   // ==================== MAIN RENDER ====================

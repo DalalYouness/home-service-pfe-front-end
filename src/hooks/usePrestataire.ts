@@ -60,6 +60,7 @@ export const usePrestataire = () => {
       if (response.roles) {
         updateUser({
           roles: response.roles,
+          activeMode: "PRESTATAIRE",
         });
       }
 

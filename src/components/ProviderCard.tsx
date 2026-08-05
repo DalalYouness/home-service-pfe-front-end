@@ -47,7 +47,6 @@ export const ProviderCard = ({
                   {initialLetter}
                 </div>
               )}
-              <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" />
             </div>
 
             {/* Main Info */}

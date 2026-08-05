@@ -20,10 +20,6 @@ export default function RegisterForm() {
         backgroundImage: `url(${bgRegister})`,
       }}
     >
-      {/*
-        - نقصنا الـ max-w لـ max-w-xl باش تاخد قياس متناسق.
-        - زدنا backdrop-blur خفيف مع bg-white/95 باش تبان المودرن UI layout.
-      */}
       <div className="w-full max-w-xl bg-white/95 backdrop-blur-sm p-6 md:p-8 rounded-3xl my-8 shadow-2xl border border-white/20">
         <div className="flex flex-col items-center mb-6">
           <h2 className="text-2xl font-bold text-forest-950 mt-2">
