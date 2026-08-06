@@ -58,6 +58,7 @@ export const ServiceGrid = () => {
           return (
             <ServiceCard
               key={service.id}
+              id={service.id}
               title={service.name}
               description={service.description}
               icon={media?.icon || Briefcase}

@@ -25,3 +25,13 @@ export interface BecomePrestataiteRespDto {
 export interface SwitchModeResponse {
   message: string;
 }
+
+export interface ProvidersPublic {
+  id: number;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  city: string;
+  country: string;
+  imgUrl?: string;
+}

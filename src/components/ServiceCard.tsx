@@ -3,6 +3,7 @@ import { ArrowUpRight, type LucideIcon } from "lucide-react";
 import { ProvidersModal } from "./ProvidersModal";
 
 type ServiceCardProps = {
+  id: number;
   title: string;
   description: string;
   icon: LucideIcon;

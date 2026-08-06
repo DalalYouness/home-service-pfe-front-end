@@ -9,6 +9,7 @@ import type {
   SwitchModeResponse,
 } from "../types/prestataire";
 
+
 // j'injecte pas le token dans le service parce l'intercepteur du request d'axios fait ca
 export const profileService = {
   getProfil: async (): Promise<UserProfilResponseDTO> => {
@@ -61,4 +62,9 @@ export const profileService = {
     const response = await apiClient.post("/api/v1/auth/switch-to-provider");
     return response.data;
   },
+
+ getAllProvidersByServiceId: async (serviceId : number): Promise<any> => {
 };
+
+
+
