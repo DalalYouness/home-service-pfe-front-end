@@ -6,9 +6,9 @@ import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
 import type {
   BecomePrestataireDto,
   BecomePrestataiteRespDto,
+  ProvidersPublic,
   SwitchModeResponse,
 } from "../types/prestataire";
-
 
 // j'injecte pas le token dans le service parce l'intercepteur du request d'axios fait ca
 export const profileService = {
@@ -63,8 +63,12 @@ export const profileService = {
     return response.data;
   },
 
- getAllProvidersByServiceId: async (serviceId : number): Promise<any> => {
+  getAllProvidersByServiceId: async (
+    serviceId: number,
+  ): Promise<ProvidersPublic[]> => {
+    const response = await apiClient.get(
+      `/api/v1/expertise/${serviceId}/providers`,
+    );
+    return response.data;
+  },
 };
-
-
-
