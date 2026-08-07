@@ -1,7 +1,6 @@
 import { MapPin, Star } from "lucide-react";
 import type { ProvidersPublic } from "../types/prestataire";
 
-// & means inheriting the properties of ProvidersPublic and adding an optional rating property
 export type ProviderCardProps = ProvidersPublic & {
   rating?: number; // Optional
 };
@@ -14,8 +13,16 @@ export const ProviderCard = ({
   imgUrl,
   rating,
 }: ProviderCardProps) => {
-  const fullName = `${firstName} ${lastName}`.trim();
-  const initialLetter = firstName ? firstName.charAt(0).toUpperCase() : "?";
+  // Capitalize الحرف الأول من السمية والكنية
+  const formattedFirstName = firstName
+    ? firstName.charAt(0).toUpperCase() + firstName.slice(1)
+    : "";
+  const formattedLastName = lastName
+    ? lastName.charAt(0).toUpperCase() + lastName.slice(1)
+    : "";
+
+  const fullName = `${formattedFirstName} ${formattedLastName}`.trim();
+  const initialLetter = formattedFirstName ? formattedFirstName.charAt(0) : "?";
   const locationText = [city, country].filter(Boolean).join(", ");
 
   return (
@@ -54,14 +61,14 @@ export const ProviderCard = ({
       {/* Bottom Section: Rating & CTA */}
       <div>
         <div className="pt-3 border-t border-gray-100 flex items-center justify-between mb-4">
-          {rating !== undefined ? (
-            <div className="flex items-center gap-1.5">
-              <Star size={16} className="text-amber-400 fill-amber-400" />
+          <div className="flex items-center gap-1.5">
+            <Star size={16} className="text-amber-400 fill-amber-400" />
+            {rating !== undefined ? (
               <span className="font-bold text-sm text-gray-900">{rating}</span>
-            </div>
-          ) : (
-            <span className="text-xs text-gray-400 font-medium">Nouveau</span>
-          )}
+            ) : (
+              <span className="text-xs text-gray-400 font-medium">Nouveau</span>
+            )}
+          </div>
         </div>
 
         {/* Action Button */}

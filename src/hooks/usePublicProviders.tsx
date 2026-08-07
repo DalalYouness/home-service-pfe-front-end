@@ -4,17 +4,33 @@ import type { ProvidersPublic } from "../types/prestataire";
 
 export const usePublicProviders = (serviceId: number, isOpen: boolean) => {
   const [providers, setProviders] = useState<ProvidersPublic[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // hit ila kan isOpen false, bach ma nfetchiwch data ila modal kan mamfouhch , ce qui est logique, sinon kan fetchiw data ila modal mamfouhch
-    if (!serviceId || !isOpen) return;
+    if (!serviceId || !isOpen) {
+      setIsLoading(false);
+      return;
+    }
 
+    let isMounted = true;
     setIsLoading(true);
+
     profileService
       .getAllProvidersByServiceId(serviceId)
-      .then(setProviders)
-      .finally(() => setIsLoading(false));
+      .then((data) => {
+        if (isMounted) setProviders(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching providers:", err);
+        if (isMounted) setProviders([]);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false; // Cleanup flag
+    };
   }, [serviceId, isOpen]);
 
   return { providers, isLoading };

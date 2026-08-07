@@ -11,6 +11,7 @@ type ServiceCardProps = {
 };
 
 export const ServiceCard = ({
+  id,
   title,
   description,
   icon: Icon,
@@ -61,6 +62,7 @@ export const ServiceCard = ({
       <ProvidersModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        serviceId={id}
         serviceTitle={title}
       />
     </>

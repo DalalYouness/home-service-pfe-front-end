@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, Home, X, Repeat, Loader2 } from "lucide-react";
+import { Search, Bell, LogOut, X, Repeat, Loader2 } from "lucide-react";
 import { LogoutModal } from "./LogoutModal";
 import { useAuth } from "../context/AuthContext";
 import { useSwitchMode } from "../hooks/useSwitchMode";
+import Logo from "./Logo";
 
 export const UserNavbar = () => {
   const navigate = useNavigate();
@@ -55,23 +56,7 @@ export const UserNavbar = () => {
         ) : (
           <>
             {/* LOGO */}
-            <div
-              className="flex items-center gap-2 md:gap-3 cursor-pointer shrink-0"
-              onClick={() =>
-                navigate(
-                  currentMode === "PRESTATAIRE"
-                    ? "/prestataire/dashboard"
-                    : "/user/dashboard",
-                )
-              }
-            >
-              <div className="w-9 h-9 md:w-10 md:h-10 bg-emerald-800 rounded-xl flex items-center justify-center text-white shadow-md transition-all">
-                <Home className="w-5 h-5 md:w-5.5 md:h-5.5" />
-              </div>
-              <span className="text-lg md:text-xl font-bold text-emerald-950 tracking-tight">
-                dalyoo
-              </span>
-            </div>
+            <Logo variant="light-bg" size="sm" />
 
             {/* DESKTOP SEARCH BAR */}
             <div className="flex-1 max-w-xl mx-8 hidden md:block">

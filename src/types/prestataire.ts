@@ -35,3 +35,15 @@ export interface ProvidersPublic {
   country: string;
   imgUrl?: string;
 }
+
+export interface ProviderDetailsPublic {
+  id: number;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  city: string;
+  country: string;
+  bio: string;
+  interventionArea: string;
+  imgUrl?: string;
+}

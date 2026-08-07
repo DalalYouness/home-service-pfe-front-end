@@ -6,6 +6,7 @@ import type { UpdateProfileRequestDto } from "../types/UpdateProfileRequestDto";
 import type {
   BecomePrestataireDto,
   BecomePrestataiteRespDto,
+  ProviderDetailsPublic,
   ProvidersPublic,
   SwitchModeResponse,
 } from "../types/prestataire";
@@ -68,6 +69,15 @@ export const profileService = {
   ): Promise<ProvidersPublic[]> => {
     const response = await apiClient.get(
       `/api/v1/expertise/${serviceId}/providers`,
+    );
+    return response.data;
+  },
+
+  getProviderPublicDetails: async (
+    providerId: number,
+  ): Promise<ProviderDetailsPublic> => {
+    const response = await apiClient.get(
+      `/api/v1/auth/${providerId}/public-profile`,
     );
     return response.data;
   },
