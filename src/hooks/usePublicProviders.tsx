@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
-import { providerService, ProvidersPublic } from "../services/providerService";
+import { profileService } from "../services/profile.service";
+import type { ProvidersPublic } from "../types/prestataire";
 
-export const usePublicProviders = (serviceId: number) => {
+export const usePublicProviders = (serviceId: number, isOpen: boolean) => {
   const [providers, setProviders] = useState<ProvidersPublic[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!serviceId) return;
+    // hit ila kan isOpen false, bach ma nfetchiwch data ila modal kan mamfouhch , ce qui est logique, sinon kan fetchiw data ila modal mamfouhch
+    if (!serviceId || !isOpen) return;
 
     setIsLoading(true);
-    providerService
+    profileService
       .getAllProvidersByServiceId(serviceId)
-      .then((data) => setProviders(data))
+      .then(setProviders)
       .finally(() => setIsLoading(false));
-  }, [serviceId]);
+  }, [serviceId, isOpen]);
 
   return { providers, isLoading };
 };
