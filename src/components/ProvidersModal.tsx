@@ -88,6 +88,7 @@ export const ProvidersModal = ({
             /* 3. Data Grid State */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               {providers.map((provider) => (
+                // hadi ahsan tariqa bach props onthanaw hiya nsifto destructured props directly
                 <ProviderCard key={provider.id} {...provider} />
               ))}
             </div>
