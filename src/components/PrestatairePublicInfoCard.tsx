@@ -1,5 +1,6 @@
 import { Briefcase, Send, MapPin, Target } from "lucide-react";
 import { usePrestatairePublicDetails } from "../hooks/usePrestatairePublicDetails";
+import AnonymeProfile from "./AnonymeProfile";
 
 interface PrestatairePublicInfoCardProps {
   providerId: number;
@@ -45,7 +46,7 @@ export default function PrestatairePublicInfoCard({
     normalizedGender === "female" ||
     normalizedGender === "f";
 
-  // 2. Thème الألوان
+  // 2. Thème
   const theme = {
     bannerBg: isFemale ? "bg-rose-700" : "bg-emerald-800",
     badgeBg: isFemale ? "bg-rose-500" : "bg-emerald-500",
@@ -76,13 +77,7 @@ export default function PrestatairePublicInfoCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <svg
-              className="w-16 h-16 sm:w-20 sm:h-20 text-slate-400 dark:text-slate-500"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
+            <AnonymeProfile />
           )}
         </div>
 

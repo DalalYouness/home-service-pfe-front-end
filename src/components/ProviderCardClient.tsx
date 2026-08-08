@@ -1,5 +1,6 @@
 import { Star, MapPin } from "lucide-react";
 import type { ProvidersPublic } from "../types/prestataire";
+import AnonymeProfile from "./AnonymeProfile";
 
 export type ProviderCardClientProps = ProvidersPublic & {
   rating?: number;
@@ -22,12 +23,10 @@ export const ProviderCardClient = ({
           <img
             src={imgUrl}
             alt={`${firstName} ${lastName}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-emerald-900 text-white text-3xl font-bold">
-            {firstName?.charAt(0).toUpperCase()}
-          </div>
+          <AnonymeProfile />
         )}
       </div>
 
