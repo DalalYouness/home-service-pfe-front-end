@@ -1,4 +1,12 @@
-import { X, MapPin, Phone, CheckCircle, Clock } from "lucide-react";
+import {
+  X,
+  MapPin,
+  Phone,
+  CheckCircle,
+  Clock,
+  Star,
+  CalendarCheck,
+} from "lucide-react";
 import AnonymeProfile from "./AnonymeProfile";
 
 const MOCK_PROVIDER = {
@@ -56,14 +64,25 @@ export const ProviderDetailModalClient = ({
             </div>
 
             <div className="flex flex-col text-center sm:text-left gap-1 mt-1">
-              <div className="flex items-center justify-center sm:justify-start gap-2">
+              {/* Full Name & Rating */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                   {MOCK_PROVIDER.firstName} {MOCK_PROVIDER.lastName}
                 </h2>
+
+                {/* Rating Badge */}
+                <div className="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-800/40 w-fit mx-auto sm:mx-0">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 shrink-0" />
+                  <span className="text-xs font-bold">
+                    {MOCK_PROVIDER.rating
+                      ? MOCK_PROVIDER.rating.toFixed(2)
+                      : "Nouveau"}
+                  </span>
+                </div>
               </div>
 
               {/* Status Indicator */}
-              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium">
+              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium mt-1">
                 {MOCK_PROVIDER.isAvailable ? (
                   <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                     <CheckCircle className="w-3.5 h-3.5" /> Disponible
@@ -102,8 +121,8 @@ export const ProviderDetailModalClient = ({
             </h3>
 
             <div className="grid grid-cols-1 gap-2.5">
-              {/* Phone Card */}
-              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-800">
+              {/* Phone Card with UX note instead of call button */}
+              <div className="flex flex-col gap-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
                     <Phone className="w-4 h-4" />
@@ -117,12 +136,12 @@ export const ProviderDetailModalClient = ({
                     </span>
                   </div>
                 </div>
-                <a
-                  href={`tel:${MOCK_PROVIDER.phoneNumber}`}
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors"
-                >
-                  Appeler
-                </a>
+
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 italic bg-white dark:bg-slate-900/60 p-2 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                  💡 Vous pourrez appeler votre prestataire directement après
+                  l'acceptation de la réservation pour une meilleure
+                  organisation.
+                </p>
               </div>
 
               {/* Address Card */}
@@ -140,6 +159,17 @@ export const ProviderDetailModalClient = ({
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Booking / Portfolio Action Button */}
+          <div className="pt-2">
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 active:scale-[0.99] transition-all"
+            >
+              <CalendarCheck className="w-5 h-5" />
+              <span>Réserver ce service</span>
+            </button>
           </div>
         </div>
       </div>
