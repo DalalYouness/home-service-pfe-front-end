@@ -11,13 +11,7 @@ import { Toaster } from "sonner";
 import GlobalErrorHandler from "./components/GlobalErrorHandler";
 import { AuthProvider } from "./context/AuthContext";
 import BecomePrestatairePage from "./components/BecomePrestatairePage";
-
-// for test
-const ClientDashboard = () => (
-  <div className="text-xl font-bold text-emerald-950">
-    Tableau de bord (Dashboard)
-  </div>
-);
+import ClientDashboard from "./components/ClientDashboard";
 
 export default function App() {
   return (

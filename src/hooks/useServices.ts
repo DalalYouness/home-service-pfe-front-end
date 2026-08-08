@@ -18,6 +18,7 @@ export const useServices = () => {
           setServices(servicesResponse.content);
         }
       } catch (err) {
+        // consoles printing khashom ythaydo man b3d ma ykml l project hit machi production really
         console.error("Error fetching services list:", err);
       } finally {
         if (isMounted) {
