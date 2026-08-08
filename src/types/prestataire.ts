@@ -47,3 +47,9 @@ export interface ProviderDetailsPublic {
   interventionArea: string;
   imgUrl?: string;
 }
+
+export interface ProviderDetailsPrivate extends ProviderDetailsPublic {
+  phoneNumber: string;
+  isAvailable?: boolean;
+  address: string;
+}
