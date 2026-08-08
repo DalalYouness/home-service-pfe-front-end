@@ -1,13 +1,5 @@
 import { Star, MapPin } from "lucide-react";
-
-export interface ProvidersPublic {
-  id: string | number;
-  firstName: string;
-  lastName: string;
-  city: string;
-  country: string;
-  imgUrl?: string;
-}
+import type { ProvidersPublic } from "../types/prestataire";
 
 export type ProviderCardClientProps = ProvidersPublic & {
   rating?: number;
