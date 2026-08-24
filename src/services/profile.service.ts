@@ -87,7 +87,7 @@ export const profileService = {
     providerId: number,
   ): Promise<ProviderDetailsPrivate> => {
     const response = await apiClient.get(
-      `/api/v1/auth/${providerId}/private-profile`,
+      `/api/v1/auth/${providerId}/private-profil`,
     );
     return response.data;
   },

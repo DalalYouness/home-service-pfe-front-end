@@ -65,6 +65,7 @@ export const ProviderCardClient = ({
       </div>
 
       <ProviderDetailModalClient
+        providerId={id}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
