@@ -12,6 +12,7 @@ import GlobalErrorHandler from "./components/GlobalErrorHandler";
 import { AuthProvider } from "./context/AuthContext";
 import BecomePrestatairePage from "./components/BecomePrestatairePage";
 import ClientDashboard from "./components/ClientDashboard";
+import { DashBoardPage } from "./components/DashBoardPage";
 
 export default function App() {
   return (
@@ -45,7 +46,7 @@ export default function App() {
           {/* 2 - client private routes*/}
           <Route path="/user" element={<UserLayout />}>
             {/* /client/dashboard */}
-            <Route path="dashboard" element={<ClientDashboard />} />
+            <Route path="dashboard" element={<DashBoardPage />} />
 
             {/* /client/compte */}
             <Route path="account-setting" element={<AccountSetting />} />
