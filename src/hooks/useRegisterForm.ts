@@ -180,6 +180,7 @@ export const useRegisterForm = () => {
 
       login(
         {
+          id: response.id,
           email: response.email,
           roles: response.roles,
           fullname: response.fullName,

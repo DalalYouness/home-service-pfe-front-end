@@ -66,6 +66,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
       const responseData = await authService.login(formData);
 
       const user = {
+        id: responseData.id,
         email: responseData.email,
         fullname: responseData.fullName,
         roles: responseData.roles,

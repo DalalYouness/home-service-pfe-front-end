@@ -8,6 +8,7 @@ export interface LoginRequestDto {
 
 // equal to AuthResponseDto in my backend
 export interface AuthResponseDto {
+  id?: number;
   token: string;
   email: string;
   fullName: string;

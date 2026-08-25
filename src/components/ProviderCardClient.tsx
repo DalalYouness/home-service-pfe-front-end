@@ -6,6 +6,7 @@ import ProviderDetailModalClient from "./ProviderDetailModalClient";
 
 export type ProviderCardClientProps = ProvidersPublic & {
   rating?: number;
+  serviceId: number;
 };
 
 export const ProviderCardClient = ({
@@ -16,6 +17,7 @@ export const ProviderCardClient = ({
   country,
   imgUrl,
   rating,
+  serviceId,
 }: ProviderCardClientProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -67,6 +69,7 @@ export const ProviderCardClient = ({
       <ProviderDetailModalClient
         providerId={id}
         isOpen={isModalOpen}
+        serviceId={serviceId}
         onClose={() => setIsModalOpen(false)}
       />
     </>

@@ -96,6 +96,7 @@ export default function ClientDashboard() {
                 country={provider.country}
                 imgUrl={provider.imgUrl}
                 gender={provider.gender}
+                serviceId={selectedServiceId}
               />
             ))}
           </div>
