@@ -1,14 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
-// token : 3tini lbadge bach nqdr ndkhol fl backend onjbd luserid
+// obligé je dois revisé ca une autre fois
 export const useWebSocket = (token, onNotificationReceived) => {
+  const callbackRef = useRef(onNotificationReceived);
+
+  useEffect(() => {
+    callbackRef.current = onNotificationReceived;
+  }, [onNotificationReceived]);
+
   useEffect(() => {
     if (!token) return;
+
     const stompClient = new Client({
       webSocketFactory: () =>
-        new SockJS("http://localhost:8082/ws-notifications"),
+        new SockJS("http://localhost:9999/ws-notifications"),
 
       connectHeaders: {
         Authorization: `Bearer ${token}`,
@@ -25,21 +32,23 @@ export const useWebSocket = (token, onNotificationReceived) => {
       onConnect: () => {
         console.log("✅ Connecté au serveur WebSocket STOMP!");
 
-        // using closure
         stompClient.subscribe("/user/queue/notifications", (message) => {
           if (message.body) {
             const notification = JSON.parse(message.body);
-            onNotificationReceived(notification);
+            if (callbackRef.current) {
+              callbackRef.current(notification);
+            }
           }
         });
       },
+
       onStompError: (frame) => {
         console.error("❌ Erreur STOMP :", frame.headers["message"]);
       },
     });
-    // toujours les callbacks c'est des fonction a execyté apres une action
 
     stompClient.activate();
+
     return () => {
       if (stompClient.active) {
         stompClient.deactivate();
