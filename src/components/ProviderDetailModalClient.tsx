@@ -9,6 +9,7 @@ import {
   CalendarCheck,
   Loader2,
   Calendar,
+  Lock,
 } from "lucide-react";
 import AnonymeProfile from "./AnonymeProfile";
 import { usePrestatairePrivateDetails } from "../hooks/usePrestatairePrivateDetails";
@@ -51,7 +52,6 @@ export const ProviderDetailModalClient = ({
   };
 
   const handleSubmitBooking = async () => {
-    // 1. Validation فـ Frontend قبل ما نصيفطو الـ Request
     if (!dateRdv) {
       toast.error(
         "Veuillez sélectionner une date et une heure pour le rendez-vous",
@@ -69,7 +69,6 @@ export const ProviderDetailModalClient = ({
       return;
     }
 
-    // 2. Formatting au LocalDateTime (بحال "2026-08-28T15:32:00")
     const formattedDateRdv = dateRdv.length === 16 ? `${dateRdv}:00` : dateRdv;
 
     try {
@@ -185,22 +184,7 @@ export const ProviderDetailModalClient = ({
               </h3>
 
               <div className="grid grid-cols-1 gap-2.5">
-                <div className="flex flex-col gap-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-400 font-medium uppercase">
-                        Téléphone
-                      </span>
-                      <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                        {provider.phoneNumber}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
+                {/* 1. Address: Visible عادي */}
                 <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-800">
                   <div className="p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
                     <MapPin className="w-4 h-4" />
@@ -210,8 +194,26 @@ export const ProviderDetailModalClient = ({
                       Adresse exacte
                     </span>
                     <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                      {provider.address}
+                      {provider.address || "Non spécifiée"}
                     </span>
+                  </div>
+                </div>
+
+                {/* 2. Phone: Masqué avec un message clair */}
+                <div className="relative overflow-hidden flex items-start gap-3 p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/40 text-amber-900 dark:text-amber-200 shadow-lg shadow-amber-500/20 ring-2 ring-amber-500/30 animate-pulse">
+                  {/* Glowing background accent */}
+                  <div className="p-2.5 bg-amber-500 text-white rounded-xl shrink-0 shadow-md shadow-amber-500/40">
+                    <Lock className="w-4 h-4" />
+                  </div>
+
+                  <div className="flex flex-col gap-0.5 z-10">
+                    <span className="text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                      Numéro de téléphone masqué
+                    </span>
+                    <p className="text-xs font-semibold leading-relaxed text-amber-900 dark:text-amber-200">
+                      Le numéro de téléphone vous sera envoyé par notification
+                      dès que le prestataire aura accepté votre réservation.
+                    </p>
                   </div>
                 </div>
               </div>
