@@ -1,8 +1,18 @@
+import React from "react";
 import { Calendar, Clock, XCircle, User, Wrench } from "lucide-react";
+import { type ReservationResponse, BookingStatus } from "../types/reservation";
 
-export const BookingItemCard = ({ booking }) => {
-  // تقطيع date_rdv لـ التاريخ والوقت
-  const rdvDateTime = booking.date_rdv ? new Date(booking.date_rdv) : null;
+interface BookingItemCardProps {
+  booking: ReservationResponse;
+  onCancel?: (bookingId: number) => void;
+}
+
+export const BookingItemCard: React.FC<BookingItemCardProps> = ({
+  booking,
+  onCancel,
+}) => {
+  const rdvDateTime = booking.dateRdv ? new Date(booking.dateRdv) : null;
+
   const formattedDate = rdvDateTime
     ? rdvDateTime.toLocaleDateString("fr-FR", {
         day: "numeric",
@@ -18,23 +28,32 @@ export const BookingItemCard = ({ booking }) => {
       })
     : "--:--";
 
-  // ألوان الـ Badge على حسب الـ status
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: BookingStatus) => {
     switch (status) {
-      case "PENDING":
+      case BookingStatus.PENDING:
         return {
           label: "En attente",
           style: "bg-amber-50 text-amber-700 border-amber-200",
         };
-      case "CONFIRMED":
+      case BookingStatus.CONFIRMED:
         return {
           label: "Confirmée",
           style: "bg-forest-50 text-forest-700 border-forest-200",
         };
-      case "CANCELLED":
+      case BookingStatus.REJECTED:
+        return {
+          label: "Refusée",
+          style: "bg-orange-50 text-orange-700 border-orange-200",
+        };
+      case BookingStatus.CANCELLED:
         return {
           label: "Annulée",
           style: "bg-red-50 text-red-600 border-red-200",
+        };
+      case BookingStatus.COMPLETED:
+        return {
+          label: "Terminée",
+          style: "bg-blue-50 text-blue-700 border-blue-200",
         };
       default:
         return {
@@ -45,6 +64,9 @@ export const BookingItemCard = ({ booking }) => {
   };
 
   const statusInfo = getStatusBadge(booking.status);
+  const isCancellable =
+    booking.status === BookingStatus.PENDING ||
+    booking.status === BookingStatus.CONFIRMED;
 
   return (
     <div className="bg-white rounded-2xl p-5 border border-forest-100/70 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between font-sans relative group">
@@ -69,7 +91,7 @@ export const BookingItemCard = ({ booking }) => {
 
         {/* Card Body: Details */}
         <div className="space-y-3 mb-5">
-          {/* Service Info */}
+          {/* Service Info:  idService (camelCase) */}
           <div className="flex items-start gap-2.5">
             <Wrench className="w-4 h-4 text-forest-600 shrink-0 mt-0.5" />
             <div>
@@ -77,12 +99,12 @@ export const BookingItemCard = ({ booking }) => {
                 Service
               </span>
               <h4 className="font-serif font-bold text-forest-900 text-base leading-tight">
-                {booking.serviceName || `Service #${booking.id_service}`}
+                {`Service #${booking.idService}`}
               </h4>
             </div>
           </div>
 
-          {/* Provider Info */}
+          {/* Provider Info:  idProvider (camelCase) */}
           <div className="flex items-start gap-2.5">
             <User className="w-4 h-4 text-forest-600 shrink-0 mt-0.5" />
             <div>
@@ -90,7 +112,7 @@ export const BookingItemCard = ({ booking }) => {
                 Prestataire
               </span>
               <p className="text-xs text-forest-800 font-semibold">
-                {booking.providerName || `Prestataire #${booking.id_provider}`}
+                {`Prestataire #${booking.idProvider}`}
               </p>
             </div>
           </div>
@@ -111,15 +133,20 @@ export const BookingItemCard = ({ booking }) => {
 
       {/* Card Footer: Action Button */}
       <div className="pt-3 border-t border-cream-100">
-        {booking.status !== "CANCELLED" ? (
-          <button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100/80 border border-red-200/60 rounded-xl transition-all cursor-pointer active:scale-95">
+        {isCancellable ? (
+          <button
+            onClick={() => onCancel && onCancel(booking.id)}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100/80 border border-red-200/60 rounded-xl transition-all cursor-pointer active:scale-95"
+          >
             <XCircle className="w-4 h-4" />
             <span>Annuler la réservation</span>
           </button>
         ) : (
           <div className="text-center py-1">
             <span className="text-xs text-gray-400 font-medium italic">
-              Réservation annulée
+              {booking.status === BookingStatus.CANCELLED
+                ? "Réservation annulée"
+                : "Aucune action disponible"}
             </span>
           </div>
         )}
