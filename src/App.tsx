@@ -11,7 +11,6 @@ import { Toaster } from "sonner";
 import GlobalErrorHandler from "./components/GlobalErrorHandler";
 import { AuthProvider } from "./context/AuthContext";
 import BecomePrestatairePage from "./components/BecomePrestatairePage";
-import ClientDashboard from "./components/ClientDashboard";
 import { DashBoardPage } from "./components/DashBoardPage";
 
 export default function App() {

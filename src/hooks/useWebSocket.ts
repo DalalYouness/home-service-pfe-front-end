@@ -2,10 +2,11 @@ import { useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
-// obligé je dois revisé ca une autre fois
 export const useWebSocket = (token, onNotificationReceived) => {
+  // 1. Déclarer le Ref pour garder la dernière version de la fonction callback
   const callbackRef = useRef(onNotificationReceived);
 
+  // 2. Mettre à jour le Ref à chaque re-render sans reconnecter le WebSocket
   useEffect(() => {
     callbackRef.current = onNotificationReceived;
   }, [onNotificationReceived]);
@@ -32,11 +33,20 @@ export const useWebSocket = (token, onNotificationReceived) => {
       onConnect: () => {
         console.log("✅ Connecté au serveur WebSocket STOMP!");
 
+        // 🟢 S'abonner à la file d'attente personnelle
         stompClient.subscribe("/user/queue/notifications", (message) => {
+          console.log("📩 [STOMP Payload Received]:", message.body);
+
           if (message.body) {
-            const notification = JSON.parse(message.body);
-            if (callbackRef.current) {
-              callbackRef.current(notification);
+            try {
+              const notification = JSON.parse(message.body);
+
+              // ⚡ Déclencher le callback via le Ref le plus récent
+              if (typeof callbackRef.current === "function") {
+                callbackRef.current(notification);
+              }
+            } catch (error) {
+              console.error("❌ Erreur de parsing du JSON reçue :", error);
             }
           }
         });
@@ -44,6 +54,7 @@ export const useWebSocket = (token, onNotificationReceived) => {
 
       onStompError: (frame) => {
         console.error("❌ Erreur STOMP :", frame.headers["message"]);
+        console.error("Détails :", frame.body);
       },
     });
 

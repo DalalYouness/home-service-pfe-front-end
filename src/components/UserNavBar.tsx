@@ -3,16 +3,22 @@ import { Bell, LogOut, Repeat, Loader2 } from "lucide-react";
 import { LogoutModal } from "./LogoutModal";
 import { useAuth } from "../context/AuthContext";
 import { useSwitchMode } from "../hooks/useSwitchMode";
+import { useNotifications } from "../hooks/useNotifications";
+import NotificationPopup from "../components/NotificationPopup"; // 👈 1. استيراد المكون الجديد
 import Logo from "./Logo";
 
 export const UserNavbar = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isNotifPopupOpen, setIsNotifPopupOpen] = useState(false); // 👈 2. حالة الـ Popup
 
   // Auth Context
   const { user, logout, currentMode } = useAuth();
 
   // Custom Hook Switch Mode
   const { hasPrestataireRole, handleModeAction, isLoading } = useSwitchMode();
+
+  // Custom Hook Notifications
+  const { unreadCount } = useNotifications();
 
   const handleLogoutConfirm = () => {
     logout();
@@ -27,11 +33,23 @@ export const UserNavbar = () => {
 
         {/* ACTIONS & PROFILE */}
         <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">
-          {/* Notification Button */}
-          <button className="relative p-2 text-gray-500 hover:text-emerald-800 rounded-full transition-all cursor-pointer">
-            <Bell className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
+          {/* Notification Button + Popup Container */}
+          <div className="relative">
+            {" "}
+            {/* 👈 3. حاوية بـ relative باش تثبت الـ Popup تحت الجرس */}
+            <button
+              onClick={() => setIsNotifPopupOpen((prev) => !prev)}
+              className="relative p-2 text-gray-500 hover:text-emerald-800 rounded-full transition-all cursor-pointer"
+            >
+              <Bell className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center border-2 border-white animate-pulse">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </button>
+            {isNotifPopupOpen && <NotificationPopup />}
+          </div>
 
           {/* DYNAMIC MODE SWITCH BUTTON (RESPONSIVE: MOBILE & DESKTOP) */}
           <button
