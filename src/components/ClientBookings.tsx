@@ -1,65 +1,56 @@
 import { BookingItemCard } from "./BookingItemCard";
 
 export const ClientBookings = () => {
-  const dummyBookings = [
+  // Data مطابق لـ الجدول ديالك
+  const dummyBookingsFromDB = [
     {
-      id: 101,
-      serviceTitle: "Nettoyage Complet Appartement",
-      prestataireName: "Youssef Alami",
-      bookingDate: "2026-09-02",
-      bookingTime: "14:00",
-      city: "Casablanca",
-      price: 350,
+      id: 1,
+      date_rdv: "2026-08-28 15:12:00",
+      duree_reel: null,
       status: "PENDING",
+      id_client: 14,
+      id_provider: 19,
+      id_service: 16,
+      created_at: "2026-08-27 15:12:09",
     },
     {
-      id: 102,
-      serviceTitle: "Réparation Plomberie Cuisine",
-      prestataireName: "Amine Benali",
-      bookingDate: "2026-08-30",
-      bookingTime: "10:30",
-      city: "Casablanca",
-      price: 200,
-      status: "CONFIRMED",
-    },
-    {
-      id: 103,
-      serviceTitle: "Peinture Chambre Enfant",
-      prestataireName: "Hassan Berrada",
-      bookingDate: "2026-08-20",
-      bookingTime: "09:00",
-      city: "Mohammedia",
-      price: 600,
-      status: "CANCELLED",
+      id: 2,
+      date_rdv: "2026-08-30 15:13:00",
+      duree_reel: null,
+      status: "PENDING",
+      id_client: 14,
+      id_provider: 19,
+      id_service: 16,
+      created_at: "2026-08-27 15:13:06",
     },
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 font-sans">
-      {/* Page Header */}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 font-sans">
+      {/* Header */}
       <div className="mb-6">
         <h1 className="font-serif font-bold text-2xl sm:text-3xl text-forest-900">
           Mes Réservations
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 mt-1">
-          Gérez vos demandes de services et suivez leur état en temps réel.
+          Suivez l'état de vos rendez-vous et gérez vos annulations.
         </p>
       </div>
 
-      {/* Bookings List */}
-      <div className="space-y-4">
-        {dummyBookings.length === 0 ? (
-          <div className="text-center py-12 bg-cream-50 rounded-2xl border border-forest-100">
-            <p className="text-forest-800 font-semibold">
-              Aucune réservation pour le moment.
-            </p>
-          </div>
-        ) : (
-          dummyBookings.map((booking) => (
+      {/* Grid Container */}
+      {dummyBookingsFromDB.length === 0 ? (
+        <div className="text-center py-12 bg-cream-50 rounded-2xl border border-forest-100">
+          <p className="text-forest-800 font-semibold text-sm">
+            Aucune réservation trouvée.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {dummyBookingsFromDB.map((booking) => (
             <BookingItemCard key={booking.id} booking={booking} />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

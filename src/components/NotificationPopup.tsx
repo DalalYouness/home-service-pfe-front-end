@@ -28,41 +28,41 @@ export const NotificationPopup = () => {
         @keyframes envelopeOpen {
           0% {
             opacity: 0;
-            transform: translateY(-12px) scale(0.92) rotateX(-15deg);
+            transform: translateY(-10px) scale(0.95);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1) rotateX(0deg);
+            transform: translateY(0) scale(1);
           }
         }
         .animate-envelope-direct {
-          animation: envelopeOpen 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-          transform-origin: top;
+          animation: envelopeOpen 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          transform-origin: top right;
         }
       `}</style>
 
-      {/* 2. الـ Popup Structure */}
-      <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-card-hover border border-forest-100/60 z-50 overflow-hidden font-sans animate-envelope-direct">
+      {/* Responsive Popup Container: Fixed on Mobile, Absolute on Desktop */}
+      <div className="fixed inset-x-3 top-16 sm:inset-auto sm:absolute sm:right-0 sm:top-full sm:mt-3 sm:w-96 bg-white rounded-2xl shadow-card-hover border border-forest-100/70 z-50 overflow-hidden font-sans animate-envelope-direct">
         {/* Header */}
-        <div className="p-4 border-b border-forest-100 bg-cream-50 flex items-center justify-between">
+        <div className="p-3.5 sm:p-4 border-b border-forest-100 bg-cream-50 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="font-serif font-bold text-forest-900 text-base">
+            <h3 className="font-serif font-bold text-forest-900 text-sm sm:text-base">
               Notifications
             </h3>
-            <span className="bg-forest-100 text-forest-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+            <span className="bg-forest-100 text-forest-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">
               2 nouvelles
             </span>
           </div>
         </div>
 
-        {/* Body List */}
-        <div className="max-h-[380px] overflow-y-auto divide-y divide-cream-100">
+        {/* Body List with dynamic max-height */}
+        <div className="max-h-[60vh] sm:max-h-[380px] overflow-y-auto divide-y divide-cream-100">
           {dummyNotifications.map((notif) => (
             <div
               key={notif.id}
-              className={`p-4 flex gap-3.5 items-start transition-all cursor-pointer relative ${
+              className={`p-3.5 sm:p-4 flex gap-3 items-start transition-all cursor-pointer relative ${
                 !notif.isRead
-                  ? "bg-forest-50/60 hover:bg-forest-50 animate-pulse"
+                  ? "bg-forest-50/50 hover:bg-forest-50"
                   : "bg-white hover:bg-cream-50/50"
               }`}
             >
@@ -91,7 +91,7 @@ export const NotificationPopup = () => {
                 </p>
 
                 <span
-                  className={`text-[11px] font-medium mt-1.5 block ${
+                  className={`text-[10px] sm:text-[11px] font-medium mt-1 block ${
                     !notif.isRead
                       ? "text-amber-600 font-semibold"
                       : "text-forest-500"

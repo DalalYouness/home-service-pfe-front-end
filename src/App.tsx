@@ -12,6 +12,7 @@ import GlobalErrorHandler from "./components/GlobalErrorHandler";
 import { AuthProvider } from "./context/AuthContext";
 import BecomePrestatairePage from "./components/BecomePrestatairePage";
 import { DashBoardPage } from "./components/DashBoardPage";
+import ClientBookings from "./components/ClientBookings";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="/user" element={<UserLayout />}>
             {/* /client/dashboard */}
             <Route path="dashboard" element={<DashBoardPage />} />
+            <Route path="my-reservations" element={<ClientBookings />} />
 
             {/* /client/compte */}
             <Route path="account-setting" element={<AccountSetting />} />

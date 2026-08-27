@@ -1,12 +1,17 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { User, LayoutDashboard, Settings } from "lucide-react";
+import { User, LayoutDashboard, Settings, Calendar } from "lucide-react";
 
 const menuItems = [
   {
     name: "Tableau de bord",
     path: "/user/dashboard",
     icon: <LayoutDashboard className="w-5 h-5" />,
+  },
+  {
+    name: "Mes Réservations",
+    path: "/user/my-reservations",
+    icon: <Calendar className="w-5 h-5" />,
   },
   {
     name: "Profil",
@@ -19,6 +24,7 @@ const menuItems = [
     icon: <Settings className="w-5 h-5" />,
   },
 ];
+
 export const UserSidebar: React.FC = () => {
   return (
     <>
@@ -45,28 +51,32 @@ export const UserSidebar: React.FC = () => {
           ))}
         </div>
 
-        <div className="text-xxs text-gray-400 px-4">dalyoo v1.0.0</div>
+        <div className="text-[10px] text-gray-400 px-4">dalyoo v1.0.0</div>
       </aside>
 
       {/* ========================================================
           2 - MOBILE BOTTOM NAVIGATION
          ======================================================== */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 flex justify-around items-center z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] h-16">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-3 py-2 flex justify-around items-center z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] h-16">
         {menuItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-all ${
+              `flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg transition-all ${
                 isActive ? "text-emerald-900 font-semibold" : "text-gray-400"
               }`
             }
           >
-            <div className="p-1">{item.icon}</div>
-            <span className="text-[10px] tracking-tight">{item.name}</span>
+            <div className="p-0.5">{item.icon}</div>
+            <span className="text-[10px] tracking-tight text-center truncate max-w-[70px]">
+              {item.name}
+            </span>
           </NavLink>
         ))}
       </nav>
     </>
   );
 };
+
+export default UserSidebar;

@@ -11,4 +11,13 @@ export const reservationService = {
     const response = await apiClient.post("/api/v1/reservations", requestDto);
     return response.data;
   },
+
+  getAllClientBookings: async (
+    clientId: number,
+  ): Promise<ReservationResponse[]> => {
+    const response = await apiClient.get(
+      `/api/v1/reservations/client/${clientId}`,
+    );
+    return response.data;
+  },
 };
