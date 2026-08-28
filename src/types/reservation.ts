@@ -34,3 +34,7 @@ export interface ReservationResponse {
   idProvider: number;
   idService: number;
 }
+
+export interface ReservationValidateRequest {
+  dureeReel: number;
+}

@@ -1,6 +1,7 @@
 import type {
   ReservationCreateRequest,
   ReservationResponse,
+  ReservationValidateRequest,
 } from "../types/reservation";
 import apiClient from "./api.client";
 
@@ -43,9 +44,13 @@ export const reservationService = {
     return response.data;
   },
 
-  validateBooking: async (reservationId: number) => {
-    const response = await apiClient.patch(
+  validateBooking: async (
+    reservationId: number,
+    data: ReservationValidateRequest = { dureeReel: 60 },
+  ): Promise<ReservationResponse> => {
+    const response = await apiClient.patch<ReservationResponse>(
       `${ENDPOINT}/${reservationId}/validate`,
+      data,
     );
     return response.data;
   },
