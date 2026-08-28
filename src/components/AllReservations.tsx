@@ -1,15 +1,14 @@
 import React from "react";
-import { BookingItemCard } from "./BookingItemCard";
+import { ReservationCardItem } from "./ReservationCardItem";
 import { useReservations } from "../hooks/useReservations";
 import { useAuth } from "../context/AuthContext";
 import { Loader2, AlertCircle, CalendarX, RotateCw } from "lucide-react";
 
-export const ClientBookings: React.FC = () => {
-  const { user } = useAuth();
-  const clientId = user?.id;
-
+export const AllReservations: React.FC = () => {
+  const { user, currentMode } = useAuth();
+  const userId = user?.id;
   const { bookings, loading, error, refetchBookings, cancelBooking } =
-    useReservations(clientId);
+    useReservations(userId, currentMode);
 
   return (
     <div className="w-full space-y-4 py-6 px-4 md:px-8 pb-16 font-sans">
@@ -81,13 +80,15 @@ export const ClientBookings: React.FC = () => {
         </div>
       )}
 
+      {/* 4. State: Grid View */}
       {!loading && !error && bookings.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">
           {bookings.map((booking) => (
-            <BookingItemCard
+            <ReservationCardItem
               key={booking.id}
               booking={booking}
               onCancel={cancelBooking}
+              mode={currentMode}
             />
           ))}
         </div>
@@ -96,4 +97,4 @@ export const ClientBookings: React.FC = () => {
   );
 };
 
-export default ClientBookings;
+export default AllReservations;
