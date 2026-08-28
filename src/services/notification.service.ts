@@ -12,7 +12,9 @@ export const notificationService = {
   getAllUserNotifications: async (
     userId: number,
   ): Promise<NotificationResponse[]> => {
-    const response = await apiClient.get(`/api/v1/notifications/${userId}`);
+    const response = await apiClient.get(
+      `/api/v1/notifications/user/${userId}`,
+    );
     return response.data;
   },
 };

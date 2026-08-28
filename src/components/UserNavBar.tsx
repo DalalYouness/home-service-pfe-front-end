@@ -4,12 +4,12 @@ import { LogoutModal } from "./LogoutModal";
 import { useAuth } from "../context/AuthContext";
 import { useSwitchMode } from "../hooks/useSwitchMode";
 import { useNotifications } from "../hooks/useNotifications";
-import NotificationPopup from "../components/NotificationPopup"; // 👈 1. استيراد المكون الجديد
+import NotificationPopup from "../components/NotificationPopup";
 import Logo from "./Logo";
 
 export const UserNavbar = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isNotifPopupOpen, setIsNotifPopupOpen] = useState(false); // 👈 2. حالة الـ Popup
+  const [isNotifPopupOpen, setIsNotifPopupOpen] = useState(false);
 
   // Auth Context
   const { user, logout, currentMode } = useAuth();
@@ -36,7 +36,6 @@ export const UserNavbar = () => {
           {/* Notification Button + Popup Container */}
           <div className="relative">
             {" "}
-            {/* 👈 3. حاوية بـ relative باش تثبت الـ Popup تحت الجرس */}
             <button
               onClick={() => setIsNotifPopupOpen((prev) => !prev)}
               className="relative p-2 text-gray-500 hover:text-emerald-800 rounded-full transition-all cursor-pointer"

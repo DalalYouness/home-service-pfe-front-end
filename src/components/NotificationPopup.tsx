@@ -1,27 +1,17 @@
-export const NotificationPopup = () => {
-  const dummyNotifications = [
-    {
-      id: 1,
-      message:
-        "Vous avez reçu une nouvelle demande de réservation de la part de Karim.",
-      createdAt: "Il y a 5 min",
-      isRead: false,
-    },
-    {
-      id: 2,
-      message:
-        "Votre prestation 'Nettoyage à domicile' a été marquée comme terminée.",
-      createdAt: "Il y a 1 heure",
-      isRead: false,
-    },
-    {
-      id: 3,
-      message: "Votre réservation #15 a été confirmée par le prestataire.",
-      createdAt: "Hier",
-      isRead: true,
-    },
-  ];
+import React from "react";
+import type { NotificationResponse } from "../types/notification";
 
+interface NotificationPopupProps {
+  notifications: NotificationResponse[];
+  unreadCount: number;
+  loading?: boolean;
+}
+
+export const NotificationPopup: React.FC<NotificationPopupProps> = ({
+  notifications,
+  unreadCount,
+  loading = false,
+}) => {
   return (
     <>
       <style>{`
@@ -41,7 +31,7 @@ export const NotificationPopup = () => {
         }
       `}</style>
 
-      {/* Responsive Popup Container: Fixed on Mobile, Absolute on Desktop */}
+      {/* Responsive Popup Container */}
       <div className="fixed inset-x-3 top-16 sm:inset-auto sm:absolute sm:right-0 sm:top-full sm:mt-3 sm:w-96 bg-white rounded-2xl shadow-card-hover border border-forest-100/70 z-50 overflow-hidden font-sans animate-envelope-direct">
         {/* Header */}
         <div className="p-3.5 sm:p-4 border-b border-forest-100 bg-cream-50 flex items-center justify-between">
@@ -50,63 +40,78 @@ export const NotificationPopup = () => {
               Notifications
             </h3>
             <span className="bg-forest-100 text-forest-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">
-              2 nouvelles
+              {unreadCount} nouvelle{unreadCount > 1 ? "s" : ""}
             </span>
           </div>
         </div>
 
-        {/* Body List with dynamic max-height */}
+        {/* Body List */}
         <div className="max-h-[60vh] sm:max-h-[380px] overflow-y-auto divide-y divide-cream-100">
-          {dummyNotifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`p-3.5 sm:p-4 flex gap-3 items-start transition-all cursor-pointer relative ${
-                !notif.isRead
-                  ? "bg-forest-50/50 hover:bg-forest-50"
-                  : "bg-white hover:bg-cream-50/50"
-              }`}
-            >
-              {/* Status Indicator */}
-              <div className="mt-1 shrink-0 relative flex items-center justify-center">
-                {!notif.isRead ? (
-                  <>
-                    <span className="absolute inline-flex h-3 w-3 rounded-full bg-forest-500 opacity-75 animate-ping" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-forest-700" />
-                  </>
-                ) : (
-                  <span className="h-2 w-2 rounded-full bg-cream-300 block" />
+          {loading ? (
+            <div className="p-8 text-center text-xs text-forest-700/60 font-medium">
+              Chargement des notifications...
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="p-8 text-center text-xs text-forest-700/60 font-medium">
+              Aucune notification pour le moment.
+            </div>
+          ) : (
+            notifications.map((notif) => (
+              <div
+                key={notif.id}
+                className={`p-3.5 sm:p-4 flex gap-3 items-start transition-all cursor-pointer relative ${
+                  !notif.isRead
+                    ? "bg-forest-50/50 hover:bg-forest-50"
+                    : "bg-white hover:bg-cream-50/50"
+                }`}
+              >
+                {/* Status Indicator */}
+                <div className="mt-1 shrink-0 relative flex items-center justify-center">
+                  {!notif.isRead ? (
+                    <>
+                      <span className="absolute inline-flex h-3 w-3 rounded-full bg-forest-500 opacity-75 animate-ping" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-forest-700" />
+                    </>
+                  ) : (
+                    <span className="h-2 w-2 rounded-full bg-cream-300 block" />
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <p
+                    className={`text-xs sm:text-sm leading-relaxed ${
+                      !notif.isRead
+                        ? "font-semibold text-forest-900"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {notif.message}
+                  </p>
+
+                  <span
+                    className={`text-[10px] sm:text-[11px] font-medium mt-1 block ${
+                      !notif.isRead
+                        ? "text-amber-600 font-semibold"
+                        : "text-forest-500"
+                    }`}
+                  >
+                    {new Date(notif.createdAt).toLocaleDateString("fr-FR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </span>
+                </div>
+
+                {/* Left accent bar */}
+                {!notif.isRead && (
+                  <span className="absolute left-0 top-0 bottom-0 w-1 bg-forest-700 rounded-r-md" />
                 )}
               </div>
-
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <p
-                  className={`text-xs sm:text-sm leading-relaxed ${
-                    !notif.isRead
-                      ? "font-semibold text-forest-900"
-                      : "text-gray-600"
-                  }`}
-                >
-                  {notif.message}
-                </p>
-
-                <span
-                  className={`text-[10px] sm:text-[11px] font-medium mt-1 block ${
-                    !notif.isRead
-                      ? "text-amber-600 font-semibold"
-                      : "text-forest-500"
-                  }`}
-                >
-                  {notif.createdAt}
-                </span>
-              </div>
-
-              {/* Left accent bar */}
-              {!notif.isRead && (
-                <span className="absolute left-0 top-0 bottom-0 w-1 bg-forest-700 rounded-r-md" />
-              )}
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Footer */}
