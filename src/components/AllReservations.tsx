@@ -7,8 +7,17 @@ import { Loader2, AlertCircle, CalendarX, RotateCw } from "lucide-react";
 export const AllReservations: React.FC = () => {
   const { user, currentMode } = useAuth();
   const userId = user?.id;
-  const { bookings, loading, error, refetchBookings, cancelBooking } =
-    useReservations(userId, currentMode);
+
+  const {
+    bookings,
+    loading,
+    error,
+    refetchBookings,
+    cancelBooking,
+    confirmBooking,
+    rejectBooking,
+    completeBooking,
+  } = useReservations(userId, currentMode);
 
   return (
     <div className="w-full space-y-4 py-6 px-4 md:px-8 pb-16 font-sans">
@@ -19,7 +28,7 @@ export const AllReservations: React.FC = () => {
             Mes Réservations
           </h1>
           <p className="text-xs md:text-sm text-forest-700/70">
-            Suivez l'état de vos rendez-vous et gérez vos annulations.
+            Suivez l'état de vos rendez-vous.
           </p>
         </div>
 
@@ -87,8 +96,11 @@ export const AllReservations: React.FC = () => {
             <ReservationCardItem
               key={booking.id}
               booking={booking}
-              onCancel={cancelBooking}
               mode={currentMode}
+              onCancel={cancelBooking}
+              onConfirm={confirmBooking}
+              onReject={rejectBooking}
+              onComplete={completeBooking}
             />
           ))}
         </div>

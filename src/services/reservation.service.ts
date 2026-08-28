@@ -35,4 +35,25 @@ export const reservationService = {
     const response = await apiClient.get(`${ENDPOINT}/provider/${providerId}`);
     return response.data;
   },
+
+  rejectBooking: async (reservationId: number) => {
+    const response = await apiClient.patch(
+      `${ENDPOINT}/${reservationId}/reject`,
+    );
+    return response.data;
+  },
+
+  validateBooking: async (reservationId: number) => {
+    const response = await apiClient.patch(
+      `${ENDPOINT}/${reservationId}/validate`,
+    );
+    return response.data;
+  },
+
+  completeBooking: async (reservationId: number) => {
+    const response = await apiClient.patch(
+      `${ENDPOINT}/${reservationId}/complete`,
+    );
+    return response.data;
+  },
 };

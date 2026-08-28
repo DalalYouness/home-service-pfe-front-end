@@ -42,7 +42,7 @@ export const useReservations = (
     }
   }, [userId, fetchBookings]);
 
-  // 2. Cancel Booking Function (Optimistic Update)
+  // 2. Cancel Booking (Client)
   const handleCancelBooking = async (reservationId: number) => {
     try {
       await reservationService.cancelBooking(reservationId);
@@ -64,11 +64,78 @@ export const useReservations = (
     }
   };
 
+  // 3. Validate / Confirm Booking (Provider)
+  const handleConfirmBooking = async (reservationId: number) => {
+    try {
+      await reservationService.validateBooking(reservationId);
+
+      setBookings((prevBookings) =>
+        prevBookings.map((b) =>
+          b.id === reservationId
+            ? { ...b, status: BookingStatus.CONFIRMED }
+            : b,
+        ),
+      );
+      return { success: true };
+    } catch (err: any) {
+      console.error("Erreur validation:", err);
+      return {
+        success: false,
+        message: err.response?.data?.message || "Échec de la confirmation.",
+      };
+    }
+  };
+
+  // 4. Reject Booking (Provider)
+  const handleRejectBooking = async (reservationId: number) => {
+    try {
+      await reservationService.rejectBooking(reservationId);
+
+      setBookings((prevBookings) =>
+        prevBookings.map((b) =>
+          b.id === reservationId ? { ...b, status: BookingStatus.REJECTED } : b,
+        ),
+      );
+      return { success: true };
+    } catch (err: any) {
+      console.error("Erreur rejection:", err);
+      return {
+        success: false,
+        message: err.response?.data?.message || "Échec du refus.",
+      };
+    }
+  };
+
+  // 5. Complete Booking (Provider)
+  const handleCompleteBooking = async (reservationId: number) => {
+    try {
+      await reservationService.completeBooking(reservationId);
+
+      setBookings((prevBookings) =>
+        prevBookings.map((b) =>
+          b.id === reservationId
+            ? { ...b, status: BookingStatus.COMPLETED }
+            : b,
+        ),
+      );
+      return { success: true };
+    } catch (err: any) {
+      console.error("Erreur completion:", err);
+      return {
+        success: false,
+        message: err.response?.data?.message || "Échec de la validation.",
+      };
+    }
+  };
+
   return {
     bookings,
     loading,
     error,
     refetchBookings: fetchBookings,
     cancelBooking: handleCancelBooking,
+    confirmBooking: handleConfirmBooking,
+    rejectBooking: handleRejectBooking,
+    completeBooking: handleCompleteBooking,
   };
 };
