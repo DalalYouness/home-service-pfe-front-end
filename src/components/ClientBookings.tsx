@@ -8,12 +8,12 @@ export const ClientBookings: React.FC = () => {
   const { user } = useAuth();
   const clientId = user?.id;
 
-  const { bookings, loading, error, refetchBookings } =
+  const { bookings, loading, error, refetchBookings, cancelBooking } =
     useReservations(clientId);
 
   return (
     <div className="w-full space-y-4 py-6 px-4 md:px-8 pb-16 font-sans">
-      {/* Header + Refresh Button aligned with the new structure */}
+      {/* Header + Refresh Button */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-forest-800 tracking-tight">
@@ -81,11 +81,14 @@ export const ClientBookings: React.FC = () => {
         </div>
       )}
 
-      {/* 4. State: Grid View */}
       {!loading && !error && bookings.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">
           {bookings.map((booking) => (
-            <BookingItemCard key={booking.id} booking={booking} />
+            <BookingItemCard
+              key={booking.id}
+              booking={booking}
+              onCancel={cancelBooking}
+            />
           ))}
         </div>
       )}

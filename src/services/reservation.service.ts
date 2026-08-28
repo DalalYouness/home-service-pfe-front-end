@@ -27,4 +27,12 @@ export const reservationService = {
     );
     return response.data;
   },
+
+  /* provider usecases */
+  getAllProviderBookings: async (
+    providerId: number,
+  ): Promise<ReservationResponse[]> => {
+    const response = await apiClient.get(`${ENDPOINT}/provider/${providerId}`);
+    return response.data;
+  },
 };

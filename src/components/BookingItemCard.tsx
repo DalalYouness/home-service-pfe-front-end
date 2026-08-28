@@ -1,16 +1,28 @@
-import React from "react";
-import { Calendar, Clock, XCircle, User, Wrench } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Calendar,
+  Clock,
+  XCircle,
+  User,
+  Wrench,
+  Loader2,
+  Check,
+  X,
+} from "lucide-react";
 import { type ReservationResponse, BookingStatus } from "../types/reservation";
 
 interface BookingItemCardProps {
   booking: ReservationResponse;
-  onCancel?: (bookingId: number) => void;
+  onCancel?: (bookingId: number) => Promise<void> | void;
 }
 
 export const BookingItemCard: React.FC<BookingItemCardProps> = ({
   booking,
   onCancel,
 }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
   const rdvDateTime = booking.dateRdv ? new Date(booking.dateRdv) : null;
 
   const formattedDate = rdvDateTime
@@ -68,6 +80,17 @@ export const BookingItemCard: React.FC<BookingItemCardProps> = ({
     booking.status === BookingStatus.PENDING ||
     booking.status === BookingStatus.CONFIRMED;
 
+  const handleConfirmCancel = async () => {
+    if (!onCancel) return;
+    try {
+      setIsCancelling(true);
+      await onCancel(booking.id);
+    } finally {
+      setIsCancelling(false);
+      setShowConfirm(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl p-5 border border-forest-100/70 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between font-sans relative group">
       <div>
@@ -91,7 +114,7 @@ export const BookingItemCard: React.FC<BookingItemCardProps> = ({
 
         {/* Card Body: Details */}
         <div className="space-y-3 mb-5">
-          {/* Service Info:  idService (camelCase) */}
+          {/* Service Info */}
           <div className="flex items-start gap-2.5">
             <Wrench className="w-4 h-4 text-forest-600 shrink-0 mt-0.5" />
             <div>
@@ -104,7 +127,7 @@ export const BookingItemCard: React.FC<BookingItemCardProps> = ({
             </div>
           </div>
 
-          {/* Provider Info:  idProvider (camelCase) */}
+          {/* Provider Info */}
           <div className="flex items-start gap-2.5">
             <User className="w-4 h-4 text-forest-600 shrink-0 mt-0.5" />
             <div>
@@ -131,16 +154,43 @@ export const BookingItemCard: React.FC<BookingItemCardProps> = ({
         </div>
       </div>
 
-      {/* Card Footer: Action Button */}
+      {/* Card Footer: Action Button or Inline Confirmation */}
       <div className="pt-3 border-t border-cream-100">
         {isCancellable ? (
-          <button
-            onClick={() => onCancel && onCancel(booking.id)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100/80 border border-red-200/60 rounded-xl transition-all cursor-pointer active:scale-95"
-          >
-            <XCircle className="w-4 h-4" />
-            <span>Annuler la réservation</span>
-          </button>
+          !showConfirm ? (
+            /* State 1: Default Cancel Button */
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100/80 border border-red-200/60 rounded-xl transition-all cursor-pointer active:scale-95"
+            >
+              <XCircle className="w-4 h-4" />
+              <span>Annuler la réservation</span>
+            </button>
+          ) : (
+            /* State 2: Confirmation Buttons (Oui / Non) */
+            <div className="flex items-center gap-2 animate-in fade-in duration-200">
+              <button
+                onClick={handleConfirmCancel}
+                disabled={isCancelling}
+                className="flex-1 flex items-center justify-center gap-1 px-2.5 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCancelling ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Check className="w-3.5 h-3.5" />
+                )}
+                <span>{isCancelling ? "Annulation..." : "Oui, annuler"}</span>
+              </button>
+
+              <button
+                onClick={() => setShowConfirm(false)}
+                disabled={isCancelling}
+                className="px-3 py-2 text-xs font-semibold text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )
         ) : (
           <div className="text-center py-1">
             <span className="text-xs text-gray-400 font-medium italic">
