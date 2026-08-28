@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { reservationService } from "../services/reservation.service";
 import { type ReservationResponse, BookingStatus } from "../types/reservation";
 import type { AppMode } from "../context/AuthContext";
+import { toast } from "sonner";
 
 export const useReservations = (
   userId: number | undefined,
@@ -79,13 +80,17 @@ export const useReservations = (
       return { success: true };
     } catch (err: any) {
       console.error("Erreur validation:", err);
-      return {
-        success: false,
-        message: err.response?.data?.message || "Échec de la confirmation.",
-      };
+
+      if (err.response?.status === 409) {
+        toast.error("Désolé ! Le client a déjà annulé cette réservation.");
+        fetchBookings();
+        return { success: false };
+      }
+
+      toast.error(err.response?.data?.message || "Échec de la confirmation.");
+      return { success: false };
     }
   };
-
   // 4. Reject Booking (Provider)
   const handleRejectBooking = async (reservationId: number) => {
     try {
@@ -99,10 +104,15 @@ export const useReservations = (
       return { success: true };
     } catch (err: any) {
       console.error("Erreur rejection:", err);
-      return {
-        success: false,
-        message: err.response?.data?.message || "Échec du refus.",
-      };
+
+      if (err.response?.status === 409) {
+        toast.error("Désolé ! Le client a déjà annulé cette réservation.");
+        fetchBookings();
+        return { success: false };
+      }
+
+      toast.error(err.response?.data?.message || "Échec du refus.");
+      return { success: false };
     }
   };
 
