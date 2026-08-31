@@ -14,6 +14,7 @@ import { CategoryTab } from "./CategoryTab";
 import { ProviderCardClient } from "./ProviderCardClient";
 import { useServices } from "../hooks/useServices";
 import { usePublicProviders } from "../hooks/usePublicProviders";
+import { useAuth } from "../context/AuthContext"; // 1. استيراد الـ Auth
 
 const SERVICE_ICON_MAP: Record<string, LucideIcon> = {
   Plomberie: Wrench,
@@ -25,6 +26,7 @@ const SERVICE_ICON_MAP: Record<string, LucideIcon> = {
 };
 
 export default function ClientDashboard() {
+  const { user } = useAuth();
   const { services, isLoadingServices } = useServices();
 
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(
@@ -43,6 +45,9 @@ export default function ClientDashboard() {
   const getCategoryIcon = (name: string): LucideIcon => {
     return SERVICE_ICON_MAP[name] || HelpCircle;
   };
+
+  const filteredProviders =
+    providers?.filter((provider) => provider.id !== user?.id) || [];
 
   if (isLoadingServices) {
     return (
@@ -84,9 +89,9 @@ export default function ClientDashboard() {
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
           </div>
-        ) : providers.length > 0 ? (
+        ) : filteredProviders.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {providers.map((provider) => (
+            {filteredProviders.map((provider) => (
               <ProviderCardClient
                 key={provider.id}
                 id={provider.id}

@@ -111,13 +111,13 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
 
   return (
     <div className="bg-white rounded-3xl p-5 border border-forest-100/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 font-sans">
-      {/* Header: ID + Status */}
+      {/* Header: N° Réservation + Status */}
       <div className="flex items-center justify-between border-b border-forest-50 pb-3">
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 text-xs font-bold text-forest-800 bg-forest-50 rounded-lg">
-            #{booking.id}
+          <span className="px-3 py-1 bg-forest-900 text-white rounded-xl text-xs font-mono font-bold shadow-sm">
+            N° {booking.id}
           </span>
-          <span className="text-xs font-medium text-forest-700/60">
+          <span className="text-[11px] font-semibold text-forest-700/60 uppercase tracking-wider">
             Réservation
           </span>
         </div>
