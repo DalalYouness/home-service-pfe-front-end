@@ -33,6 +33,9 @@ export interface ReservationResponse {
   idClient: number;
   idProvider: number;
   idService: number;
+  providerName: string;
+  clientName: string;
+  serviceName: string;
 }
 
 export interface ReservationValidateRequest {

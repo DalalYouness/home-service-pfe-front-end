@@ -126,6 +126,7 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
 
       {/* Details */}
       <div className="space-y-3 py-1">
+        {/* Nom du Service */}
         <div className="flex items-start gap-3">
           <Wrench className="w-4 h-4 text-forest-600 shrink-0 mt-0.5" />
           <div>
@@ -133,11 +134,12 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
               Service
             </p>
             <p className="text-sm font-bold text-forest-900">
-              Service #{booking.idService}
+              {booking.serviceName || `Service #${booking.idService}`}
             </p>
           </div>
         </div>
 
+        {/* Nom du Client ou Prestataire */}
         <div className="flex items-start gap-3">
           <User className="w-4 h-4 text-forest-600 shrink-0 mt-0.5" />
           <div>
@@ -146,8 +148,8 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
             </p>
             <p className="text-sm font-bold text-forest-900">
               {isProvider
-                ? `Client #${booking.idClient}`
-                : `Prestataire #${booking.idProvider}`}
+                ? booking.clientName || `Client #${booking.idClient}`
+                : booking.providerName || `Prestataire #${booking.idProvider}`}
             </p>
           </div>
         </div>
@@ -179,7 +181,6 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
                     <span>Annuler la réservation</span>
                   </button>
                 ) : (
-                  /* Two buttons view like design */
                   <div className="flex items-center gap-2 animate-in fade-in duration-150">
                     <button
                       onClick={() => handleAction("cancel", onCancel)}

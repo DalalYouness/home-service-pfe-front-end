@@ -2,14 +2,14 @@ import React from "react";
 import type { NotificationResponse } from "../types/notification";
 
 interface NotificationPopupProps {
-  notifications: NotificationResponse[];
-  unreadCount: number;
+  notifications?: NotificationResponse[];
+  unreadCount?: number;
   loading?: boolean;
 }
 
 export const NotificationPopup: React.FC<NotificationPopupProps> = ({
-  notifications,
-  unreadCount,
+  notifications = [],
+  unreadCount = 0,
   loading = false,
 }) => {
   return (
@@ -51,7 +51,7 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
             <div className="p-8 text-center text-xs text-forest-700/60 font-medium">
               Chargement des notifications...
             </div>
-          ) : notifications.length === 0 ? (
+          ) : !notifications || notifications.length === 0 ? (
             <div className="p-8 text-center text-xs text-forest-700/60 font-medium">
               Aucune notification pour le moment.
             </div>
@@ -96,12 +96,14 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
                         : "text-forest-500"
                     }`}
                   >
-                    {new Date(notif.createdAt).toLocaleDateString("fr-FR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      day: "2-digit",
-                      month: "short",
-                    })}
+                    {notif.createdAt
+                      ? new Date(notif.createdAt).toLocaleDateString("fr-FR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          day: "2-digit",
+                          month: "short",
+                        })
+                      : ""}
                   </span>
                 </div>
 

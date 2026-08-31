@@ -18,7 +18,7 @@ export const UserNavbar = () => {
   const { hasPrestataireRole, handleModeAction, isLoading } = useSwitchMode();
 
   // Custom Hook Notifications
-  const { unreadCount } = useNotifications();
+  const { notifications, unreadCount, loading } = useNotifications();
 
   const handleLogoutConfirm = () => {
     logout();
@@ -35,7 +35,6 @@ export const UserNavbar = () => {
         <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0">
           {/* Notification Button + Popup Container */}
           <div className="relative">
-            {" "}
             <button
               onClick={() => setIsNotifPopupOpen((prev) => !prev)}
               className="relative p-2 text-gray-500 hover:text-emerald-800 rounded-full transition-all cursor-pointer"
@@ -47,10 +46,17 @@ export const UserNavbar = () => {
                 </span>
               )}
             </button>
-            {isNotifPopupOpen && <NotificationPopup />}
+
+            {isNotifPopupOpen && (
+              <NotificationPopup
+                notifications={notifications}
+                unreadCount={unreadCount}
+                loading={loading}
+              />
+            )}
           </div>
 
-          {/* DYNAMIC MODE SWITCH BUTTON (RESPONSIVE: MOBILE & DESKTOP) */}
+          {/* DYNAMIC MODE SWITCH BUTTON */}
           <button
             onClick={handleModeAction}
             disabled={isLoading}
@@ -82,7 +88,7 @@ export const UserNavbar = () => {
                     : "Passer en mode Prestataire"}
             </span>
 
-            {/*  Mobile Short Text (Pro / Client / Devenir) */}
+            {/* Mobile Short Text */}
             <span className="inline sm:hidden font-semibold text-[11px]">
               {isLoading
                 ? "..."
