@@ -5,6 +5,7 @@ import type {
   ResetPasswordRequestDto,
 } from "../types/auth";
 import type { RegisterRequestDto } from "../types/register";
+import type { PageResponse, UserProfileMinDto } from "../types/admin";
 
 export const authService = {
   login: async (credentials: LoginRequestDto): Promise<AuthResponseDto> => {
@@ -25,5 +26,17 @@ export const authService = {
 
   resetPassword: async (formData: ResetPasswordRequestDto): Promise<void> => {
     await apiClient.put<void>("/api/v1/auth/reset-password", formData);
+  },
+  getAllUsers: async (
+    page: number = 0,
+    size: number = 10,
+  ): Promise<PageResponse<UserProfileMinDto>> => {
+    const response = await apiClient.get<PageResponse<UserProfileMinDto>>(
+      "/api/v1/auth/users",
+      {
+        params: { page, size },
+      },
+    );
+    return response.data;
   },
 };
