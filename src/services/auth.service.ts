@@ -39,4 +39,11 @@ export const authService = {
     );
     return response.data;
   },
+  createAdmin: async (data: RegisterRequestDto): Promise<UserProfileMinDto> => {
+    const response = await apiClient.post<UserProfileMinDto>(
+      "/api/v1/auth/add-administrator",
+      data,
+    );
+    return response.data;
+  },
 };

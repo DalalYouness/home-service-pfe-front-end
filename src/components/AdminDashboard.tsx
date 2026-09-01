@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useUsers } from "../hooks/useUsers";
 import { type RoleName } from "../types/admin";
+import { AddAdminModal } from "./AddAdminModal"; // Import Modal
 
 export const AdminDashboard: React.FC = () => {
   // 1. Hook Integration
@@ -26,6 +27,9 @@ export const AdminDashboard: React.FC = () => {
     setPage,
     refetch,
   } = useUsers(0, 10);
+
+  // State control pour le Modal Add Admin
+  const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
 
   // Search input state
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,6 +50,11 @@ export const AdminDashboard: React.FC = () => {
     return roles.map((r) => r.replace("ROLE_", "")).join(", ");
   };
 
+  // Callback en cas de succès de la création d'un admin
+  const handleAdminCreated = () => {
+    refetch(); // Rafraîchir la liste après ajout
+  };
+
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
       {/* HEADER SECTION */}
@@ -59,10 +68,10 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* BUTTON ADD ADMIN (Gardé pour l'instant) */}
+        {/* BUTTON ADD ADMIN */}
         <button
-          onClick={() => console.log("Ajouter Admin clicked")}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-forest-800 hover:bg-forest-900 text-white font-medium text-sm rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+          onClick={() => setIsAddAdminOpen(true)}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-forest-800 hover:bg-forest-900 text-white font-medium text-sm rounded-xl shadow-xs transition-all cursor-pointer shrink-0 active:scale-[0.98]"
         >
           <UserPlus className="w-4 h-4" />
           Ajouter un administrateur
@@ -260,6 +269,13 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* ADD ADMIN MODAL COMPONENT */}
+      <AddAdminModal
+        isOpen={isAddAdminOpen}
+        onClose={() => setIsAddAdminOpen(false)}
+        onSubmitSuccess={handleAdminCreated}
+      />
     </div>
   );
 };
