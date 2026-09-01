@@ -1,10 +1,17 @@
-//refactoring done hmdulilah
 import { useState } from "react";
-import { X, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import {
+  X,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  ArrowLeft,
+} from "lucide-react";
 import { authService } from "../services/auth.service";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import type { LoginRequestDto } from "../types/auth";
+import type { LoginRequestDto, ResetPasswordRequestDto } from "../types/auth";
 
 interface LoginFormProps {
   isOpen: boolean;
@@ -12,57 +19,66 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
+  // 🔹 1. State switch لتبديل الواجهة بين Login و Reset Password
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+  // State للـ Login Form
   const [formData, setFormData] = useState<LoginRequestDto>({
     email: "",
     password: "",
   });
 
+  // State للـ Reset Password Form
+  const [resetData, setResetData] = useState<ResetPasswordRequestDto>({
+    email: "",
+    newPassword: "",
+    confirmationPassword: "",
+  });
+
   const navigate = useNavigate();
-
   const { login } = useAuth();
-  // hna fin wsalt
-  /*
-   * État pour suivre le processus asynchrone (Pending) de la requête Axios.
-   * Permet d'afficher un indicateur visuel (loading) à l'utilisateur.
-   */
-  const [isLoading, setIsLoading] = useState(false);
 
-  /*
-   * État pour mémoriser le message d'erreur si la promesse est rejetée (Rejected).
-   * Permet d'alerter l'utilisateur et de colorer les champs en rouge.
-   */
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (isForgotPassword) {
+      setResetData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
 
     if (errorMsg) {
       setErrorMsg(null);
     }
   };
 
-  /*
-   * Soumission du formulaire gérée de manière asynchrone.
-   * Communique avec le service d'authentification et gère les états visuels.
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Début du chargement : On passe à l'état 'Pending' et on réinitialise les erreurs précédentes
+    if (isForgotPassword) {
+      console.log("Reset Password triggered visually with data:", resetData);
+      return;
+    }
+
     setIsLoading(true);
     setErrorMsg(null);
 
     try {
-      // 2. Appel asynchrone de l'API via notre service avec les données du formulaire (LoginRequestDto)
       const responseData = await authService.login(formData);
 
       const user = {
@@ -80,8 +96,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
       navigate("/user/dashboard", {
         replace: true,
       });
-    } catch (error) {
-      // 1. Safe navigation using error?.response?.status
+    } catch (error: any) {
       if (error?.response?.status === 401) {
         const backendMessage =
           error.response?.data?.message || "Email ou mot de passe incorrect.";
@@ -89,7 +104,6 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
         return;
       }
     } finally {
-      // 3. Stop the loading spinner
       setIsLoading(false);
     }
   };
@@ -99,6 +113,12 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
       email: "",
       password: "",
     });
+    setResetData({
+      email: "",
+      newPassword: "",
+      confirmationPassword: "",
+    });
+    setIsForgotPassword(false);
   };
 
   const handleClose = () => {
@@ -107,10 +127,21 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
     resetForm();
   };
 
+  // Switch to forgot password view & sync email
+  const handleToggleForgotPassword = (value: boolean) => {
+    setErrorMsg(null);
+    setIsForgotPassword(value);
+    if (value) {
+      setResetData((prev) => ({ ...prev, email: formData.email }));
+    } else {
+      setFormData((prev) => ({ ...prev, email: resetData.email }));
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-card p-8 border border-cream-200">
-        {/*clode button*/}
+        {/* Close button */}
         <button
           onClick={handleClose}
           className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:bg-cream-50 hover:text-gray-600 transition-colors"
@@ -119,29 +150,28 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
           <X size={20} />
         </button>
 
-        {/* Title */}
+        {/* Dynamic Title */}
         <div className="mb-8">
-          <h1 className="font-sans font-bold text-3xl">Bienvenue</h1>
+          <h1 className="font-sans font-bold text-3xl">
+            {isForgotPassword ? "Réinitialisation" : "Bienvenue"}
+          </h1>
+          {isForgotPassword && (
+            <p className="text-xs text-gray-500 mt-1">
+              Entrez votre email et votre nouveau mot de passe.
+            </p>
+          )}
         </div>
 
-        {/*
-         * Affichage dynamique d'un bandeau d'erreur général
-         * si la mémoire 'errorMsg' contient une erreur du serveur.
-         */}
-        {/*
-         * Affichage dynamique d'un bandeau d'erreur stylisé (avec icône)
-         * si la mémoire 'errorMsg' contient une erreur du serveur.
-         */}
+        {/* Error Banner */}
         {errorMsg && (
           <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800">
-            {/* Icône d'alerte rouge importée de lucide-react */}
             <AlertCircle size={20} className="shrink-0 text-red-600" />
             <span className="text-sm font-medium">{errorMsg}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/*email field*/}
+          {/* Email field */}
           <div>
             <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
               Adresse Email
@@ -153,12 +183,8 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
               <input
                 type="email"
                 name="email"
-                value={formData.email}
+                value={isForgotPassword ? resetData.email : formData.email}
                 onChange={handleInputChange}
-                /*
-                 * Coloration dynamique de la bordure et du fond en cas d'erreur
-                 * pour signaler visuellement le problème à l'utilisateur.
-                 */
                 className={`w-full pl-11 pr-4 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 transition-all ${
                   errorMsg
                     ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
@@ -170,59 +196,119 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
             </div>
           </div>
 
-          {/*pwd field*/}
-          <div>
-            <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
-              Mot de passe
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <Lock size={18} />
-              </span>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                /*
-                 * Même logique de coloration dynamique d'erreur pour le mot de passe.
-                 */
-                className={`w-full pl-11 pr-12 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 tracking-wide transition-all ${
-                  errorMsg
-                    ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
-                    : "bg-[#faf8f3] border border-[#e8dfc8] focus:border-forest-500 focus:ring-forest-500 text-gray-700 placeholder-gray-400"
-                }`}
-                placeholder="Password@123"
-                required
-              />
-              {/*button show/hide Eye*/}
+          {/* IF LOGIN: Show standard password field */}
+          {!isForgotPassword && (
+            <div>
+              <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                  <Lock size={18} />
+                </span>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`w-full pl-11 pr-12 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 tracking-wide transition-all ${
+                    errorMsg
+                      ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
+                      : "bg-[#faf8f3] border border-[#e8dfc8] focus:border-forest-500 focus:ring-forest-500 text-gray-700 placeholder-gray-400"
+                  }`}
+                  placeholder="Password@123"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* IF FORGOT PASSWORD: Show New Password & Confirmation */}
+          {isForgotPassword && (
+            <>
+              {/* Nouveau mot de passe */}
+              <div>
+                <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
+                  Nouveau mot de passe
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                    <Lock size={18} />
+                  </span>
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    name="newPassword"
+                    value={resetData.newPassword}
+                    onChange={handleInputChange}
+                    className="w-full pl-11 pr-12 py-3 text-base bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl focus:outline-none focus:border-forest-500 focus:ring-1 focus:ring-forest-500 text-gray-700 placeholder-gray-400 transition-all"
+                    placeholder="Nouveau mot de passe"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600"
+                  >
+                    {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirmation mot de passe */}
+              <div>
+                <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
+                  Confirmer le mot de passe
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                    <Lock size={18} />
+                  </span>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmationPassword"
+                    value={resetData.confirmationPassword}
+                    onChange={handleInputChange}
+                    className="w-full pl-11 pr-12 py-3 text-base bg-[#faf8f3] border border-[#e8dfc8] rounded-2xl focus:outline-none focus:border-forest-500 focus:ring-1 focus:ring-forest-500 text-gray-700 placeholder-gray-400 transition-all"
+                    placeholder="Confirmez le mot de passe"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Forget password button */}
+          {!isForgotPassword && (
+            <div className="text-right">
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600"
+                onClick={() => handleToggleForgotPassword(true)}
+                className="text-sm font-medium text-forest-700 hover:text-forest-900 hover:underline transition-colors"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                Mot de passe oublié ?
               </button>
             </div>
-          </div>
+          )}
 
-          {/*forget password button*/}
-          <div className="text-right">
-            <Link
-              to="/forgot-password"
-              className="text-sm font-medium text-forest-700 hover:text-forest-900 hover:underline transition-colors"
-            >
-              {" "}
-              Mot de passe oublié ?
-            </Link>
-          </div>
-
-          {/* submit button */}
-          {/*
-           * Bouton de soumission qui réagit dynamiquement à l'état isLoading :
-           * - Désactivé (disabled) pendant la requête pour éviter les doubles clics.
-           * - Affiche un indicateur de chargement stylisé à la place du texte habituel.
-           */}
+          {/* Submit button */}
           <button
             type="submit"
             disabled={isLoading}
@@ -249,27 +335,318 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                <span>Connexion en cours...</span>
+                <span>
+                  {isForgotPassword ? "Traitement..." : "Connexion en cours..."}
+                </span>
               </>
+            ) : isForgotPassword ? (
+              "Réinitialiser le mot de passe"
             ) : (
               "Se connecter"
             )}
           </button>
         </form>
 
-        {/*register si vous n'avez pas encore un compte*/}
+        {/* Footer / Back Link */}
         <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
-            Pas encore de compte ?{" "}
-            <Link
-              to={"/register"}
-              className="font-bold text-forest-700 hover:text-forest-900 hover:underline transition-colors"
+          {isForgotPassword ? (
+            <button
+              type="button"
+              onClick={() => handleToggleForgotPassword(false)}
+              className="inline-flex items-center gap-2 text-sm font-bold text-forest-700 hover:text-forest-900 hover:underline transition-colors"
             >
-              Créer un compte
-            </Link>
-          </p>
+              <ArrowLeft size={16} />
+              Retour à la connexion
+            </button>
+          ) : (
+            <p className="text-sm text-gray-600">
+              Pas encore de compte ?{" "}
+              <Link
+                to={"/register"}
+                className="font-bold text-forest-700 hover:text-forest-900 hover:underline transition-colors"
+              >
+                Créer un compte
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+// //refactoring done hmdulilah
+// import { useState } from "react";
+// import { X, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+// import { authService } from "../services/auth.service";
+// import { Link, useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
+// import type { LoginRequestDto } from "../types/auth";
+
+// interface LoginFormProps {
+//   isOpen: boolean;
+//   onClose: () => void;
+// }
+
+// export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
+//   const [formData, setFormData] = useState<LoginRequestDto>({
+//     email: "",
+//     password: "",
+//   });
+
+//   const navigate = useNavigate();
+
+//   const { login } = useAuth();
+//   // hna fin wsalt
+//   /*
+//    * État pour suivre le processus asynchrone (Pending) de la requête Axios.
+//    * Permet d'afficher un indicateur visuel (loading) à l'utilisateur.
+//    */
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   /*
+//    * État pour mémoriser le message d'erreur si la promesse est rejetée (Rejected).
+//    * Permet d'alerter l'utilisateur et de colorer les champs en rouge.
+//    */
+//   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+//   const [showPassword, setShowPassword] = useState(false);
+
+//   if (!isOpen) return null;
+
+//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { name, value } = e.target;
+
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+
+//     if (errorMsg) {
+//       setErrorMsg(null);
+//     }
+//   };
+
+//   /*
+//    * Soumission du formulaire gérée de manière asynchrone.
+//    * Communique avec le service d'authentification et gère les états visuels.
+//    */
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     // 1. Début du chargement : On passe à l'état 'Pending' et on réinitialise les erreurs précédentes
+//     setIsLoading(true);
+//     setErrorMsg(null);
+
+//     try {
+//       // 2. Appel asynchrone de l'API via notre service avec les données du formulaire (LoginRequestDto)
+//       const responseData = await authService.login(formData);
+
+//       const user = {
+//         id: responseData.id,
+//         email: responseData.email,
+//         fullname: responseData.fullName,
+//         roles: responseData.roles,
+//         activeMode: responseData.activeMode,
+//       };
+
+//       login(user, responseData.token);
+//       resetForm();
+//       onClose();
+
+//       navigate("/user/dashboard", {
+//         replace: true,
+//       });
+//     } catch (error) {
+//       // 1. Safe navigation using error?.response?.status
+//       if (error?.response?.status === 401) {
+//         const backendMessage =
+//           error.response?.data?.message || "Email ou mot de passe incorrect.";
+//         setErrorMsg(backendMessage);
+//         return;
+//       }
+//     } finally {
+//       // 3. Stop the loading spinner
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const resetForm = () => {
+//     setFormData({
+//       email: "",
+//       password: "",
+//     });
+//   };
+
+//   const handleClose = () => {
+//     onClose();
+//     setErrorMsg(null);
+//     resetForm();
+//   };
+
+//   return (
+//     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+//       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-card p-8 border border-cream-200">
+//         {/*clode button*/}
+//         <button
+//           onClick={handleClose}
+//           className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:bg-cream-50 hover:text-gray-600 transition-colors"
+//           aria-label="Fermer"
+//         >
+//           <X size={20} />
+//         </button>
+
+//         {/* Title */}
+//         <div className="mb-8">
+//           <h1 className="font-sans font-bold text-3xl">Bienvenue</h1>
+//         </div>
+
+//         {/*
+//          * Affichage dynamique d'un bandeau d'erreur général
+//          * si la mémoire 'errorMsg' contient une erreur du serveur.
+//          */}
+//         {/*
+//          * Affichage dynamique d'un bandeau d'erreur stylisé (avec icône)
+//          * si la mémoire 'errorMsg' contient une erreur du serveur.
+//          */}
+//         {errorMsg && (
+//           <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800">
+//             {/* Icône d'alerte rouge importée de lucide-react */}
+//             <AlertCircle size={20} className="shrink-0 text-red-600" />
+//             <span className="text-sm font-medium">{errorMsg}</span>
+//           </div>
+//         )}
+
+//         <form onSubmit={handleSubmit} className="space-y-5">
+//           {/*email field*/}
+//           <div>
+//             <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
+//               Adresse Email
+//             </label>
+//             <div className="relative">
+//               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+//                 <Mail size={18} />
+//               </span>
+//               <input
+//                 type="email"
+//                 name="email"
+//                 value={formData.email}
+//                 onChange={handleInputChange}
+//                 /*
+//                  * Coloration dynamique de la bordure et du fond en cas d'erreur
+//                  * pour signaler visuellement le problème à l'utilisateur.
+//                  */
+//                 className={`w-full pl-11 pr-4 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 transition-all ${
+//                   errorMsg
+//                     ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
+//                     : "bg-[#faf8f3] border border-[#e8dfc8] focus:border-forest-500 focus:ring-forest-500 text-gray-700 placeholder-gray-400"
+//                 }`}
+//                 placeholder="dalal@exemple.com"
+//                 required
+//               />
+//             </div>
+//           </div>
+
+//           {/*pwd field*/}
+//           <div>
+//             <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
+//               Mot de passe
+//             </label>
+//             <div className="relative">
+//               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+//                 <Lock size={18} />
+//               </span>
+//               <input
+//                 type={showPassword ? "text" : "password"}
+//                 name="password"
+//                 value={formData.password}
+//                 onChange={handleInputChange}
+//                 /*
+//                  * Même logique de coloration dynamique d'erreur pour le mot de passe.
+//                  */
+//                 className={`w-full pl-11 pr-12 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 tracking-wide transition-all ${
+//                   errorMsg
+//                     ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
+//                     : "bg-[#faf8f3] border border-[#e8dfc8] focus:border-forest-500 focus:ring-forest-500 text-gray-700 placeholder-gray-400"
+//                 }`}
+//                 placeholder="Password@123"
+//                 required
+//               />
+//               {/*button show/hide Eye*/}
+//               <button
+//                 type="button"
+//                 onClick={() => setShowPassword(!showPassword)}
+//                 className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600"
+//               >
+//                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+//               </button>
+//             </div>
+//           </div>
+
+//           {/*forget password button*/}
+//           <div className="text-right">
+//             <Link
+//               to="/forgot-password"
+//               className="text-sm font-medium text-forest-700 hover:text-forest-900 hover:underline transition-colors"
+//             >
+//               {" "}
+//               Mot de passe oublié ?
+//             </Link>
+//           </div>
+
+//           {/* submit button */}
+//           {/*
+//            * Bouton de soumission qui réagit dynamiquement à l'état isLoading :
+//            * - Désactivé (disabled) pendant la requête pour éviter les doubles clics.
+//            * - Affiche un indicateur de chargement stylisé à la place du texte habituel.
+//            */}
+//           <button
+//             type="submit"
+//             disabled={isLoading}
+//             className="w-full py-3.5 mt-2 text-base font-semibold text-white bg-forest-900 hover:bg-forest-800 active:scale-[0.98] rounded-2xl shadow-sm transition-all disabled:bg-forest-900/50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+//           >
+//             {isLoading ? (
+//               <>
+//                 <svg
+//                   className="animate-spin h-5 w-5 text-white"
+//                   fill="none"
+//                   viewBox="0 0 24 24"
+//                 >
+//                   <circle
+//                     className="opacity-25"
+//                     cx="12"
+//                     cy="12"
+//                     r="10"
+//                     stroke="currentColor"
+//                     strokeWidth="4"
+//                   />
+//                   <path
+//                     className="opacity-75"
+//                     fill="currentColor"
+//                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+//                   />
+//                 </svg>
+//                 <span>Connexion en cours...</span>
+//               </>
+//             ) : (
+//               "Se connecter"
+//             )}
+//           </button>
+//         </form>
+
+//         {/*register si vous n'avez pas encore un compte*/}
+//         <div className="text-center mt-6">
+//           <p className="text-sm text-gray-600">
+//             Pas encore de compte ?{" "}
+//             <Link
+//               to={"/register"}
+//               className="font-bold text-forest-700 hover:text-forest-900 hover:underline transition-colors"
+//             >
+//               Créer un compte
+//             </Link>
+//           </p>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

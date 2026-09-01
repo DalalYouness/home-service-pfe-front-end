@@ -17,3 +17,9 @@ export interface AuthResponseDto {
   expiresIn: string;
   activeMode: AppMode;
 }
+
+export interface ResetPasswordRequestDto {
+  email: string;
+  newPassword: string;
+  confirmationPassword: string;
+}
