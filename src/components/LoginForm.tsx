@@ -7,10 +7,12 @@ import {
   EyeOff,
   AlertCircle,
   ArrowLeft,
+  CheckCircle2,
 } from "lucide-react";
 import { authService } from "../services/auth.service";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useResetPassword } from "../hooks/useResetPassword";
 import type { LoginRequestDto, ResetPasswordRequestDto } from "../types/auth";
 
 interface LoginFormProps {
@@ -19,16 +21,23 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
-  // 🔹 1. State switch لتبديل الواجهة بين Login و Reset Password
+  // Mode switcher State
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  // State للـ Login Form
+  const {
+    handleResetPassword,
+    isResetLoading,
+    resetErrorMsg,
+    resetResetState,
+    setResetErrorMsg,
+  } = useResetPassword();
+
   const [formData, setFormData] = useState<LoginRequestDto>({
     email: "",
     password: "",
   });
 
-  // State للـ Reset Password Form
+  //   Reset Password Form State
   const [resetData, setResetData] = useState<ResetPasswordRequestDto>({
     email: "",
     newPassword: "",
@@ -38,14 +47,18 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  // Login specific states
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [loginErrorMsg, setLoginErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   if (!isOpen) return null;
+
+  const currentErrorMsg = isForgotPassword ? resetErrorMsg : loginErrorMsg;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,28 +68,34 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
         ...prev,
         [name]: value,
       }));
+      if (resetErrorMsg) setResetErrorMsg(null);
     } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
-    }
-
-    if (errorMsg) {
-      setErrorMsg(null);
+      if (loginErrorMsg) setLoginErrorMsg(null);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSuccessMsg(null);
 
+    //  1. Execute Reset Password Logic via Hook
     if (isForgotPassword) {
-      console.log("Reset Password triggered visually with data:", resetData);
+      await handleResetPassword(resetData, () => {
+        setSuccessMsg(
+          "Mot de passe réinitialisé avec succès. Veuillez vous connecter.",
+        );
+        handleToggleForgotPassword(false);
+      });
       return;
     }
 
-    setIsLoading(true);
-    setErrorMsg(null);
+    // 2. Execute Login Logic
+    setIsLoginLoading(true);
+    setLoginErrorMsg(null);
 
     try {
       const responseData = await authService.login(formData);
@@ -93,44 +112,39 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
       resetForm();
       onClose();
 
-      navigate("/user/dashboard", {
-        replace: true,
-      });
+      navigate("/user/dashboard", { replace: true });
     } catch (error: any) {
       if (error?.response?.status === 401) {
         const backendMessage =
           error.response?.data?.message || "Email ou mot de passe incorrect.";
-        setErrorMsg(backendMessage);
-        return;
+        setLoginErrorMsg(backendMessage);
+      } else {
+        setLoginErrorMsg("Une erreur est survenue lors de la connexion.");
       }
     } finally {
-      setIsLoading(false);
+      setIsLoginLoading(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({
-      email: "",
-      password: "",
-    });
-    setResetData({
-      email: "",
-      newPassword: "",
-      confirmationPassword: "",
-    });
+    setFormData({ email: "", password: "" });
+    setResetData({ email: "", newPassword: "", confirmationPassword: "" });
     setIsForgotPassword(false);
+    setLoginErrorMsg(null);
+    setSuccessMsg(null);
+    resetResetState();
   };
 
   const handleClose = () => {
     onClose();
-    setErrorMsg(null);
     resetForm();
   };
 
-  // Switch to forgot password view & sync email
   const handleToggleForgotPassword = (value: boolean) => {
-    setErrorMsg(null);
+    setLoginErrorMsg(null);
+    resetResetState();
     setIsForgotPassword(value);
+
     if (value) {
       setResetData((prev) => ({ ...prev, email: formData.email }));
     } else {
@@ -138,10 +152,12 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
     }
   };
 
+  const isLoading = isForgotPassword ? isResetLoading : isLoginLoading;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-card p-8 border border-cream-200">
-        {/* Close button */}
+        {/* Close Button */}
         <button
           onClick={handleClose}
           className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:bg-cream-50 hover:text-gray-600 transition-colors"
@@ -150,9 +166,9 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
           <X size={20} />
         </button>
 
-        {/* Dynamic Title */}
+        {/* Dynamic Header Title */}
         <div className="mb-8">
-          <h1 className="font-sans font-bold text-3xl">
+          <h1 className="font-sans font-bold text-3xl text-forest-900">
             {isForgotPassword ? "Réinitialisation" : "Bienvenue"}
           </h1>
           {isForgotPassword && (
@@ -162,16 +178,24 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
           )}
         </div>
 
-        {/* Error Banner */}
-        {errorMsg && (
+        {/* Success Alert Banner */}
+        {successMsg && !isForgotPassword && (
+          <div className="mb-5 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3 text-emerald-800">
+            <CheckCircle2 size={20} className="shrink-0 text-emerald-600" />
+            <span className="text-sm font-medium">{successMsg}</span>
+          </div>
+        )}
+
+        {/* Error Alert Banner */}
+        {currentErrorMsg && (
           <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-800">
             <AlertCircle size={20} className="shrink-0 text-red-600" />
-            <span className="text-sm font-medium">{errorMsg}</span>
+            <span className="text-sm font-medium">{currentErrorMsg}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email field */}
+          {/* Email Input (Shared) */}
           <div>
             <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
               Adresse Email
@@ -186,7 +210,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
                 value={isForgotPassword ? resetData.email : formData.email}
                 onChange={handleInputChange}
                 className={`w-full pl-11 pr-4 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 transition-all ${
-                  errorMsg
+                  currentErrorMsg
                     ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
                     : "bg-[#faf8f3] border border-[#e8dfc8] focus:border-forest-500 focus:ring-forest-500 text-gray-700 placeholder-gray-400"
                 }`}
@@ -196,7 +220,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
             </div>
           </div>
 
-          {/* IF LOGIN: Show standard password field */}
+          {/* Mode Login: Current Password */}
           {!isForgotPassword && (
             <div>
               <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
@@ -212,7 +236,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
                   value={formData.password}
                   onChange={handleInputChange}
                   className={`w-full pl-11 pr-12 py-3 text-base rounded-2xl focus:outline-none focus:ring-1 tracking-wide transition-all ${
-                    errorMsg
+                    currentErrorMsg
                       ? "bg-red-50/50 border border-red-300 focus:border-red-500 focus:ring-red-500 text-red-900"
                       : "bg-[#faf8f3] border border-[#e8dfc8] focus:border-forest-500 focus:ring-forest-500 text-gray-700 placeholder-gray-400"
                   }`}
@@ -230,10 +254,9 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
             </div>
           )}
 
-          {/* IF FORGOT PASSWORD: Show New Password & Confirmation */}
+          {/* Mode Reset Password: New Password & Confirmation */}
           {isForgotPassword && (
             <>
-              {/* Nouveau mot de passe */}
               <div>
                 <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
                   Nouveau mot de passe
@@ -261,7 +284,6 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
                 </div>
               </div>
 
-              {/* Confirmation mot de passe */}
               <div>
                 <label className="block text-xs font-bold text-forest-900 tracking-wider mb-2">
                   Confirmer le mot de passe
@@ -295,7 +317,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
             </>
           )}
 
-          {/* Forget password button */}
+          {/* Link to trigger Forgot Password mode */}
           {!isForgotPassword && (
             <div className="text-right">
               <button
@@ -308,7 +330,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
             </div>
           )}
 
-          {/* Submit button */}
+          {/* Dynamic Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
@@ -347,7 +369,7 @@ export default function LoginForm({ isOpen, onClose }: LoginFormProps) {
           </button>
         </form>
 
-        {/* Footer / Back Link */}
+        {/* Footer actions */}
         <div className="text-center mt-6">
           {isForgotPassword ? (
             <button

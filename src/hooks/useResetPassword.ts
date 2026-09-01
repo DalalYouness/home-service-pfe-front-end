@@ -11,7 +11,7 @@ export function useResetPassword() {
     resetData: ResetPasswordRequestDto,
     onSuccessCallback?: () => void,
   ) => {
-    // 1. Client-side Validation (Guard Clauses)
+    // Client-side Guard Validation
     if (
       !resetData.email ||
       !resetData.newPassword ||
@@ -33,25 +33,23 @@ export function useResetPassword() {
     setIsSuccess(false);
 
     try {
-      // 2. Call Service Employee (Axios PUT)
       await authService.resetPassword(resetData);
-
       setIsSuccess(true);
+
       if (onSuccessCallback) {
         onSuccessCallback();
       }
     } catch (error: any) {
-      // 3. Centralized Error Handling (Backend 400, 404, 500)
-      const message =
+      const backendMessage =
         error?.response?.data?.message ||
-        "Impossible de réinitialiser le mot de passe. Veuillez vérifier votre email.";
-      setErrorMsg(message);
+        "Impossible de réinitialiser le mot de passe. Veuillez réessayer.";
+      setErrorMsg(backendMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const resetState = () => {
+  const resetResetState = () => {
     setIsLoading(false);
     setErrorMsg(null);
     setIsSuccess(false);
@@ -59,10 +57,10 @@ export function useResetPassword() {
 
   return {
     handleResetPassword,
-    isLoading,
-    errorMsg,
-    isSuccess,
-    resetState,
-    setErrorMsg,
+    isResetLoading: isLoading,
+    resetErrorMsg: errorMsg,
+    isResetSuccess: isSuccess,
+    resetResetState,
+    setResetErrorMsg: setErrorMsg,
   };
 }
