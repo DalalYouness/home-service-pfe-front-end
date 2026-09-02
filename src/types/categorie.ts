@@ -17,3 +17,7 @@ export interface PageResponse<T> {
 export interface AddServiceReqProviderDTO {
   serviceId: number;
 }
+
+export interface AddCategoryResponseDto {
+  message: string;
+}

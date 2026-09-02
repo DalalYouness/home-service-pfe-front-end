@@ -9,40 +9,16 @@ import {
   AlertTriangle,
   FolderOpen,
   CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
+import { useServices } from "../hooks/useServices"; // تعديل المسار حسب مشروعك
 import type { ServiceResponseDto } from "../types/categorie";
 
-// Mock Data
-const INITIAL_MOCK_SERVICES: ServiceResponseDto[] = [
-  {
-    id: 1,
-    name: "Plomberie",
-    description:
-      "Réparation de fuites, installation de robinetterie et tuyauterie.",
-  },
-  {
-    id: 2,
-    name: "Électricité",
-    description: "Installation électrique, dépannage de tableaux et prises.",
-  },
-  {
-    id: 3,
-    name: "Peinture",
-    description: "Travaux de peinture intérieure et extérieure pour logements.",
-  },
-  {
-    id: 4,
-    name: "Jardinage",
-    description:
-      "Entretien d'espaces verts, taille de haies et tonte de gazon.",
-  },
-];
-
 export const ServicesManagementPage: React.FC = () => {
-  // States
-  const [services, setServices] = useState<ServiceResponseDto[]>(
-    INITIAL_MOCK_SERVICES,
-  );
+  // 1. استدعاء الموظف useServices لجلب البيانات الحقيقية
+  const { services: initialServices, isLoadingServices } = useServices();
+
+  // Local state لإدارة القائمة والتفاعل مع باقي العمليات
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Modal States
@@ -65,18 +41,13 @@ export const ServicesManagementPage: React.FC = () => {
   };
 
   // ----------------------------------------------------
-  // Handlers for CRUD Operations (Mocking Backend Actions)
+  // Handlers for CRUD Operations
   // ----------------------------------------------------
 
   // 1. Ajouter un nouveau service
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newService: ServiceResponseDto = {
-      id: Date.now(),
-      name: formData.name,
-      description: formData.description,
-    };
-    setServices([newService, ...services]);
+    // غا يتم ربطها مستقبلاً بـ API Add
     setIsAddOpen(false);
     setFormData({ name: "", description: "" });
     showNotification("Service ajouté avec succès !");
@@ -94,13 +65,7 @@ export const ServicesManagementPage: React.FC = () => {
     e.preventDefault();
     if (!selectedService) return;
 
-    setServices(
-      services.map((s) =>
-        s.id === selectedService.id
-          ? { ...s, name: formData.name, description: formData.description }
-          : s,
-      ),
-    );
+    // غا يتم ربطها مستقبلاً بـ API Edit
     setIsEditOpen(false);
     setSelectedService(null);
     setFormData({ name: "", description: "" });
@@ -117,14 +82,14 @@ export const ServicesManagementPage: React.FC = () => {
   const handleDeleteConfirm = () => {
     if (!selectedService) return;
 
-    setServices(services.filter((s) => s.id !== selectedService.id));
+    // غا يتم ربطها مستقبلاً بـ API Delete
     setIsDeleteOpen(false);
     setSelectedService(null);
     showNotification("Service supprimé avec succès !");
   };
 
   // Filter Services by Search Input
-  const filteredServices = services.filter(
+  const filteredServices = (initialServices || []).filter(
     (s) =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (s.description &&
@@ -137,6 +102,7 @@ export const ServicesManagementPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-forest-800 tracking-tight flex items-center gap-2.5">
+            <Wrench className="w-6 h-6 text-forest-800" />
             Gestion des Services
           </h1>
           <p className="text-xs md:text-sm text-forest-700/70">
@@ -183,7 +149,19 @@ export const ServicesManagementPage: React.FC = () => {
 
       {/* Table Container (Lister les services) */}
       <div className="bg-white rounded-3xl border border-cream-200 shadow-card overflow-hidden">
-        {filteredServices.length === 0 ? (
+        {isLoadingServices ? (
+          /* Loading State */
+          <div className="p-12 text-center text-gray-400 space-y-3">
+            <RefreshCw
+              size={32}
+              className="animate-spin mx-auto text-forest-800"
+            />
+            <p className="text-sm font-medium text-gray-600">
+              Chargement des services en cours...
+            </p>
+          </div>
+        ) : filteredServices.length === 0 ? (
+          /* Empty State */
           <div className="p-12 text-center text-gray-400 space-y-3">
             <FolderOpen size={40} className="mx-auto text-gray-300" />
             <p className="text-base font-semibold text-gray-600">
@@ -196,6 +174,7 @@ export const ServicesManagementPage: React.FC = () => {
             </p>
           </div>
         ) : (
+          /* Services Table */
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
