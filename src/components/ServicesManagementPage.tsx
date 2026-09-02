@@ -12,6 +12,7 @@ import {
 import { useServicesManager } from "../hooks/useServicesManager";
 import { AddServiceModal } from "../components/AddServiceModal";
 import { EditServiceModal } from "../components/EditServiceModal";
+import { DeleteServiceModal } from "../components/DeleteServiceModal";
 import type { ServiceResponseDto } from "../types/categorie";
 
 export const ServicesManagementPage: React.FC = () => {
@@ -47,7 +48,6 @@ export const ServicesManagementPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-forest-800 tracking-tight flex items-center gap-2.5">
-            <Wrench className="w-6 h-6 text-forest-800" />
             Gestion des Services
           </h1>
           <p className="text-xs md:text-sm text-forest-700/70">
@@ -162,20 +162,15 @@ export const ServicesManagementPage: React.FC = () => {
           </div>
         )}
       </div>
-      {/* ---------------------------------------------------------------------- */}
 
-      {/* ======================================================== */}
-      {/* MODAL 1 : AJOUTER UN SERVICE                            */}
-      {/* ======================================================== */}
+      {/* MODAL 1 : AJOUTER UN SERVICE */}
       <AddServiceModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onSuccess={(msg) => showNotification(msg)}
       />
 
-      {/* ======================================================== */}
-      {/* MODAL 2 : MODIFIER UN SERVICE                            */}
-      {/* ======================================================== */}
+      {/* MODAL 2 : MODIFIER UN SERVICE */}
       <EditServiceModal
         isOpen={isEditOpen}
         service={selectedService}
@@ -185,11 +180,19 @@ export const ServicesManagementPage: React.FC = () => {
         }}
         onSuccess={(msg) => showNotification(msg)}
       />
+
+      {/* MODAL 3 : SUPPRIMER UN SERVICE */}
+      <DeleteServiceModal
+        isOpen={isDeleteOpen}
+        service={selectedService}
+        onClose={() => {
+          setIsDeleteOpen(false);
+          setSelectedService(null);
+        }}
+        onSuccess={(msg) => showNotification(msg)}
+      />
     </div>
   );
-  {
-    /* ---------------------------------------------------------------------- */
-  }
 };
 
 export default ServicesManagementPage;

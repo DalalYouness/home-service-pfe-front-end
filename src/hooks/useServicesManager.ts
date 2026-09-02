@@ -65,6 +65,33 @@ export const useServicesManager = () => {
     }
   };
 
+  // --- Supprimer un service ---
+  const handleDeleteService = async (
+    id: number,
+    onSuccess?: (message: string) => void,
+  ) => {
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      const response = await categorieService.deleteService(id);
+
+      if (onSuccess) {
+        onSuccess(response.message || "Service supprimé avec succès !");
+      }
+
+      return response;
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ||
+        "Une erreur est survenue lors de la suppression du service.";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     services,
     isLoadingServices,
@@ -73,5 +100,6 @@ export const useServicesManager = () => {
     setError,
     handleAddService,
     handleUpdateService,
+    handleDeleteService,
   };
 };
