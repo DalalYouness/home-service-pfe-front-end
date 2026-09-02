@@ -18,6 +18,11 @@ export interface AddServiceReqProviderDTO {
   serviceId: number;
 }
 
+export interface CategoryRequestDto {
+  serviceName: string;
+  description?: string;
+}
+
 export interface AddCategoryResponseDto {
   message: string;
 }

@@ -1,5 +1,7 @@
 import type {
+  AddCategoryResponseDto,
   AddServiceReqProviderDTO,
+  CategoryRequestDto,
   PageResponse,
   ServiceResponseDto,
 } from "../types/categorie";
@@ -23,6 +25,16 @@ export const categorieService = {
     // parce que la reponse du backend est un message, on peut typer la réponse comme { message: string }
     const response = await apiClient.post<{ message: string }>(
       "/api/v1/expertise/add-more-service",
+      dto,
+    );
+    return response.data;
+  },
+
+  addService: async (
+    dto: CategoryRequestDto,
+  ): Promise<AddCategoryResponseDto> => {
+    const response = await apiClient.post<AddCategoryResponseDto>(
+      "/api/v1/service/add",
       dto,
     );
     return response.data;
