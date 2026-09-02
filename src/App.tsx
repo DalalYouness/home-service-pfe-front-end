@@ -13,6 +13,7 @@ import { AuthProvider } from "./context/AuthContext";
 import BecomePrestatairePage from "./components/BecomePrestatairePage";
 import { DashBoardPage } from "./components/DashBoardPage";
 import { AllReservations } from "./components/AllReservations";
+import ServicesManagementPage from "./components/ServicesManagementPage";
 
 export default function App() {
   return (
@@ -48,12 +49,13 @@ export default function App() {
             {/* /client/dashboard */}
             <Route path="dashboard" element={<DashBoardPage />} />
             <Route path="my-reservations" element={<AllReservations />} />
-
-            {/* /client/compte */}
+            {/* /client/compte */}{" "}
+            {/* ma3loma mohima ela element rah lcomposant kayrj3 jsx f return o kayt7at fih donc rah composant rah fonction katrj3 jsx donc nqdr nktb code jsx mobachara la bghit wst jsx */}
             <Route path="account-setting" element={<AccountSetting />} />
-
             {/* profile component */}
             <Route path="myprofil" element={<Profil />} />
+            {/*services management by admin*/}
+            <Route path="services" element={<ServicesManagementPage />} />
             {/* important thing when user go directly to /client i have to redirect him to /client/dashboard*/}
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>

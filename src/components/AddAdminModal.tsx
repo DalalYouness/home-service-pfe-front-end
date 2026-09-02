@@ -16,7 +16,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import type { RegisterRequestDto } from "../types/register";
-import { authService } from "../services/auth.service"; // استيراد الـ Service
+import { authService } from "../services/auth.service";
 
 interface AddAdminModalProps {
   isOpen: boolean;
