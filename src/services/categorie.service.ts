@@ -50,4 +50,11 @@ export const categorieService = {
     );
     return response.data;
   },
+
+  deleteService: async (id: number): Promise<{ message: string }> => {
+    const response = await apiClient.delete<{ message: string }>(
+      `/api/v1/service/delete/${id}`,
+    );
+    return response.data;
+  },
 };
