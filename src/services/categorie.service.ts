@@ -39,4 +39,15 @@ export const categorieService = {
     );
     return response.data;
   },
+
+  updateService: async (
+    id: number,
+    data: CategoryRequestDto,
+  ): Promise<AddCategoryResponseDto> => {
+    const response = await apiClient.put<AddCategoryResponseDto>(
+      `/api/v1/service/update/${id}`,
+      data,
+    );
+    return response.data;
+  },
 };
