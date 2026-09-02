@@ -8,11 +8,10 @@ import {
   FolderOpen,
   CheckCircle2,
   RefreshCw,
-  AlertTriangle,
-  X,
 } from "lucide-react";
 import { useServicesManager } from "../hooks/useServicesManager";
 import { AddServiceModal } from "../components/AddServiceModal";
+import { EditServiceModal } from "../components/EditServiceModal";
 import type { ServiceResponseDto } from "../types/categorie";
 
 export const ServicesManagementPage: React.FC = () => {
@@ -27,7 +26,6 @@ export const ServicesManagementPage: React.FC = () => {
 
   const [selectedService, setSelectedService] =
     useState<ServiceResponseDto | null>(null);
-  const [formData, setFormData] = useState({ name: "", description: "" });
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const showNotification = (msg: string) => {
@@ -49,6 +47,7 @@ export const ServicesManagementPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-forest-800 tracking-tight flex items-center gap-2.5">
+            <Wrench className="w-6 h-6 text-forest-800" />
             Gestion des Services
           </h1>
           <p className="text-xs md:text-sm text-forest-700/70">
@@ -163,17 +162,34 @@ export const ServicesManagementPage: React.FC = () => {
           </div>
         )}
       </div>
+      {/* ---------------------------------------------------------------------- */}
 
       {/* ======================================================== */}
-      {/* COMPOSANT INDÉPENDANT : MODAL AJOUTER UN SERVICE        */}
+      {/* MODAL 1 : AJOUTER UN SERVICE                            */}
       {/* ======================================================== */}
       <AddServiceModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onSuccess={(msg) => showNotification(msg)}
       />
+
+      {/* ======================================================== */}
+      {/* MODAL 2 : MODIFIER UN SERVICE                            */}
+      {/* ======================================================== */}
+      <EditServiceModal
+        isOpen={isEditOpen}
+        service={selectedService}
+        onClose={() => {
+          setIsEditOpen(false);
+          setSelectedService(null);
+        }}
+        onSuccess={(msg) => showNotification(msg)}
+      />
     </div>
   );
+  {
+    /* ---------------------------------------------------------------------- */
+  }
 };
 
 export default ServicesManagementPage;
