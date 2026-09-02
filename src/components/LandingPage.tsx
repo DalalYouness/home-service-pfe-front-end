@@ -2,6 +2,7 @@ import Navbar from "./NavBar";
 import Hero from "./Hero";
 import { ServicesSection } from "./ServiceSection";
 import Footer from "./Footer";
+import HowItWorks from "./HowItWorks";
 
 const LandingPage = () => {
   return (
@@ -12,7 +13,12 @@ const LandingPage = () => {
       {/* 2. Main Content Area */}
       <main className="flex-grow">
         <Hero />
-        <ServicesSection />
+        <div id="services">
+          <ServicesSection />
+        </div>
+        <div id="how-it-works">
+          <HowItWorks />
+        </div>
       </main>
 
       {/* 3. Footer Section (In the bottom) */}
