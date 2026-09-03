@@ -4,6 +4,7 @@ import { ServicesSection } from "./ServiceSection";
 import Footer from "./Footer";
 import HowItWorks from "./HowItWorks";
 import BecomeProviderSection from "./BecomeProviderSection";
+import CTASection from "./CTASection";
 
 const LandingPage = () => {
   return (
@@ -22,6 +23,7 @@ const LandingPage = () => {
         </div>
         {/* Section Espace Prestataire */}
         <BecomeProviderSection />
+        <CTASection />
       </main>
 
       {/* 3. Footer Section (In the bottom) */}
