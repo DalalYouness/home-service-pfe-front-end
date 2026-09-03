@@ -5,12 +5,14 @@ interface NotificationPopupProps {
   notifications?: NotificationResponse[];
   unreadCount?: number;
   loading?: boolean;
+  onNotificationClick?: (notificationId: number) => void;
 }
 
 export const NotificationPopup: React.FC<NotificationPopupProps> = ({
   notifications = [],
   unreadCount = 0,
   loading = false,
+  onNotificationClick,
 }) => {
   return (
     <>
@@ -39,14 +41,14 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
             <h3 className="font-serif font-bold text-forest-900 text-sm sm:text-base">
               Notifications
             </h3>
-            <span className="bg-forest-100 text-forest-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+            <span className="bg-forest-800 text-cream-50 text-[11px] font-bold px-2 py-0.5 rounded-full">
               {unreadCount} nouvelle{unreadCount > 1 ? "s" : ""}
             </span>
           </div>
         </div>
 
         {/* Body List */}
-        <div className="max-h-[60vh] sm:max-h-[380px] overflow-y-auto divide-y divide-cream-100">
+        <div className="max-h-[60vh] sm:max-h-[380px] overflow-y-auto divide-y divide-forest-100/60">
           {loading ? (
             <div className="p-8 text-center text-xs text-forest-700/60 font-medium">
               Chargement des notifications...
@@ -59,21 +61,26 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
             notifications.map((notif) => (
               <div
                 key={notif.id}
+                onClick={() => {
+                  if (!notif.isRead && onNotificationClick) {
+                    onNotificationClick(notif.id);
+                  }
+                }}
                 className={`p-3.5 sm:p-4 flex gap-3 items-start transition-all cursor-pointer relative ${
                   !notif.isRead
-                    ? "bg-forest-50/50 hover:bg-forest-50"
-                    : "bg-white hover:bg-cream-50/50"
+                    ? "bg-forest-100/70 hover:bg-forest-100/90"
+                    : "bg-white hover:bg-stone-50"
                 }`}
               >
                 {/* Status Indicator */}
                 <div className="mt-1 shrink-0 relative flex items-center justify-center">
                   {!notif.isRead ? (
                     <>
-                      <span className="absolute inline-flex h-3 w-3 rounded-full bg-forest-500 opacity-75 animate-ping" />
-                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-forest-700" />
+                      <span className="absolute inline-flex h-3 w-3 rounded-full bg-forest-600 opacity-75 animate-ping" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-forest-900" />
                     </>
                   ) : (
-                    <span className="h-2 w-2 rounded-full bg-cream-300 block" />
+                    <span className="h-2 w-2 rounded-full bg-stone-300 block" />
                   )}
                 </div>
 
@@ -82,18 +89,16 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
                   <p
                     className={`text-xs sm:text-sm leading-relaxed ${
                       !notif.isRead
-                        ? "font-semibold text-forest-900"
-                        : "text-gray-600"
+                        ? "font-bold text-forest-950"
+                        : "font-normal text-stone-600"
                     }`}
                   >
                     {notif.message}
                   </p>
 
                   <span
-                    className={`text-[10px] sm:text-[11px] font-medium mt-1 block ${
-                      !notif.isRead
-                        ? "text-amber-600 font-semibold"
-                        : "text-forest-500"
+                    className={`text-[10px] sm:text-[11px] font-semibold mt-1 block ${
+                      !notif.isRead ? "text-forest-900" : "text-stone-400"
                     }`}
                   >
                     {notif.createdAt
@@ -107,9 +112,9 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
                   </span>
                 </div>
 
-                {/* Left accent bar */}
+                {/* Left accent bar for Unread */}
                 {!notif.isRead && (
-                  <span className="absolute left-0 top-0 bottom-0 w-1 bg-forest-700 rounded-r-md" />
+                  <span className="absolute left-0 top-0 bottom-0 w-1.5 bg-forest-800 rounded-r-md" />
                 )}
               </div>
             ))
@@ -118,7 +123,7 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
 
         {/* Footer */}
         <div className="p-2.5 bg-cream-50 border-t border-forest-100 text-center">
-          <button className="text-xs font-semibold text-forest-700 hover:text-forest-900 transition-colors cursor-pointer">
+          <button className="text-xs font-semibold text-forest-800 hover:text-forest-950 transition-colors cursor-pointer">
             Tout marquer comme lu
           </button>
         </div>
