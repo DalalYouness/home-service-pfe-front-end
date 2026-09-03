@@ -27,7 +27,9 @@ const LandingPage = () => {
       </main>
 
       {/* 3. Footer Section (In the bottom) */}
-      <Footer />
+      <div id="contact">
+        <Footer />
+      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import logoImg from "../assets/logo.png";
 interface LogoProps {
   size?: "sm" | "md" | "lg";
   height?: number;
-  variant?: "dark-bg" | "light-bg"; // تقدر تختار واش الـ Navbar بيضاء ولا كحلة
+  variant?: "dark-bg" | "light-bg";
   animate?: boolean;
   className?: string;
 }

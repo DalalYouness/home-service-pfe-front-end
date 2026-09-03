@@ -10,6 +10,7 @@ export const NotificationType = {
 export type NotificationType =
   (typeof NotificationType)[keyof typeof NotificationType];
 
+// toujours le data contract doit etre compatible avec le backend, donc on doit suivre le meme format que le backend
 export interface NotificationResponse {
   id: number;
   message: string;
