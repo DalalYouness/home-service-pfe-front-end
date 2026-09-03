@@ -3,6 +3,7 @@ import Hero from "./Hero";
 import { ServicesSection } from "./ServiceSection";
 import Footer from "./Footer";
 import HowItWorks from "./HowItWorks";
+import BecomeProviderSection from "./BecomeProviderSection";
 
 const LandingPage = () => {
   return (
@@ -19,6 +20,8 @@ const LandingPage = () => {
         <div id="how-it-works">
           <HowItWorks />
         </div>
+        {/* Section Espace Prestataire */}
+        <BecomeProviderSection />
       </main>
 
       {/* 3. Footer Section (In the bottom) */}
