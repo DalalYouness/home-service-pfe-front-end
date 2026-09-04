@@ -1,4 +1,5 @@
 import type {
+  ProviderDashboardSatisfactionResponse,
   ProviderStatsResponse,
   ReviewCreateRequest,
   ReviewResponse,
@@ -20,6 +21,15 @@ export const reviewService = {
   ): Promise<ProviderStatsResponse> => {
     const response = await apiClient.get<ProviderStatsResponse>(
       `api/v1/reviews/provider/${providerId}/stats`,
+    );
+    return response.data;
+  },
+
+  getProviderDashboardSatisfaction: async (
+    providerId: number | string,
+  ): Promise<ProviderDashboardSatisfactionResponse> => {
+    const response = await apiClient.get<ProviderDashboardSatisfactionResponse>(
+      `api/v1/reviews/provider/${providerId}/dashboard`,
     );
     return response.data;
   },
