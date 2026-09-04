@@ -3,12 +3,16 @@ import ReactDOM from "react-dom";
 import { ThumbsUp, ThumbsDown, X, MessageSquare, Send } from "lucide-react";
 
 interface ReviewDrawerProps {
+  isOpen: boolean;
   onClose?: () => void;
 }
 
 export const ReviewDrawerStatic: React.FC<ReviewDrawerProps> = ({
+  isOpen,
   onClose,
 }) => {
+  if (!isOpen) return null;
+
   const content = (
     <>
       <style>{`

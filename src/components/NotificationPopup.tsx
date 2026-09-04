@@ -1,17 +1,11 @@
-import React, { useState } from "react";
-import { Star } from "lucide-react";
-import {
-  NotificationType,
-  type NotificationResponse,
-} from "../types/notification";
-import ReviewModalStatic from "./ReviewModalStatic";
+import React from "react";
+import { type NotificationResponse } from "../types/notification";
 
 interface NotificationPopupProps {
   notifications?: NotificationResponse[];
   unreadCount?: number;
   loading?: boolean;
   onNotificationClick?: (notificationId: number) => void;
-  onReviewClick?: (notification: NotificationResponse) => void;
 }
 
 export const NotificationPopup: React.FC<NotificationPopupProps> = ({
@@ -19,10 +13,7 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
   unreadCount = 0,
   loading = false,
   onNotificationClick,
-  onReviewClick,
 }) => {
-  const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
-
   return (
     <>
       <style>{`
@@ -68,9 +59,6 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
             </div>
           ) : (
             notifications.map((notif) => {
-              const isCompleted =
-                notif.notificationType === NotificationType.BOOKING_COMPLETED;
-
               return (
                 <div
                   key={notif.id}
@@ -127,23 +115,6 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
                             )
                           : ""}
                       </span>
-
-                      {isCompleted && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsReviewOpen(true);
-                            if (onReviewClick) {
-                              onReviewClick(notif);
-                            }
-                          }}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold text-amber-800 bg-amber-100/80 hover:bg-amber-200/80 border border-amber-300/60 rounded-md transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
-                        >
-                          <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
-                          <span>Donner un avis</span>
-                        </button>
-                      )}
                     </div>
                   </div>
 
@@ -164,10 +135,6 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({
           </button>
         </div>
       </div>
-
-      {isReviewOpen && (
-        <ReviewModalStatic onClose={() => setIsReviewOpen(false)} />
-      )}
     </>
   );
 };
