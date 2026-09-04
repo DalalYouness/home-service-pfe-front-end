@@ -17,3 +17,11 @@ export interface ProviderStatsResponse {
   tauxRecommandation: number;
   totalClientsVotants: number;
 }
+
+export interface ProviderDashboardSatisfactionResponse {
+  providerId: number;
+  totalVotes: number;
+  positiveVotesCount: number;
+  negativeVotesCount: number;
+  tauxRecommendation: number;
+}

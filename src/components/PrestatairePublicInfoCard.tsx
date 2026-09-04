@@ -179,13 +179,6 @@ export default function PrestatairePublicInfoCard({
               >
                 Créer un compte Client
               </button>
-              <button
-                type="button"
-                onClick={() => navigate("/login")}
-                className="w-full sm:w-auto py-2 px-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-medium text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 cursor-pointer inline-flex items-center justify-center"
-              >
-                Se connecter
-              </button>
             </div>
           </div>
         </div>
