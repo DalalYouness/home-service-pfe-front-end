@@ -11,3 +11,9 @@ export interface ReviewResponse {
   isRecommended: boolean;
   createdAt: string;
 }
+
+export interface ProviderStatsResponse {
+  providerId: number;
+  tauxRecommandation: number;
+  totalClientsVotants: number;
+}
