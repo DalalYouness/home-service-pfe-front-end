@@ -1,17 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { ThumbsUp, ThumbsDown, X, MessageSquare, Send } from "lucide-react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  X,
+  MessageSquare,
+  Send,
+  Loader2,
+} from "lucide-react";
+import { useCreateReview } from "../hooks/useCreateReview";
 
 interface ReviewDrawerProps {
   isOpen: boolean;
   onClose?: () => void;
+  reservationId: number;
+  onSuccess?: () => void;
 }
 
 export const ReviewDrawerStatic: React.FC<ReviewDrawerProps> = ({
   isOpen,
   onClose,
+  reservationId,
+  onSuccess,
 }) => {
+  const [isRecommended, setIsRecommended] = useState<boolean | null>(null);
+  const [comment, setComment] = useState<string>("");
+
+  const { handleCreateReview, loading, error } = useCreateReview();
+
   if (!isOpen) return null;
+
+  const handleSelectRecommendation = (value: boolean) => {
+    setIsRecommended(value);
+  };
+
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    if (isRecommended === null) return;
+
+    await handleCreateReview(
+      {
+        reservationId,
+        isRecommended,
+        comment,
+      },
+      () => {
+        setIsRecommended(null);
+        setComment("");
+        if (onSuccess) onSuccess();
+        if (onClose) onClose();
+      },
+    );
+  };
 
   const content = (
     <>
@@ -56,6 +99,12 @@ export const ReviewDrawerStatic: React.FC<ReviewDrawerProps> = ({
 
           {/* Body */}
           <div className="p-6 space-y-6 flex-1 overflow-y-auto">
+            {error && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-semibold">
+                {error}
+              </div>
+            )}
+
             {/* Recommandation */}
             <div className="space-y-3">
               <label className="text-xs font-bold text-forest-900 uppercase tracking-wider block">
@@ -65,17 +114,39 @@ export const ReviewDrawerStatic: React.FC<ReviewDrawerProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="py-4 px-4 rounded-2xl border flex flex-col items-center justify-center gap-2 font-bold text-xs bg-forest-900 text-cream-50 border-forest-900 shadow-sm cursor-pointer hover:bg-forest-950 transition-all"
+                  onClick={() => handleSelectRecommendation(true)}
+                  className={`py-4 px-4 rounded-2xl border flex flex-col items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all ${
+                    isRecommended === true
+                      ? "bg-forest-900 text-cream-50 border-forest-900 shadow-sm"
+                      : "bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100"
+                  }`}
                 >
-                  <ThumbsUp className="w-5 h-5 text-amber-400" />
+                  <ThumbsUp
+                    className={`w-5 h-5 ${
+                      isRecommended === true
+                        ? "text-amber-400"
+                        : "text-stone-400"
+                    }`}
+                  />
                   <span>Oui, absolument</span>
                 </button>
 
                 <button
                   type="button"
-                  className="py-4 px-4 rounded-2xl border flex flex-col items-center justify-center gap-2 font-bold text-xs bg-stone-50 text-stone-600 border-stone-200 cursor-pointer hover:bg-stone-100 transition-all"
+                  onClick={() => handleSelectRecommendation(false)}
+                  className={`py-4 px-4 rounded-2xl border flex flex-col items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all ${
+                    isRecommended === false
+                      ? "bg-forest-900 text-cream-50 border-forest-900 shadow-sm"
+                      : "bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100"
+                  }`}
                 >
-                  <ThumbsDown className="w-5 h-5 text-stone-400" />
+                  <ThumbsDown
+                    className={`w-5 h-5 ${
+                      isRecommended === false
+                        ? "text-amber-400"
+                        : "text-stone-400"
+                    }`}
+                  />
                   <span>Non</span>
                 </button>
               </div>
@@ -94,6 +165,8 @@ export const ReviewDrawerStatic: React.FC<ReviewDrawerProps> = ({
               </div>
 
               <textarea
+                value={comment}
+                onChange={handleCommentChange}
                 placeholder="Ex: Prestataire très ponctuel et travail propre..."
                 rows={4}
                 className="w-full px-4 py-3 text-xs sm:text-sm bg-stone-50/50 border border-stone-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-forest-800 focus:border-transparent outline-none transition-all resize-none text-forest-950 placeholder-stone-400"
@@ -106,18 +179,26 @@ export const ReviewDrawerStatic: React.FC<ReviewDrawerProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 text-xs font-semibold text-stone-600 bg-white border border-stone-200 hover:bg-stone-50 rounded-xl transition-all cursor-pointer"
+              disabled={loading}
+              className="flex-1 py-3 text-xs font-semibold text-stone-600 bg-white border border-stone-200 hover:bg-stone-50 rounded-xl transition-all cursor-pointer disabled:opacity-50"
             >
               Annuler
             </button>
 
             <button
               type="button"
-              onClick={onClose}
-              className="flex-1 py-3 text-xs font-bold text-cream-50 bg-forest-900 hover:bg-forest-950 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              onClick={handleSubmit}
+              disabled={loading || isRecommended === null}
+              className="flex-1 py-3 text-xs font-bold text-cream-50 bg-forest-900 hover:bg-forest-950 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="w-4 h-4" />
-              <span>Publier</span>
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>Publier</span>
+                </>
+              )}
             </button>
           </div>
         </div>

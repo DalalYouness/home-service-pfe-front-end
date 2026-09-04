@@ -9,6 +9,7 @@ import {
   Loader2,
   X,
   Star,
+  Check,
 } from "lucide-react";
 import { type ReservationResponse, BookingStatus } from "../types/reservation";
 import type { AppMode } from "../context/AuthContext";
@@ -34,8 +35,13 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState<boolean>(false);
   const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const isProvider = mode === "PRESTATAIRE";
+
+  const handleReviewSuccess = () => {
+    setIsSubmitted(true);
+  };
 
   // Formatter la date et l'heure
   const formatDateTime = (dateString?: string) => {
@@ -230,16 +236,22 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
                 </p>
               )}
 
-              {/* زر Donner un avis يظهر حصرياً للـ CLIENT عندما تكون الخدمة COMPLETED */}
-              {booking.status === BookingStatus.COMPLETED && (
-                <button
-                  onClick={() => setIsReviewOpen(true)}
-                  className="w-full py-2.5 px-4 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-800 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 shadow-sm"
-                >
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
-                  <span>Donner un avis</span>
-                </button>
-              )}
+              {booking.status === BookingStatus.COMPLETED &&
+                /* 🟡 MODIFIED: Show "Avis envoyé" badge if submitted, otherwise render review button */
+                (isSubmitted ? (
+                  <div className="w-full py-2.5 px-4 bg-emerald-50 border border-emerald-200/80 text-emerald-800 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm">
+                    <Check className="w-4 h-4 text-emerald-600" />
+                    <span>Avis envoyé</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsReviewOpen(true)}
+                    className="w-full py-2.5 px-4 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-800 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 shadow-sm"
+                  >
+                    <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
+                    <span>Donner un avis</span>
+                  </button>
+                ))}
             </>
           )}
 
@@ -307,15 +319,12 @@ export const ReservationCardItem: React.FC<ReservationCardItemProps> = ({
         </div>
       </div>
 
+      {/* Added onSuccess callback prop to ReviewDrawerStatic */}
       <ReviewDrawerStatic
         isOpen={isReviewOpen}
         onClose={() => setIsReviewOpen(false)}
-        providerName={
-          booking.providerName || `Prestataire #${booking.idProvider}`
-        }
-        serviceName={booking.serviceName || `Service #${booking.idService}`}
-        idProvider={booking.idProvider}
-        idService={booking.idService}
+        reservationId={booking.id}
+        onSuccess={handleReviewSuccess}
       />
     </>
   );
