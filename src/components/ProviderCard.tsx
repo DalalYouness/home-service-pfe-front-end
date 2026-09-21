@@ -74,7 +74,7 @@ export const ProviderCard = ({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-full border border-emerald-100 text-xs font-bold">
                   <ThumbsUp size={13} className="text-emerald-600" />
-                  <span>{stats.tauxRecommandation}%</span>
+                  <span>{Math.round(stats.tauxRecommandation)}%</span>
                 </div>
 
                 <div className="flex items-center gap-1 text-xs text-gray-500 font-medium">

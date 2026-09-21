@@ -68,7 +68,7 @@ export const ProviderCardClient = ({
               <div className="flex items-center gap-1.5">
                 <div className="flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-400">
                   <ThumbsUp className="w-3.5 h-3.5 shrink-0" />
-                  <span>{stats.tauxRecommandation}%</span>
+                  <span>{Math.round(stats.tauxRecommandation)}%</span>
                 </div>
                 <span className="text-slate-400 dark:text-slate-500">
                   ({stats.totalClientsVotants})

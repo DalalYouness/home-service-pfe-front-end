@@ -1,21 +1,62 @@
-import { ThumbsUp, ThumbsDown, Users, TrendingUp, Award } from "lucide-react";
-import type { ProviderDashboardSatisfactionResponse } from "../types/review";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  Users,
+  TrendingUp,
+  Award,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+import { useProviderDashboardSatisfaction } from "../hooks/useProviderDashboardSatisfaction";
 
-// Mock Data مطابقة للعقد
-const mockSatisfactionData: ProviderDashboardSatisfactionResponse = {
-  providerId: 101,
-  totalVotes: 48,
-  positiveVotesCount: 41,
-  negativeVotesCount: 7,
-  tauxRecommendation: 85.4,
-};
+interface PrestataireDashboardProps {
+  providerId: number | string;
+}
 
-export const PrestataireDashboard = () => {
-  const data = mockSatisfactionData;
+export const PrestataireDashboard = ({
+  providerId,
+}: PrestataireDashboardProps) => {
+  const { data, loading, error } = useProviderDashboardSatisfaction(providerId);
+
+  if (loading) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[300px] gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-forest-700" />
+        <p className="text-sm font-medium text-forest-800">
+          Chargement des données de satisfaction...
+        </p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-100 flex items-center gap-3 text-rose-800 text-sm">
+          <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" />
+          <span>
+            {error || "Une erreur est survenue lors du chargement des données."}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  const pos = data.positiveVotesCount || 0;
+  const neg = data.negativeVotesCount || 0;
+
+  const total = data.totalVotes ?? pos + neg;
+
+  const taux = data.tauxRecommendation
+    ? Math.round(data.tauxRecommendation)
+    : 0;
+
+  const satisfactionPercentage =
+    total > 0 ? Math.round((pos / total) * 100) : 0;
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto font-sans">
-      {/* HEADER SECTION - بنفس الـ Style الموحد تماماً */}
+      {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-forest-100">
         <div className="space-y-1">
           <h1 className="text-xl md:text-2xl font-bold text-forest-800 tracking-tight">
@@ -40,7 +81,7 @@ export const PrestataireDashboard = () => {
               Total des Avis
             </p>
             <h3 className="text-2xl font-bold text-forest-900 mt-0.5">
-              {data.totalVotes}
+              {total}
             </h3>
           </div>
         </div>
@@ -55,7 +96,7 @@ export const PrestataireDashboard = () => {
               Recommandation
             </p>
             <h3 className="text-2xl font-bold text-emerald-800 mt-0.5">
-              {data.tauxRecommendation}%
+              {taux}%
             </h3>
           </div>
         </div>
@@ -69,9 +110,7 @@ export const PrestataireDashboard = () => {
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Avis Positifs
             </p>
-            <h3 className="text-2xl font-bold text-forest-900 mt-0.5">
-              {data.positiveVotesCount}
-            </h3>
+            <h3 className="text-2xl font-bold text-forest-900 mt-0.5">{pos}</h3>
           </div>
         </div>
 
@@ -84,9 +123,7 @@ export const PrestataireDashboard = () => {
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Avis Négatifs
             </p>
-            <h3 className="text-2xl font-bold text-rose-900 mt-0.5">
-              {data.negativeVotesCount}
-            </h3>
+            <h3 className="text-2xl font-bold text-rose-900 mt-0.5">{neg}</h3>
           </div>
         </div>
       </div>
@@ -114,10 +151,10 @@ export const PrestataireDashboard = () => {
           <div className="flex justify-between items-center text-sm font-medium">
             <span className="text-forest-800 flex items-center gap-1.5">
               <ThumbsUp className="w-4 h-4 text-emerald-600" />
-              Avis Positifs ({data.positiveVotesCount})
+              Avis Positifs ({pos})
             </span>
             <span className="text-rose-700 flex items-center gap-1.5">
-              Avis Négatifs ({data.negativeVotesCount})
+              Avis Négatifs ({neg})
               <ThumbsDown className="w-4 h-4 text-rose-600" />
             </span>
           </div>
@@ -126,19 +163,16 @@ export const PrestataireDashboard = () => {
             <div
               className="h-full bg-forest-700 transition-all duration-500 rounded-l-full"
               style={{
-                width: `${data.totalVotes > 0 ? (data.positiveVotesCount / data.totalVotes) * 100 : 0}%`,
+                width: `${satisfactionPercentage}%`, // الاعتماد على المتغير المحسوب بآمان
               }}
             />
           </div>
 
           <div className="flex justify-between text-xs text-gray-400 font-medium pt-1">
+            <span>{satisfactionPercentage}% de satisfaction</span>
             <span>
-              {data.totalVotes > 0
-                ? Math.round((data.positiveVotesCount / data.totalVotes) * 100)
-                : 0}
-              % de satisfaction
+              Total: {total} {total > 1 ? "votes" : "vote"}
             </span>
-            <span>Total: {data.totalVotes} votes</span>
           </div>
         </div>
       </div>
