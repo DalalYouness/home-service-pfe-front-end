@@ -1,4 +1,4 @@
-# Dalyou — Home Services Platform Front-End
+<img width="1341" height="639" alt="image" src="https://github.com/user-attachments/assets/22ee0797-286b-4ae3-aa12-155497a2f450" /># Dalyou — Home Services Platform Front-End
 
 This repository contains the front-end part of the Home Services Platform developed as part of my final-year master's degree project. The project focuses on creating a modern digital platform that allows users to discover and request home services efficiently.
 
@@ -73,29 +73,13 @@ A listing screen showing available professionals for a service category such as 
 
 This screen represents the first step toward selecting a service provider.
 
-## Screens implemented from the provided mockups
-
-The repository already includes the following screens corresponding to the requested UI:
-
-1. Account creation screen  
-   File: `src/components/RegisterForm.tsx`
-
-2. Login modal and password reset flow  
-   File: `src/components/LoginForm.tsx`
-
-3. Available providers modal for a service category  
-   File: `src/components/ProvidersModal.tsx`
-
-4. Landing page and main entry screen  
-   File: `src/components/LandingPage.tsx`
-
-These screens are connected through the app router in `src/App.tsx` and match the mockup flow described for the Dalyou identity and provider discovery experience.
 
 ## Screenshots
 
 Current UI preview for the service provider discovery flow:
 
-![Dalyou provider modal preview](public/screens/providers.svg)
+![Uploading image.png…]()
+
 
 ## Technology stack
 
