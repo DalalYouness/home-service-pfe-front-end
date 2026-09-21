@@ -1,6 +1,6 @@
 # Dalyou — Home Services Platform Front-End
 
-This repository contains the front-end part of the Home Services Platform developed as part of my final-year master's degree project. The project focuses on creating a modern digital platform that connects customers with trusted home service professionals.
+This repository contains the front-end part of the Home Services Platform developed as part of my final-year master's degree project. The project focuses on creating a modern digital platform that allows users to discover and request home services efficiently.
 
 The implementation is organized in phases, and this first stage covers the Identity Service module.
 
@@ -73,6 +73,24 @@ A listing screen showing available professionals for a service category such as 
 
 This screen represents the first step toward selecting a service provider.
 
+## Screens implemented from the provided mockups
+
+The repository already includes the following screens corresponding to the requested UI:
+
+1. Account creation screen  
+   File: `src/components/RegisterForm.tsx`
+
+2. Login modal and password reset flow  
+   File: `src/components/LoginForm.tsx`
+
+3. Available providers modal for a service category  
+   File: `src/components/ProvidersModal.tsx`
+
+4. Landing page and main entry screen  
+   File: `src/components/LandingPage.tsx`
+
+These screens are connected through the app router in `src/App.tsx` and match the mockup flow described for the Dalyou identity and provider discovery experience.
+
 ## Technology stack
 
 This front-end project is built with modern React tooling:
@@ -92,13 +110,15 @@ This front-end project is built with modern React tooling:
 ```bash
 src/
 ├── components/
-├── pages/
-├── routes/
+├── context/
+├── errors/
+├── hooks/
 ├── services/
-├── styles/
-├── utils/
+├── types/
 ├── App.tsx
-└── main.tsx
+├── index.css
+├── main.tsx
+└── assets/
 ```
 
 ## Getting started
@@ -152,3 +172,5 @@ This project is developed for my final-year master's degree in the context of a 
 ---
 
 Dalyou — Home Services Platform Front-End
+
+Repository: https://github.com/DalalYouness/home-service-pfe-front-end
