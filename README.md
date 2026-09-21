@@ -91,6 +91,12 @@ The repository already includes the following screens corresponding to the reque
 
 These screens are connected through the app router in `src/App.tsx` and match the mockup flow described for the Dalyou identity and provider discovery experience.
 
+## Screenshots
+
+Current UI preview for the service provider discovery flow:
+
+![Dalyou provider modal preview](public/screens/providers.svg)
+
 ## Technology stack
 
 This front-end project is built with modern React tooling:
