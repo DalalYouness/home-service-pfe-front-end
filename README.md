@@ -1,75 +1,196 @@
-# React + TypeScript + Vite
+# Home Service Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and professional front-end application for a home services marketplace, built with React, TypeScript, and Vite. The platform allows clients to discover local service providers, book services, manage reservations, and access personalized dashboards for different user roles.
 
-Currently, two official plugins are available:
+This repository focuses on the user-facing experience for an online home service ecosystem where customers can request support from trusted professionals such as cleaners, repair specialists, and home service providers.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Overview
 
-## React Compiler
+The application includes:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- A modern landing page for promoting the platform
+- Service discovery and category-based browsing
+- Provider profiles and detail views
+- Reservation booking and management
+- Personal account and profile settings
+- Role-based user dashboards
+- Provider onboarding and service management
+- Real-time notifications and alerts
+- Secure authentication flow with token-based API requests
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Customer Experience
+- Browse available service categories and providers
+- View provider details and public information
+- Book services and manage reservations
+- Track and review service requests
+- Update profile, email, password, and account preferences
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Provider Experience
+- Become a service provider through a guided onboarding flow
+- Manage offered services
+- Access provider dashboards and operational tools
+- View reservations and service performance information
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Administration
+- Service management interface
+- User and provider oversight tools
+- Dashboard views for platform management
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Tech Stack
 
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Supabase JS
+- STOMP / SockJS for real-time messaging
+- Sonner for notifications
+- Lucide React icons
+
+## Project Structure
+
+```text
+home-service-pfe-front-end/
+├── public/                  # Static assets
+├── src/
+│   ├── components/         # Reusable UI and page components
+│   ├── context/            # Auth context and shared state
+│   ├── errors/             # Error pages
+│   ├── events/             # Application event definitions
+│   ├── hooks/              # Custom React hooks
+│   ├── services/           # API and backend communication layer
+│   ├── types/              # TypeScript types
+│   ├── App.tsx             # Main app routing
+│   ├── main.tsx            # App entry point
+│   ├── index.css           # Global styles
+│   └── App.css             # Component-level styles
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── package-lock.json
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Before running the app, make sure you have:
 
+- Node.js 18 or later
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/DalalYouness/home-service-pfe-front-end.git
+cd home-service-pfe-front-end
 ```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env.local` file in the root directory and configure the backend URL if needed:
+
+```env
+VITE_API_BASE_URL=http://localhost:9999
+```
+
+> The frontend is configured to use the environment variable `VITE_API_BASE_URL`. If it is not defined, it defaults to `http://localhost:9999`.
+
+### Run the Application
+
+```bash
+npm run dev
+```
+
+The application will be available at:
+
+```text
+http://localhost:5173
+```
+
+## Available Scripts
+
+In the project directory, you can run:
+
+```bash
+npm run dev
+```
+Starts the Vite development server.
+
+```bash
+npm run build
+```
+Builds the app for production.
+
+```bash
+npm run preview
+```
+Serves the production build locally.
+
+```bash
+npm run lint
+```
+Runs ESLint checks on the source code.
+
+```bash
+npm run typecheck
+```
+Runs TypeScript type checking without emitting files.
+
+## Environment and API Configuration
+
+This frontend communicates with a backend service through the centralized Axios client located in:
+
+```text
+src/services/api.client.ts
+```
+
+The client attaches the JWT token from local storage to authorized requests and handles common app-level errors such as:
+
+- 401 Unauthorized sessions
+- 404 missing resources
+- 500 server errors
+
+## Authentication and State Management
+
+The app uses a context-based authentication setup to manage user state and protected routes. It integrates with the backend through a centralized API service layer to keep requests consistent and accessible across components.
+
+## Notes
+
+This project is designed as a front-end interface for a service-booking platform and is intended to work alongside a backend API that exposes authentication, provider, reservation, and service-management endpoints.
+
+## License
+
+This project does not currently declare a license file in the repository. For commercial or production use, please confirm repository ownership and licensing terms with the project maintainer.
+
+## Repository
+
+- GitHub: https://github.com/DalalYouness/home-service-pfe-front-end
+
+## Contributing
+
+Contributions, suggestions, and improvements are welcome. If you would like to contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request with a clear description of the update
+
