@@ -1,75 +1,154 @@
-# React + TypeScript + Vite
+# Dalyou — Home Services Platform Front-End
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the front-end part of the Home Services Platform developed as part of my final-year master's degree project. The project focuses on creating a modern digital platform that connects customers with trusted home service professionals.
 
-Currently, two official plugins are available:
+The implementation is organized in phases, and this first stage covers the Identity Service module.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Project overview
 
-## React Compiler
+Dalyou is a home services platform designed to make it easier for users to:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- create an account
+- sign in securely
+- recover a forgotten password
+- browse available service providers
+- continue the journey in future modules of the application
 
-## Expanding the ESLint configuration
+This repository represents the front-end interface and user experience for the first section of the platform.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Master project context
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+This project is part of my last-year master's degree and aims to design and prototype a complete platform for home services. The application is structured in several sections, and each section is developed progressively.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+We are currently working on the first part:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Identity Service
 
+The screens delivered in this first phase are limited to 4 essential flows, with the rest to be added later.
+
+## Screens included in this first phase
+
+### 1. Create account
+A registration form where the user enters personal information such as:
+
+- first name
+- last name
+- email address
+- phone number
+- password
+- date of birth
+- gender
+- country
+- city
+- address
+
+This screen is part of the onboarding process for new users.
+
+### 2. Login
+A sign-in page for existing users with:
+
+- email field
+- password field
+- forgot password link
+- login button
+- account creation redirect
+
+### 3. Reset password
+A recovery flow that allows the user to:
+
+- enter an email address
+- set a new password
+- confirm the new password
+- reset access to the platform
+
+### 4. Available service providers
+A listing screen showing available professionals for a service category such as plumbing. This screen includes:
+
+- category title
+- provider cards
+- avatar or initials
+- location
+- rating and reviews
+- profile button
+
+This screen represents the first step toward selecting a service provider.
+
+## Technology stack
+
+This front-end project is built with modern React tooling:
+
+- React
+- TypeScript
+- Vite
+- React Router
+- Axios
+- Lucide React
+- Tailwind CSS
+- Supabase
+- WebSocket / STOMP support for real-time communication
+
+## Repository structure
+
+```bash
+src/
+├── components/
+├── pages/
+├── routes/
+├── services/
+├── styles/
+├── utils/
+├── App.tsx
+└── main.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Install dependencies
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
 ```
+
+### Run the development server
+
+```bash
+npm run dev
+```
+
+### Build the project
+
+```bash
+npm run build
+```
+
+### Type-check the application
+
+```bash
+npm run typecheck
+```
+
+## Roadmap
+
+This project will be developed in several parts:
+
+1. Identity Service
+2. Customer / User Dashboard
+3. Service Request Management
+4. Provider Management and Booking Flow
+5. Additional features and improvements
+
+The current repository includes the first section only, as part of the initial design and UI implementation.
+
+## Notes
+
+This is a front-end prototype and UI implementation for a master's project. The design is focused on usability, clarity, and a clean user experience for the home services domain.
+
+The remaining sections will be added progressively in future updates.
+
+## Author
+
+This project is developed for my final-year master's degree in the context of a home services platform.
+
+---
+
+Dalyou — Home Services Platform Front-End
