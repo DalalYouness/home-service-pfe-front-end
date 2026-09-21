@@ -22,7 +22,7 @@ The application includes:
 
 This section contains screenshots of the main interfaces for our platform. You can open the screenshot folder here:
 
-- [Open project screenshots folder](./project-screenshots)
+- [Open project screenshots folder](./src/project-screenshots)
 
 Suggested interface screens to add in this folder:
 
