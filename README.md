@@ -1,8 +1,8 @@
 # Home Service Platform
 
-A modern and professional front-end application for a home services marketplace, built with React, TypeScript, and Vite. The platform allows clients to discover local service providers, book services, manage reservations, and access personalized dashboards for different user roles.
+A modern and professional front-end application for a home services marketplace, built with React, TypeScript, and Vite. The platform allows clients to discover local service providers, book services, and manage bookings through a clean and responsive interface.
 
-This repository focuses on the user-facing experience for an online home service ecosystem where customers can request support from trusted professionals such as cleaners, repair specialists, and home service providers.
+This repository focuses on the user-facing experience for an online home service ecosystem where customers can request support from trusted professionals such as cleaners, repair specialists, and home maintenance experts.
 
 ## Overview
 
@@ -17,6 +17,22 @@ The application includes:
 - Provider onboarding and service management
 - Real-time notifications and alerts
 - Secure authentication flow with token-based API requests
+
+## Platform Screenshots
+
+This section contains screenshots of the main interfaces for our platform. You can open the screenshot folder here:
+
+- [Open project screenshots folder](./project-screenshots)
+
+Suggested interface screens to add in this folder:
+
+- Landing page
+- Login and registration
+- Client dashboard
+- Reservations page
+- Provider dashboard
+- Services management
+- Profile and account settings
 
 ## Features
 
@@ -68,6 +84,7 @@ home-service-pfe-front-end/
 │   ├── main.tsx            # App entry point
 │   ├── index.css           # Global styles
 │   └── App.css             # Component-level styles
+├── project-screenshots/     # Screenshot folder for the platform interfaces
 ├── .gitignore
 ├── eslint.config.js
 ├── index.html
@@ -171,7 +188,7 @@ The client attaches the JWT token from local storage to authorized requests and 
 
 ## Authentication and State Management
 
-The app uses a context-based authentication setup to manage user state and protected routes. It integrates with the backend through a centralized API service layer to keep requests consistent and accessible across components.
+The app uses a context-based authentication setup to manage user state and protected routes. It integrates with the backend through a centralized API service layer to keep requests consistent and maintainable.
 
 ## Notes
 
@@ -193,4 +210,3 @@ Contributions, suggestions, and improvements are welcome. If you would like to c
 2. Create a feature branch
 3. Commit your changes
 4. Open a pull request with a clear description of the update
-
